@@ -1,0 +1,18 @@
+[project]
+name = "cash-flow-api"
+version = "0.1.0"
+description = "FastAPI application for the cash flow prediction platform."
+requires-python = ">=3.13"
+dependencies = [
+  "cash-flow-database",
+  "cash-flow-domain",
+  "cash-flow-integrations",
+  "cash-flow-ml",
+  "cash-flow-schemas",
+  "fastapi",
+  "pydantic-settings",
+  "uvicorn",
+]
+
+[tool.uv]
+package = false

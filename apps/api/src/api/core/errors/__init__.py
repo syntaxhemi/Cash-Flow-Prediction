@@ -1,0 +1,1 @@
+"""API error definitions package."""

@@ -1,0 +1,23 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "cash-flow-training"
+version = "0.1.0"
+description = "Training pipeline for the cash flow prediction platform."
+requires-python = ">=3.13"
+dependencies = [
+  "cash-flow-ml",
+  "numpy",
+  "pandas",
+  "pyyaml",
+  "scikit-learn",
+  "torch",
+]
+
+[tool.uv]
+package = true
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/training"]

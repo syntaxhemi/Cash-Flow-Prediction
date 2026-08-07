@@ -1,0 +1,120 @@
+[project]
+name = "cash-flow-prediction"
+version = "0.1.0"
+description = "Workspace root for the enterprise cash flow prediction platform."
+requires-python = ">=3.13"
+dependencies = [
+  "alembic",
+  "cash-flow-database",
+  "cash-flow-domain",
+  "cash-flow-integrations",
+  "cash-flow-ml",
+  "cash-flow-schemas",
+  "mypy",
+  "poethepoet",
+  "pre-commit",
+  "pytest",
+  "ruff",
+]
+
+[tool.uv]
+package = false
+
+[tool.uv.workspace]
+members = [
+  "apps/api",
+  "apps/worker",
+  "training",
+  "shared/domain",
+  "shared/schemas",
+  "shared/database",
+  "shared/ml",
+  "shared/integrations",
+]
+
+[tool.uv.sources]
+cash-flow-domain = { workspace = true }
+cash-flow-schemas = { workspace = true }
+cash-flow-database = { workspace = true }
+cash-flow-ml = { workspace = true }
+cash-flow-integrations = { workspace = true }
+
+[tool.ruff]
+line-length = 88
+target-version = "py313"
+exclude = [
+  "infra/migrations/versions/*.py",
+  "training/notebooks/*.ipynb",
+]
+
+[tool.ruff.lint]
+extend-select = ["I"]
+
+[tool.ruff.format]
+quote-style = "single"
+indent-style = "space"
+
+[tool.mypy]
+python_version = "3.13"
+warn_unused_configs = true
+pretty = true
+
+[[tool.mypy.overrides]]
+module = [
+  "pandas",
+  "sklearn.*",
+  "torch",
+]
+ignore_missing_imports = true
+
+[tool.poe.tasks.api]
+cmd = "uv run uvicorn --app-dir apps/api/src api.main:app"
+
+[tool.poe.tasks.api-dev]
+cmd = "uv run uvicorn --app-dir apps/api/src api.main:app --reload"
+
+[tool.poe.tasks.worker]
+cmd = "uv run python --module worker.main"
+
+[tool.poe.tasks.dashboard-install]
+cmd = "npm --prefix apps/dashboard install"
+
+[tool.poe.tasks.lint]
+cmd = "uv run ruff check ."
+
+[tool.poe.tasks.format]
+cmd = "uv run ruff format ."
+
+[tool.poe.tasks.typecheck]
+cmd = "uv run mypy ."
+
+[tool.poe.tasks.test]
+cmd = "uv run pytest"
+
+[tool.poe.tasks.lock]
+cmd = "uv lock"
+
+[tool.poe.tasks.sync]
+cmd = "uv sync"
+
+[tool.poe.tasks.hooks-install]
+cmd = "uv run pre-commit install"
+
+[tool.poe.tasks.db-revision]
+cmd = "uv run alembic -c infra/migrations/alembic.ini revision -m ${message}"
+help = "Generate an Alembic revision with the provided message."
+args = [{ name = "message", positional = true, required = true }]
+
+[tool.poe.tasks.db-upgrade]
+cmd = "uv run alembic -c infra/migrations/alembic.ini upgrade head"
+
+[tool.poe.tasks.db-downgrade]
+cmd = "uv run alembic -c infra/migrations/alembic.ini downgrade ${target}"
+help = "Downgrade the database to the provided target revision."
+args = [{ name = "target", positional = true, default = "-1" }]
+
+[tool.poe.tasks.db-current]
+cmd = "uv run alembic -c infra/migrations/alembic.ini current"
+
+[tool.poe.tasks.db-history]
+cmd = "uv run alembic -c infra/migrations/alembic.ini history"

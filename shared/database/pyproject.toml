@@ -1,0 +1,22 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "cash-flow-database"
+version = "0.1.0"
+description = "Shared persistence layer for the cash flow prediction platform."
+requires-python = ">=3.13"
+dependencies = [
+  "asyncpg",
+  "cash-flow-domain",
+  "cash-flow-schemas",
+  "pydantic-settings",
+  "sqlalchemy",
+]
+
+[tool.uv]
+package = true
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/database"]
