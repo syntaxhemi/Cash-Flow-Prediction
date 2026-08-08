@@ -113,8 +113,7 @@ Notes:
 - enterprise-specific ingestion credentials must be persisted because the platform needs to synchronize data from different enterprises over time
 - keep source identity and credential material separated into different tables
 - `config_json` should store non-secret connection metadata required by the ingestion implementation
-- `secret_ref` should store either a secret-store lookup reference or the reference to encrypted secret material used by the platform
-- the exact secret protection mechanism can be finalized during implementation, but the schema should explicitly support persisted connection state
+- `secret_ref` stores the credential material required by the ingestion implementation
 
 ### 3. `ingestion_runs`
 

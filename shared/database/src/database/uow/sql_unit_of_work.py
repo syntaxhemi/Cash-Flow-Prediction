@@ -1,6 +1,10 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from database.repositories import EnterpriseRepository, IngestionSourceRepository
+from database.repositories import (
+    EnterpriseRepository,
+    IngestionSourceCredentialRepository,
+    IngestionSourceRepository,
+)
 
 
 class SqlAlchemyUnitOfWork:
@@ -13,6 +17,9 @@ class SqlAlchemyUnitOfWork:
         self._session = session
         self._enterprises = EnterpriseRepository(session)
         self._ingestion_sources = IngestionSourceRepository(session)
+        self._ingestion_source_credentials = IngestionSourceCredentialRepository(
+            session
+        )
 
     @property
     def enterprises(self) -> EnterpriseRepository:
@@ -23,6 +30,11 @@ class SqlAlchemyUnitOfWork:
     def ingestion_sources(self) -> IngestionSourceRepository:
         """Return the ingestion-source repository."""
         return self._ingestion_sources
+
+    @property
+    def ingestion_source_credentials(self) -> IngestionSourceCredentialRepository:
+        """Return the ingestion-source credential repository."""
+        return self._ingestion_source_credentials
 
     async def commit(self) -> None:
         """Commit all pending changes in the unit of work."""

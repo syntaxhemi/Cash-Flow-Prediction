@@ -83,6 +83,7 @@ This execution plan is the proposed delivery sequence to review before implement
 ## Phase 5: Ingestion and Persistence
 
 - [done] Implement enterprise and ingestion-source management basics through shared schemas, repositories, UoW, API services, and routes.
+- [done] Implement ingestion-source credential management through DTOs, repositories, UoW, API services, and nested routes.
 - [done] Add ingestion-source soft deletion with active filtering and Alembic migration.
 - [todo] Implement ERPNext ingestion adapter.
 - [todo] Implement CSV upload ingestion.

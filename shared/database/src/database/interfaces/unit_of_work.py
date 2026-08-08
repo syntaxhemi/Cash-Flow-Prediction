@@ -1,6 +1,10 @@
 from typing import Protocol
 
-from database.repositories import EnterpriseRepository, IngestionSourceRepository
+from database.repositories import (
+    EnterpriseRepository,
+    IngestionSourceCredentialRepository,
+    IngestionSourceRepository,
+)
 
 
 class IUnitOfWork(Protocol):
@@ -12,6 +16,11 @@ class IUnitOfWork(Protocol):
     @property
     def ingestion_sources(self) -> IngestionSourceRepository:
         """Return the ingestion-source repository."""
+        ...
+
+    @property
+    def ingestion_source_credentials(self) -> IngestionSourceCredentialRepository:
+        """Return the ingestion-source credential repository."""
         ...
 
     async def commit(self) -> None:

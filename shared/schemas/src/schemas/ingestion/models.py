@@ -1,7 +1,8 @@
 from datetime import datetime
+from typing import Any
 from uuid import UUID
 
-from domain.ingestion import IngestionSourceStatus
+from domain.ingestion import CredentialStatus, CredentialType, IngestionSourceStatus
 from pydantic import Field
 
 from schemas.base import SchemaModel
@@ -38,5 +39,63 @@ class IngestionSourceFilterParams(SchemaModel):
     source_key: str | None = Field(default=None, min_length=1)
     status: IngestionSourceStatus | None = None
     is_active: bool = True
+    limit: int = Field(default=50, ge=1, le=200)
+    offset: int = Field(default=0, ge=0)
+
+
+class IngestionSourceCredentialSchema(SchemaModel):
+    """Public ingestion-source credential metadata."""
+
+    id: UUID
+    enterprise_id: UUID
+    ingestion_source_id: UUID
+    credential_type: CredentialType
+    status: CredentialStatus
+    config_json: dict[str, Any]
+    last_rotated_at: datetime | None = None
+    expires_at: datetime | None = None
+    created_at: datetime
+    updated_at: datetime
+
+
+class IngestionSourceCredentialCreateSchema(SchemaModel):
+    """Ingestion-source credential creation payload."""
+
+    credential_type: CredentialType
+    config_json: dict[str, Any] = Field(default_factory=dict)
+    secret_ref: str = Field(min_length=1)
+    expires_at: datetime | None = None
+
+
+class IngestionSourceCredentialUpdateSchema(SchemaModel):
+    """Internal ingestion-source credential persistence update payload."""
+
+    credential_type: CredentialType | None = None
+    config_json: dict[str, Any] | None = None
+    secret_ref: str | None = Field(default=None, min_length=1)
+    status: CredentialStatus | None = None
+    last_rotated_at: datetime | None = None
+    expires_at: datetime | None = None
+
+
+class IngestionSourceCredentialMetadataUpdateSchema(SchemaModel):
+    """Public ingestion-source credential metadata update payload."""
+
+    credential_type: CredentialType | None = None
+    config_json: dict[str, Any] | None = None
+    expires_at: datetime | None = None
+
+
+class IngestionSourceCredentialSecretUpdateSchema(SchemaModel):
+    """Ingestion-source credential rotation payload."""
+
+    secret_ref: str = Field(min_length=1)
+
+
+class IngestionSourceCredentialFilterParams(SchemaModel):
+    """Ingestion-source credential list filters."""
+
+    credential_type: CredentialType | None = None
+    status: CredentialStatus | None = None
     limit: int = Field(default=50, ge=1, le=200)
     offset: int = Field(default=0, ge=0)

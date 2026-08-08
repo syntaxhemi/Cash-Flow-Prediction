@@ -40,3 +40,11 @@ class IngestionSourceAlreadyExistsError(DomainError):
 
 class IngestionSourceNotFoundError(DomainError):
     """Raised when an ingestion source cannot be found."""
+
+
+class IngestionSourceCredentialNotFoundError(DomainError):
+    """Raised when an ingestion-source credential cannot be found."""
+
+
+class InvalidIngestionSourceCredentialStateError(DomainError):
+    """Raised when an ingestion-source credential lifecycle transition is invalid."""

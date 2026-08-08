@@ -2,6 +2,12 @@
 
 from schemas.ingestion.models import (
     IngestionSourceCreateSchema,
+    IngestionSourceCredentialCreateSchema,
+    IngestionSourceCredentialFilterParams,
+    IngestionSourceCredentialMetadataUpdateSchema,
+    IngestionSourceCredentialSchema,
+    IngestionSourceCredentialSecretUpdateSchema,
+    IngestionSourceCredentialUpdateSchema,
     IngestionSourceFilterParams,
     IngestionSourceSchema,
     IngestionSourceUpdateSchema,
@@ -9,6 +15,12 @@ from schemas.ingestion.models import (
 
 __all__ = [
     'IngestionSourceCreateSchema',
+    'IngestionSourceCredentialCreateSchema',
+    'IngestionSourceCredentialFilterParams',
+    'IngestionSourceCredentialMetadataUpdateSchema',
+    'IngestionSourceCredentialSchema',
+    'IngestionSourceCredentialSecretUpdateSchema',
+    'IngestionSourceCredentialUpdateSchema',
     'IngestionSourceFilterParams',
     'IngestionSourceSchema',
     'IngestionSourceUpdateSchema',

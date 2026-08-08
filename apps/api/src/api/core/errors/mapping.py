@@ -5,11 +5,13 @@ from domain.exceptions import (
     EnterpriseAlreadyExistsError,
     EnterpriseNotFoundError,
     IngestionSourceAlreadyExistsError,
+    IngestionSourceCredentialNotFoundError,
     IngestionSourceNotFoundError,
     InvalidEnterpriseConfigurationError,
     InvalidFinancialRecordError,
     InvalidForecastRunError,
     InvalidIngestionRunError,
+    InvalidIngestionSourceCredentialStateError,
     InvalidIngestionSourceError,
     InvalidSimulationError,
 )
@@ -36,7 +38,14 @@ def get_domain_error_mapping(error: DomainError) -> DomainErrorMapping:
         error, (EnterpriseAlreadyExistsError, IngestionSourceAlreadyExistsError)
     ):
         return DomainErrorMapping(409, 'resource_already_exists')
-    if isinstance(error, (EnterpriseNotFoundError, IngestionSourceNotFoundError)):
+    if isinstance(
+        error,
+        (
+            EnterpriseNotFoundError,
+            IngestionSourceNotFoundError,
+            IngestionSourceCredentialNotFoundError,
+        ),
+    ):
         return DomainErrorMapping(404, 'resource_not_found')
     if isinstance(
         error,
@@ -46,6 +55,7 @@ def get_domain_error_mapping(error: DomainError) -> DomainErrorMapping:
             InvalidForecastRunError,
             InvalidIngestionRunError,
             InvalidIngestionSourceError,
+            InvalidIngestionSourceCredentialStateError,
             InvalidSimulationError,
         ),
     ):
