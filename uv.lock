@@ -18,6 +18,7 @@ members = [
     "cash-flow-api",
     "cash-flow-database",
     "cash-flow-domain",
+    "cash-flow-event-broker",
     "cash-flow-integrations",
     "cash-flow-ml",
     "cash-flow-prediction",
@@ -173,6 +174,7 @@ source = { virtual = "apps/api" }
 dependencies = [
     { name = "cash-flow-database" },
     { name = "cash-flow-domain" },
+    { name = "cash-flow-event-broker" },
     { name = "cash-flow-integrations" },
     { name = "cash-flow-ml" },
     { name = "cash-flow-schemas" },
@@ -185,6 +187,7 @@ dependencies = [
 requires-dist = [
     { name = "cash-flow-database", editable = "shared/database" },
     { name = "cash-flow-domain", editable = "shared/domain" },
+    { name = "cash-flow-event-broker", editable = "shared/event_broker" },
     { name = "cash-flow-integrations", editable = "shared/integrations" },
     { name = "cash-flow-ml", editable = "shared/ml" },
     { name = "cash-flow-schemas", editable = "shared/schemas" },
@@ -218,6 +221,21 @@ requires-dist = [
 name = "cash-flow-domain"
 version = "0.1.0"
 source = { editable = "shared/domain" }
+
+[[package]]
+name = "cash-flow-event-broker"
+version = "0.1.0"
+source = { editable = "shared/event_broker" }
+dependencies = [
+    { name = "pydantic-settings" },
+    { name = "redis" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "pydantic-settings" },
+    { name = "redis" },
+]
 
 [[package]]
 name = "cash-flow-integrations"
@@ -273,6 +291,7 @@ dependencies = [
     { name = "alembic" },
     { name = "cash-flow-database" },
     { name = "cash-flow-domain" },
+    { name = "cash-flow-event-broker" },
     { name = "cash-flow-integrations" },
     { name = "cash-flow-ml" },
     { name = "cash-flow-schemas" },
@@ -290,6 +309,7 @@ requires-dist = [
     { name = "alembic" },
     { name = "cash-flow-database", editable = "shared/database" },
     { name = "cash-flow-domain", editable = "shared/domain" },
+    { name = "cash-flow-event-broker", editable = "shared/event_broker" },
     { name = "cash-flow-integrations", editable = "shared/integrations" },
     { name = "cash-flow-ml", editable = "shared/ml" },
     { name = "cash-flow-schemas", editable = "shared/schemas" },
@@ -347,6 +367,7 @@ source = { editable = "apps/worker" }
 dependencies = [
     { name = "cash-flow-database" },
     { name = "cash-flow-domain" },
+    { name = "cash-flow-event-broker" },
     { name = "cash-flow-integrations" },
     { name = "cash-flow-ml" },
     { name = "cash-flow-schemas" },
@@ -358,6 +379,7 @@ dependencies = [
 requires-dist = [
     { name = "cash-flow-database", editable = "shared/database" },
     { name = "cash-flow-domain", editable = "shared/domain" },
+    { name = "cash-flow-event-broker", editable = "shared/event_broker" },
     { name = "cash-flow-integrations", editable = "shared/integrations" },
     { name = "cash-flow-ml", editable = "shared/ml" },
     { name = "cash-flow-schemas", editable = "shared/schemas" },

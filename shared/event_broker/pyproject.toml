@@ -1,0 +1,19 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "cash-flow-event-broker"
+version = "0.1.0"
+description = "Shared Redis Streams transport for the cash flow prediction platform."
+requires-python = ">=3.13"
+dependencies = [
+  "pydantic-settings",
+  "redis",
+]
+
+[tool.uv]
+package = true
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/event_broker"]

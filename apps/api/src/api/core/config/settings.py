@@ -2,6 +2,7 @@ from functools import lru_cache
 from typing import Literal
 
 from database import DatabaseSettings
+from event_broker import EventBrokerSettings
 from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -45,6 +46,11 @@ class ApiSettings(BaseSettings):
     def database_settings(self) -> DatabaseSettings:
         """Return database settings configured for the API environment."""
         return DatabaseSettings(ENVIRONMENT=self.ENVIRONMENT)
+
+    @property
+    def event_broker_settings(self) -> EventBrokerSettings:
+        """Return event-broker settings configured for the API environment."""
+        return EventBrokerSettings(ENVIRONMENT=self.ENVIRONMENT)
 
 
 @lru_cache

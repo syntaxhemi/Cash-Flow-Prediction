@@ -6,6 +6,7 @@ requires-python = ">=3.13"
 dependencies = [
   "alembic",
   "cash-flow-database",
+  "cash-flow-event-broker",
   "cash-flow-domain",
   "cash-flow-integrations",
   "cash-flow-ml",
@@ -30,6 +31,7 @@ members = [
   "shared/domain",
   "shared/schemas",
   "shared/database",
+  "shared/event_broker",
   "shared/ml",
   "shared/integrations",
 ]
@@ -40,6 +42,7 @@ cash-flow-schemas = { workspace = true }
 cash-flow-database = { workspace = true }
 cash-flow-ml = { workspace = true }
 cash-flow-integrations = { workspace = true }
+cash-flow-event-broker = { workspace = true }
 
 [tool.ruff]
 line-length = 88

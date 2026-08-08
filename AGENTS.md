@@ -64,6 +64,7 @@ Expected top-level layout:
   /database
   /ml
   /integrations
+  /event_broker
 /infra
   /docker
   /migrations
@@ -210,6 +211,20 @@ Owns:
 - file-ingestion adapters
 - integration clients and payload translation
 
+### `shared/event_broker`
+
+Owns:
+
+- Redis Streams client lifecycle
+- event-broker interfaces
+- publish, consumer-group, read, acknowledgement, and deletion operations
+
+Should not own:
+
+- domain events or business rules
+- financial records or workflow state
+- API routes or worker job orchestration
+
 ## Architecture Rules
 
 - prefer a modular monolith over microservice sprawl
@@ -217,6 +232,7 @@ Owns:
 - use Docker Compose as the primary execution model
 - use PostgreSQL as the system of record
 - use Redis as a lightweight runtime dependency for async or coordination needs
+- use the shared Redis Streams event broker for durable API-worker job transport
 - keep one strong automated ingestion path rather than many weak ones
 - treat simulation as decision support, not autonomous financial control
 
