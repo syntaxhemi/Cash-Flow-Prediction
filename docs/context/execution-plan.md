@@ -60,7 +60,8 @@ This execution plan is the proposed delivery sequence to review before implement
 - [done] Scaffold `shared/database`.
 - [done] Scaffold `shared/ml`.
 - [done] Scaffold `shared/integrations`.
-- [todo] Define base domain models for enterprise, ledger, forecast, and simulation concepts.
+- [done] Define base domain models for enterprise, ledger, forecast, and simulation concepts.
+- [done] Define domain entities and class-based validation rules for enterprise, ingestion, financial, forecasting, and simulation concepts.
 - [todo] Define shared Pydantic schemas for ingestion, forecasting, and simulation workflows.
 - [done] Scaffold forecasting service modules under `apps/api/services/forecasting`.
 - [done] Scaffold forecasting service modules under `apps/worker/services/forecasting`.

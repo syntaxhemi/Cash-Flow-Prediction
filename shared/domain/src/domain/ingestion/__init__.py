@@ -1,5 +1,10 @@
 """Ingestion domain concepts."""
 
+from domain.ingestion.entities import (
+    IngestionRun,
+    IngestionSource,
+    IngestionSourceCredential,
+)
 from domain.ingestion.enums import (
     CredentialStatus,
     CredentialType,
@@ -11,7 +16,10 @@ from domain.ingestion.enums import (
 __all__ = [
     'CredentialStatus',
     'CredentialType',
+    'IngestionRun',
     'IngestionRunType',
+    'IngestionSource',
+    'IngestionSourceCredential',
     'IngestionSourceStatus',
     'IngestionStatus',
 ]
