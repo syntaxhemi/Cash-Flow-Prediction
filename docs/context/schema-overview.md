@@ -78,6 +78,8 @@ Suggested fields:
 - `source_key`
 - `display_name`
 - `status`
+- `is_active`
+- `deleted_at`
 - `last_synced_at`
 - `created_at`
 - `updated_at`

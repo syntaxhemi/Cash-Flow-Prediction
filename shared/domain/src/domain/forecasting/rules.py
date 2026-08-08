@@ -13,7 +13,9 @@ class IForecastingRules(Protocol):
         sequence_window_months: int,
         model_version: str,
         artifact_version: str,
-    ) -> None: ...
+    ) -> None:
+        """Validate forecast target range and model metadata."""
+        ...
 
 
 class DefaultForecastingRules:
@@ -26,6 +28,18 @@ class DefaultForecastingRules:
         model_version: str,
         artifact_version: str,
     ) -> None:
+        """Validate forecast target range and model metadata.
+
+        Args:
+            target_period_start: First forecast target period.
+            target_period_end: Last forecast target period.
+            sequence_window_months: Number of historical months used.
+            model_version: Loaded model version identifier.
+            artifact_version: Loaded artifact version identifier.
+
+        Raises:
+            InvalidForecastRunError: If the forecast configuration is invalid.
+        """
         if target_period_end < target_period_start:
             raise InvalidForecastRunError(
                 'Forecast target period cannot end before it starts.'

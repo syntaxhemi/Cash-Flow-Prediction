@@ -62,11 +62,12 @@ This execution plan is the proposed delivery sequence to review before implement
 - [done] Scaffold `shared/integrations`.
 - [done] Define base domain models for enterprise, ledger, forecast, and simulation concepts.
 - [done] Define domain entities and class-based validation rules for enterprise, ingestion, financial, forecasting, and simulation concepts.
-- [todo] Define shared Pydantic schemas for ingestion, forecasting, and simulation workflows.
+- [done] Define shared Pydantic schemas for enterprise and ingestion-source configuration.
 - [done] Scaffold forecasting service modules under `apps/api/services/forecasting`.
 - [done] Scaffold forecasting service modules under `apps/worker/services/forecasting`.
 - [done] Set up shared SQLAlchemy base, database settings, engine creation, session factory, session manager, and database manager.
 - [done] Define the agreed SQLAlchemy ORM models for enterprise, ingestion, financial, forecast, and simulation entities.
+- [done] Complete API core settings, infrastructure lifecycle, logging, error handling, middleware, pagination, and application wiring.
 
 ## Phase 4: Infrastructure Foundations
 
@@ -81,7 +82,8 @@ This execution plan is the proposed delivery sequence to review before implement
 
 ## Phase 5: Ingestion and Persistence
 
-- [todo] Implement enterprise and ingestion-source management basics.
+- [done] Implement enterprise and ingestion-source management basics through shared schemas, repositories, UoW, API services, and routes.
+- [done] Add ingestion-source soft deletion with active filtering and Alembic migration.
 - [todo] Implement ERPNext ingestion adapter.
 - [todo] Implement CSV upload ingestion.
 - [todo] Implement Excel upload ingestion.

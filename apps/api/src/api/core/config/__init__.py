@@ -1,1 +1,5 @@
 """API configuration package."""
+
+from api.core.config.settings import ApiSettings, get_api_settings
+
+__all__ = ['ApiSettings', 'get_api_settings']

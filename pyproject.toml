@@ -10,11 +10,13 @@ dependencies = [
   "cash-flow-integrations",
   "cash-flow-ml",
   "cash-flow-schemas",
+  "fastapi",
   "mypy",
   "poethepoet",
   "pre-commit",
   "pytest",
   "ruff",
+  "uvicorn",
 ]
 
 [tool.uv]

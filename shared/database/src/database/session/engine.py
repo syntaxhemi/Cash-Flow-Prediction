@@ -18,6 +18,14 @@ class AsyncDatabaseConfig:
 
     @classmethod
     def from_settings(cls, settings: DatabaseSettings) -> 'AsyncDatabaseConfig':
+        """Create engine configuration from database settings.
+
+        Args:
+            settings: Database connection settings.
+
+        Returns:
+            Async engine configuration.
+        """
         return cls(
             url=settings.DATABASE_URL,
             echo=False,
@@ -28,6 +36,14 @@ class AsyncDatabaseConfig:
 
 
 def normalize_async_database_url(url: str) -> str:
+    """Ensure a PostgreSQL URL uses the asyncpg driver.
+
+    Args:
+        url: Database URL to normalize.
+
+    Returns:
+        URL with an async PostgreSQL driver when applicable.
+    """
     parsed_url = make_url(url)
     drivername = parsed_url.drivername
 
@@ -38,6 +54,14 @@ def normalize_async_database_url(url: str) -> str:
 
 
 def create_database_engine(config: AsyncDatabaseConfig) -> AsyncEngine:
+    """Create an async SQLAlchemy engine.
+
+    Args:
+        config: Engine connection and pool configuration.
+
+    Returns:
+        Configured async engine.
+    """
     return create_async_engine(
         normalize_async_database_url(config.url),
         echo=config.echo,

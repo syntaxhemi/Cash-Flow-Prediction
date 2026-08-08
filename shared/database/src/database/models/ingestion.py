@@ -8,7 +8,7 @@ from domain.ingestion import (
     IngestionSourceStatus,
     IngestionStatus,
 )
-from sqlalchemy import ForeignKey, Index, Integer, String, UniqueConstraint
+from sqlalchemy import Boolean, ForeignKey, Index, Integer, String, UniqueConstraint
 from sqlalchemy.dialects.postgresql import JSONB, TIMESTAMP
 from sqlalchemy.dialects.postgresql import UUID as PGUUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -34,6 +34,8 @@ class IngestionSourceModel(Base):
     status: Mapped[IngestionSourceStatus] = mapped_column(
         enum_type(IngestionSourceStatus, name='ingestion_source_status'), nullable=False
     )
+    is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
+    deleted_at: Mapped[datetime | None] = mapped_column(TIMESTAMP(timezone=True))
     last_synced_at: Mapped[datetime | None] = mapped_column(TIMESTAMP(timezone=True))
     created_at: Mapped[datetime] = mapped_column(
         TIMESTAMP(timezone=True), server_default=func.now(), nullable=False

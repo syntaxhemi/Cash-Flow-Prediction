@@ -24,3 +24,19 @@ class InvalidForecastRunError(DomainError):
 
 class InvalidSimulationError(DomainError):
     """Raised when simulation data is invalid."""
+
+
+class EnterpriseAlreadyExistsError(DomainError):
+    """Raised when an enterprise external key already exists."""
+
+
+class EnterpriseNotFoundError(DomainError):
+    """Raised when an enterprise cannot be found."""
+
+
+class IngestionSourceAlreadyExistsError(DomainError):
+    """Raised when an enterprise source key already exists."""
+
+
+class IngestionSourceNotFoundError(DomainError):
+    """Raised when an ingestion source cannot be found."""

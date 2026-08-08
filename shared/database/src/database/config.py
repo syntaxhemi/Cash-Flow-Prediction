@@ -21,6 +21,7 @@ class DatabaseSettings(BaseSettings):
 
     @property
     def DATABASE_URL(self) -> str:
+        """Build the async PostgreSQL connection URL."""
         parsed_username = quote_plus(self.DB_USERNAME)
         parsed_password = quote_plus(self.DB_PASSWORD.get_secret_value())
 
@@ -36,4 +37,5 @@ class DatabaseSettings(BaseSettings):
 
 @lru_cache
 def get_database_settings() -> DatabaseSettings:
+    """Return cached database settings loaded from the environment."""
     return DatabaseSettings()

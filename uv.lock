@@ -276,11 +276,13 @@ dependencies = [
     { name = "cash-flow-integrations" },
     { name = "cash-flow-ml" },
     { name = "cash-flow-schemas" },
+    { name = "fastapi" },
     { name = "mypy" },
     { name = "poethepoet" },
     { name = "pre-commit" },
     { name = "pytest" },
     { name = "ruff" },
+    { name = "uvicorn" },
 ]
 
 [package.metadata]
@@ -291,11 +293,13 @@ requires-dist = [
     { name = "cash-flow-integrations", editable = "shared/integrations" },
     { name = "cash-flow-ml", editable = "shared/ml" },
     { name = "cash-flow-schemas", editable = "shared/schemas" },
+    { name = "fastapi" },
     { name = "mypy" },
     { name = "poethepoet" },
     { name = "pre-commit" },
     { name = "pytest" },
     { name = "ruff" },
+    { name = "uvicorn" },
 ]
 
 [[package]]
