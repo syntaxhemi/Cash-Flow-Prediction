@@ -1,0 +1,13 @@
+from typing import Protocol
+
+from database.interfaces.session_manager import ISessionManager
+
+
+class IDatabaseManager(Protocol):
+    def get_session_manager(self) -> ISessionManager: ...
+
+    async def initialize(self) -> None: ...
+
+    async def check_connection(self) -> None: ...
+
+    async def dispose(self) -> None: ...

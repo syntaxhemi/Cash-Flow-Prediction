@@ -52,28 +52,30 @@ This execution plan is the proposed delivery sequence to review before implement
 
 ## Phase 3: Backend and Shared Foundations
 
-- [todo] Scaffold `apps/api`.
-- [todo] Scaffold `apps/worker`.
-- [todo] Scaffold `apps/dashboard`.
-- [todo] Scaffold `shared/domain`.
-- [todo] Scaffold `shared/schemas`.
-- [todo] Scaffold `shared/database`.
-- [todo] Scaffold `shared/ml`.
-- [todo] Scaffold `shared/integrations`.
+- [done] Scaffold `apps/api`.
+- [done] Scaffold `apps/worker`.
+- [done] Scaffold `apps/dashboard`.
+- [done] Scaffold `shared/domain`.
+- [done] Scaffold `shared/schemas`.
+- [done] Scaffold `shared/database`.
+- [done] Scaffold `shared/ml`.
+- [done] Scaffold `shared/integrations`.
 - [todo] Define base domain models for enterprise, ledger, forecast, and simulation concepts.
 - [todo] Define shared Pydantic schemas for ingestion, forecasting, and simulation workflows.
-- [todo] Scaffold forecasting service modules under `apps/api/services/forecasting`.
-- [todo] Scaffold forecasting service modules under `apps/worker/services/forecasting`.
+- [done] Scaffold forecasting service modules under `apps/api/services/forecasting`.
+- [done] Scaffold forecasting service modules under `apps/worker/services/forecasting`.
+- [done] Set up shared SQLAlchemy base, database settings, engine creation, session factory, session manager, and database manager.
 
 ## Phase 4: Infrastructure Foundations
 
-- [todo] Scaffold `infra/docker`.
-- [todo] Scaffold `infra/migrations`.
-- [todo] Scaffold `infra/seed`.
-- [todo] Create Docker Compose setup for API, worker, dashboard, PostgreSQL, Redis, and optional ERPNext demo services.
-- [todo] Define environment-variable strategy.
+- [done] Scaffold `infra/docker`.
+- [done] Scaffold `infra/migrations`.
+- [done] Scaffold `infra/seed`.
+- [done] Create Docker Compose setup for API, worker, dashboard, PostgreSQL, Redis, and optional ERPNext demo services.
+- [done] Define environment-variable strategy.
 - [todo] Draft the initial database schema.
-- [todo] Set up migration tooling.
+- [done] Set up migration tooling.
+- [done] Wire Alembic to shared database metadata and database settings.
 
 ## Phase 5: Ingestion and Persistence
 

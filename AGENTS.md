@@ -10,6 +10,7 @@ Use this document together with:
 - `docs/context/research-summary.md`
 - `docs/context/prd-summary.md`
 - `docs/context/repo-structure.md`
+- `docs/context/schema-overview.md`
 - `docs/context/implementation-strategy.md`
 - `docs/context/execution-plan.md`
 

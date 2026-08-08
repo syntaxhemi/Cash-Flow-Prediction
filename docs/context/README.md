@@ -10,8 +10,9 @@ These documents are intended to be the primary source of truth before scaffoldin
 2. [research-summary.md](./research-summary.md)
 3. [prd-summary.md](./prd-summary.md)
 4. [repo-structure.md](./repo-structure.md)
-5. [implementation-strategy.md](./implementation-strategy.md)
-6. [execution-plan.md](./execution-plan.md)
+5. [schema-overview.md](./schema-overview.md)
+6. [implementation-strategy.md](./implementation-strategy.md)
+7. [execution-plan.md](./execution-plan.md)
 
 ## Role of `docs/reference`
 
@@ -24,6 +25,4 @@ The Markdown files in this directory are derived implementation guidance built f
 
 ## Current Status
 
-These documents represent the initial proposed architecture and delivery plan.
-
-They should be reviewed and refined before repository scaffolding begins.
+These documents represent the current committed architecture and implementation context for the repository.
