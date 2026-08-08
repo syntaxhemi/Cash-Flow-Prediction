@@ -65,6 +65,7 @@ This execution plan is the proposed delivery sequence to review before implement
 - [done] Scaffold forecasting service modules under `apps/api/services/forecasting`.
 - [done] Scaffold forecasting service modules under `apps/worker/services/forecasting`.
 - [done] Set up shared SQLAlchemy base, database settings, engine creation, session factory, session manager, and database manager.
+- [done] Define the agreed SQLAlchemy ORM models for enterprise, ingestion, financial, forecast, and simulation entities.
 
 ## Phase 4: Infrastructure Foundations
 
@@ -73,7 +74,7 @@ This execution plan is the proposed delivery sequence to review before implement
 - [done] Scaffold `infra/seed`.
 - [done] Create Docker Compose setup for API, worker, dashboard, PostgreSQL, Redis, and optional ERPNext demo services.
 - [done] Define environment-variable strategy.
-- [todo] Draft the initial database schema.
+- [done] Document the agreed database schema in `docs/context/schema-overview.md`.
 - [done] Set up migration tooling.
 - [done] Wire Alembic to shared database metadata and database settings.
 

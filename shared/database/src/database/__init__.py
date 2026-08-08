@@ -24,5 +24,8 @@ __all__ = [
     'create_session_factory',
     'get_database_settings',
     'metadata',
+    'models',
     'normalize_async_database_url',
 ]
+
+from database import models
