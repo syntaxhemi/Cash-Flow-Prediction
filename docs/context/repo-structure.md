@@ -22,6 +22,7 @@ This document records the intended repository layout before scaffolding begins.
   /database
   /ml
   /integrations
+  /event_broker
 /infra
   /docker
   /migrations
@@ -72,6 +73,7 @@ Suggested responsibilities:
 - `database`: ORM models, repositories, and shared persistence utilities
 - `ml`: model loading, tensor preparation, and inference support
 - `integrations`: ERP/accounting and file-ingestion adapters
+- `event_broker`: shared Redis Streams transport and lifecycle manager for API-worker jobs
 
 Forecasting and simulation should not be top-level shared packages.
 
@@ -181,6 +183,7 @@ Python services should share:
 - `shared/database`
 - `shared/ml`
 - `shared/integrations`
+- `shared/event_broker`
 
 For the dashboard:
 

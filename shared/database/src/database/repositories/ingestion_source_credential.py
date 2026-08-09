@@ -105,6 +105,40 @@ class IngestionSourceCredentialRepository:
             )
         return credential
 
+    async def get_active_for_source(
+        self, ingestion_source_id: UUID
+    ) -> IngestionSourceCredentialModel:
+        """Return the newest active credential for an ingestion source.
+
+        Args:
+            ingestion_source_id: Owning ingestion-source identifier.
+
+        Returns:
+            The newest active credential model.
+
+        Raises:
+            IngestionSourceCredentialNotFoundError: If no active credential exists.
+        """
+        result = await self._session.execute(
+            select(IngestionSourceCredentialModel)
+            .where(
+                IngestionSourceCredentialModel.ingestion_source_id
+                == ingestion_source_id,
+                IngestionSourceCredentialModel.status == CredentialStatus.ACTIVE,
+            )
+            .order_by(
+                IngestionSourceCredentialModel.created_at.desc(),
+                IngestionSourceCredentialModel.id,
+            )
+            .limit(1)
+        )
+        credential = result.scalar_one_or_none()
+        if credential is None:
+            raise IngestionSourceCredentialNotFoundError(
+                f'No active credential exists for ingestion source "{ingestion_source_id}".'
+            )
+        return credential
+
     async def list_for_source(
         self,
         ingestion_source_id: UUID,

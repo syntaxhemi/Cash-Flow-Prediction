@@ -4,6 +4,7 @@ from domain.exceptions import (
     DomainError,
     EnterpriseAlreadyExistsError,
     EnterpriseNotFoundError,
+    IngestionRunNotFoundError,
     IngestionSourceAlreadyExistsError,
     IngestionSourceCredentialNotFoundError,
     IngestionSourceNotFoundError,
@@ -44,6 +45,7 @@ def get_domain_error_mapping(error: DomainError) -> DomainErrorMapping:
             EnterpriseNotFoundError,
             IngestionSourceNotFoundError,
             IngestionSourceCredentialNotFoundError,
+            IngestionRunNotFoundError,
         ),
     ):
         return DomainErrorMapping(404, 'resource_not_found')

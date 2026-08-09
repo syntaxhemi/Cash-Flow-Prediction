@@ -1,6 +1,10 @@
 """Ingestion configuration schemas."""
 
 from schemas.ingestion.models import (
+    IngestionRunCreateSchema,
+    IngestionRunFilterParams,
+    IngestionRunSchema,
+    IngestionRunUpdateSchema,
     IngestionSourceCreateSchema,
     IngestionSourceCredentialCreateSchema,
     IngestionSourceCredentialFilterParams,
@@ -14,6 +18,10 @@ from schemas.ingestion.models import (
 )
 
 __all__ = [
+    'IngestionRunCreateSchema',
+    'IngestionRunFilterParams',
+    'IngestionRunSchema',
+    'IngestionRunUpdateSchema',
     'IngestionSourceCreateSchema',
     'IngestionSourceCredentialCreateSchema',
     'IngestionSourceCredentialFilterParams',

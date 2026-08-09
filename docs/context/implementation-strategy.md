@@ -56,6 +56,16 @@ Primary delivery format:
 
 This project should not depend on cloud-only infrastructure to prove its architecture.
 
+### Redis Streams Event Broker
+
+Redis is used as a lightweight transport between the API and worker for durable
+application jobs. The shared `event_broker` package owns Redis Streams client lifecycle,
+publishing, consumer-group creation, reads, acknowledgements, and message deletion.
+
+The broker transports compact commands such as an ingestion run identifier. PostgreSQL
+remains the source of truth for run state and financial data. The package must not become
+a generic domain-event framework or carry financial records in stream messages.
+
 Important clarification:
 
 - PostgreSQL and Redis are not separate repository apps

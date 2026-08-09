@@ -1,7 +1,10 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.repositories import (
+    CounterpartyRepository,
     EnterpriseRepository,
+    FinancialTransactionRepository,
+    IngestionRunRepository,
     IngestionSourceCredentialRepository,
     IngestionSourceRepository,
 )
@@ -15,11 +18,19 @@ class SqlAlchemyUnitOfWork:
             session: Session whose operations form one unit of work.
         """
         self._session = session
+        self._counterparties = CounterpartyRepository(session)
         self._enterprises = EnterpriseRepository(session)
         self._ingestion_sources = IngestionSourceRepository(session)
         self._ingestion_source_credentials = IngestionSourceCredentialRepository(
             session
         )
+        self._ingestion_runs = IngestionRunRepository(session)
+        self._financial_transactions = FinancialTransactionRepository(session)
+
+    @property
+    def counterparties(self) -> CounterpartyRepository:
+        """Return the counterparty repository."""
+        return self._counterparties
 
     @property
     def enterprises(self) -> EnterpriseRepository:
@@ -35,6 +46,16 @@ class SqlAlchemyUnitOfWork:
     def ingestion_source_credentials(self) -> IngestionSourceCredentialRepository:
         """Return the ingestion-source credential repository."""
         return self._ingestion_source_credentials
+
+    @property
+    def ingestion_runs(self) -> IngestionRunRepository:
+        """Return the ingestion-run repository."""
+        return self._ingestion_runs
+
+    @property
+    def financial_transactions(self) -> FinancialTransactionRepository:
+        """Return the financial-transaction repository."""
+        return self._financial_transactions
 
     async def commit(self) -> None:
         """Commit all pending changes in the unit of work."""

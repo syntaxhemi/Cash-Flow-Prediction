@@ -2,7 +2,13 @@ from datetime import datetime
 from typing import Any
 from uuid import UUID
 
-from domain.ingestion import CredentialStatus, CredentialType, IngestionSourceStatus
+from domain.ingestion import (
+    CredentialStatus,
+    CredentialType,
+    IngestionRunType,
+    IngestionSourceStatus,
+    IngestionStatus,
+)
 from pydantic import Field
 
 from schemas.base import SchemaModel
@@ -33,6 +39,7 @@ class IngestionSourceUpdateSchema(SchemaModel):
     status: IngestionSourceStatus | None = None
     is_active: bool | None = None
     deleted_at: datetime | None = None
+    last_synced_at: datetime | None = None
 
 
 class IngestionSourceFilterParams(SchemaModel):
@@ -97,5 +104,51 @@ class IngestionSourceCredentialFilterParams(SchemaModel):
 
     credential_type: CredentialType | None = None
     status: CredentialStatus | None = None
+    limit: int = Field(default=50, ge=1, le=200)
+    offset: int = Field(default=0, ge=0)
+
+
+class IngestionRunSchema(SchemaModel):
+    """Ingestion-run response schema."""
+
+    id: UUID
+    enterprise_id: UUID
+    ingestion_source_id: UUID
+    run_type: IngestionRunType
+    status: IngestionStatus
+    started_at: datetime | None = None
+    finished_at: datetime | None = None
+    records_received: int
+    records_processed: int
+    records_failed: int
+    error_summary: str | None = None
+    created_at: datetime
+
+
+class IngestionRunCreateSchema(SchemaModel):
+    """Ingestion synchronization request schema."""
+
+    run_type: IngestionRunType = IngestionRunType.INCREMENTAL
+    status: IngestionStatus = IngestionStatus.PENDING
+    since: datetime | None = None
+
+
+class IngestionRunUpdateSchema(SchemaModel):
+    """Internal ingestion-run persistence update schema."""
+
+    status: IngestionStatus | None = None
+    started_at: datetime | None = None
+    finished_at: datetime | None = None
+    records_received: int | None = Field(default=None, ge=0)
+    records_processed: int | None = Field(default=None, ge=0)
+    records_failed: int | None = Field(default=None, ge=0)
+    error_summary: str | None = None
+
+
+class IngestionRunFilterParams(SchemaModel):
+    """Ingestion-run history filters and pagination parameters."""
+
+    status: IngestionStatus | None = None
+    run_type: IngestionRunType | None = None
     limit: int = Field(default=50, ge=1, le=200)
     offset: int = Field(default=0, ge=0)

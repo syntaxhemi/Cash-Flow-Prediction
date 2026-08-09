@@ -21,6 +21,7 @@ class ApiSettings(BaseSettings):
     API_CORS_ALLOW_CREDENTIALS: bool = True
     API_CORS_ALLOW_METHODS: list[str] = ['*']
     API_CORS_ALLOW_HEADERS: list[str] = ['*']
+    INGESTION_SYNC_STREAM_NAME: str = 'cash_flow_ingestion_sync'
 
     @field_validator(
         'API_CORS_ALLOW_ORIGINS',

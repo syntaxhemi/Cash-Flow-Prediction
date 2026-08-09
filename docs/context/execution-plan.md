@@ -68,6 +68,7 @@ This execution plan is the proposed delivery sequence to review before implement
 - [done] Set up shared SQLAlchemy base, database settings, engine creation, session factory, session manager, and database manager.
 - [done] Define the agreed SQLAlchemy ORM models for enterprise, ingestion, financial, forecast, and simulation entities.
 - [done] Complete API core settings, infrastructure lifecycle, logging, error handling, middleware, pagination, and application wiring.
+- [done] Add the shared Redis Streams event-broker package and API infrastructure wiring.
 
 ## Phase 4: Infrastructure Foundations
 
@@ -85,7 +86,8 @@ This execution plan is the proposed delivery sequence to review before implement
 - [done] Implement enterprise and ingestion-source management basics through shared schemas, repositories, UoW, API services, and routes.
 - [done] Implement ingestion-source credential management through DTOs, repositories, UoW, API services, and nested routes.
 - [done] Add ingestion-source soft deletion with active filtering and Alembic migration.
-- [todo] Implement ERPNext ingestion adapter.
+- [done] Implement ERPNext ingestion workflow according to `docs/context/erpnext-ingestion-plan.md`.
+- [done] Implement the source-key ingestion adapter registry in `shared/integrations`.
 - [todo] Implement CSV upload ingestion.
 - [todo] Implement Excel upload ingestion.
 - [todo] Normalize all ingestion paths into a canonical accounting schema.
@@ -125,7 +127,7 @@ This execution plan is the proposed delivery sequence to review before implement
 - [todo] Add backend tests.
 - [todo] Add forecasting and simulation tests.
 - [todo] Add dashboard tests where useful.
-- [todo] Add Compose smoke test flow.
+- [done] Add the optional ERPNext Compose demo stack.
 - [todo] Add demo seed data.
 - [todo] Add operator runbook and presentation notes.
 - [todo] Validate the end-to-end ERPNext-to-dashboard demo flow.

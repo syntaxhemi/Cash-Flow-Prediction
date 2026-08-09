@@ -1,13 +1,21 @@
 from typing import Protocol
 
 from database.repositories import (
+    CounterpartyRepository,
     EnterpriseRepository,
+    FinancialTransactionRepository,
+    IngestionRunRepository,
     IngestionSourceCredentialRepository,
     IngestionSourceRepository,
 )
 
 
 class IUnitOfWork(Protocol):
+    @property
+    def counterparties(self) -> CounterpartyRepository:
+        """Return the counterparty repository."""
+        ...
+
     @property
     def enterprises(self) -> EnterpriseRepository:
         """Return the enterprise repository."""
@@ -21,6 +29,16 @@ class IUnitOfWork(Protocol):
     @property
     def ingestion_source_credentials(self) -> IngestionSourceCredentialRepository:
         """Return the ingestion-source credential repository."""
+        ...
+
+    @property
+    def ingestion_runs(self) -> IngestionRunRepository:
+        """Return the ingestion-run repository."""
+        ...
+
+    @property
+    def financial_transactions(self) -> FinancialTransactionRepository:
+        """Return the financial-transaction repository."""
         ...
 
     async def commit(self) -> None:

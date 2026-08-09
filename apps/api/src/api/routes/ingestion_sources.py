@@ -3,6 +3,9 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends, status
 from schemas.ingestion import (
+    IngestionRunCreateSchema,
+    IngestionRunFilterParams,
+    IngestionRunSchema,
     IngestionSourceCreateSchema,
     IngestionSourceCredentialCreateSchema,
     IngestionSourceCredentialFilterParams,
@@ -15,12 +18,15 @@ from schemas.ingestion import (
 )
 
 from api.dependencies.services import (
+    get_ingestion_run_service,
     get_ingestion_source_credential_service,
     get_ingestion_source_service,
 )
 from api.schemas.ingestion_credentials import IngestionSourceCredentialListResponse
+from api.schemas.ingestion_runs import IngestionRunListResponse
 from api.schemas.ingestion_sources import IngestionSourceListResponse
 from api.services.ingestion import (
+    IngestionRunService,
     IngestionSourceCredentialService,
     IngestionSourceService,
 )
@@ -29,6 +35,43 @@ router = APIRouter(
     prefix='/enterprises/{enterprise_id}/ingestion-sources',
     tags=['ingestion-sources'],
 )
+
+
+@router.post(
+    '/{source_id}/sync',
+    response_model=IngestionRunSchema,
+    status_code=status.HTTP_202_ACCEPTED,
+)
+async def request_ingestion_sync(
+    enterprise_id: UUID,
+    source_id: UUID,
+    payload: IngestionRunCreateSchema,
+    service: Annotated[IngestionRunService, Depends(get_ingestion_run_service)],
+) -> IngestionRunSchema:
+    """Request an asynchronous synchronization for an ingestion source."""
+    return await service.create(enterprise_id, source_id, payload)
+
+
+@router.get('/{source_id}/runs', response_model=IngestionRunListResponse)
+async def list_ingestion_runs(
+    enterprise_id: UUID,
+    source_id: UUID,
+    filters: Annotated[IngestionRunFilterParams, Depends()],
+    service: Annotated[IngestionRunService, Depends(get_ingestion_run_service)],
+) -> IngestionRunListResponse:
+    """List synchronization runs for an ingestion source."""
+    return await service.list(enterprise_id, source_id, filters)
+
+
+@router.get('/{source_id}/runs/{run_id}', response_model=IngestionRunSchema)
+async def get_ingestion_run(
+    enterprise_id: UUID,
+    source_id: UUID,
+    run_id: UUID,
+    service: Annotated[IngestionRunService, Depends(get_ingestion_run_service)],
+) -> IngestionRunSchema:
+    """Return a synchronization run for an ingestion source."""
+    return await service.get(enterprise_id, source_id, run_id)
 
 
 @router.post(

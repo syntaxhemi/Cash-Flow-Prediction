@@ -66,6 +66,17 @@ This currently starts:
 - PostgreSQL
 - Redis
 
+The local ERPNext demo is optional because it adds several services and can take a
+few minutes to initialize. Start it with:
+
+```bash
+docker compose --profile erpnext up -d
+```
+
+ERPNext will be available at `http://localhost:8090` with username `Administrator`
+and password `admin`. Configure an ingestion source with base URL
+`http://localhost:8090` and an ERPNext API credential before triggering a sync.
+
 ## Quality Checks
 
 Run repository hooks:
