@@ -11,6 +11,7 @@ from domain.ingestion.enums import (
     IngestionRunType,
     IngestionSourceStatus,
     IngestionStatus,
+    IngestionUploadCleanupStatus,
 )
 
 __all__ = [
@@ -22,4 +23,5 @@ __all__ = [
     'IngestionSourceCredential',
     'IngestionSourceStatus',
     'IngestionStatus',
+    'IngestionUploadCleanupStatus',
 ]

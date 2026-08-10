@@ -22,6 +22,7 @@ class WorkerSettings(BaseSettings):
     WORKER_BATCH_SIZE: int = 10
     WORKER_BLOCK_MS: int = 5000
     INGESTION_SYNC_STREAM_NAME: str = 'cash_flow_ingestion_sync'
+    INGESTION_UPLOAD_DIRECTORY: str = 'var/uploads'
     DB_HOST: str = 'localhost'
     DB_PORT: int = 5432
     DB_USERNAME: str = 'postgres'

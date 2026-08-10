@@ -32,3 +32,9 @@ class IngestionStatus(StrEnum):
     RUNNING = 'running'
     COMPLETED = 'completed'
     FAILED = 'failed'
+
+
+class IngestionUploadCleanupStatus(StrEnum):
+    STAGED = 'staged'
+    CLEANED = 'cleaned'
+    FAILED = 'failed'

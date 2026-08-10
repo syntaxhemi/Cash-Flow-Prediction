@@ -22,6 +22,7 @@ from database.repositories.ingestion_source_credential import (
     IngestionSourceCredentialListResult,
     IngestionSourceCredentialRepository,
 )
+from database.repositories.ingestion_upload import IngestionUploadRepository
 
 __all__ = [
     'CounterpartyListResult',
@@ -35,6 +36,7 @@ __all__ = [
     'IngestionRunRepository',
     'IngestionSourceCredentialListResult',
     'IngestionSourceCredentialRepository',
+    'IngestionUploadRepository',
     'IngestionSourceListResult',
     'IngestionSourceRepository',
 ]

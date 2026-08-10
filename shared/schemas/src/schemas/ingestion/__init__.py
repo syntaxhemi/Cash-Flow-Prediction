@@ -15,6 +15,8 @@ from schemas.ingestion.models import (
     IngestionSourceFilterParams,
     IngestionSourceSchema,
     IngestionSourceUpdateSchema,
+    IngestionUploadCreateSchema,
+    IngestionUploadUpdateSchema,
 )
 
 __all__ = [
@@ -32,4 +34,6 @@ __all__ = [
     'IngestionSourceFilterParams',
     'IngestionSourceSchema',
     'IngestionSourceUpdateSchema',
+    'IngestionUploadCreateSchema',
+    'IngestionUploadUpdateSchema',
 ]

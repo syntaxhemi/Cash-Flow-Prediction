@@ -69,7 +69,9 @@ async def _process_message(
     try:
         session = database_manager.get_session_manager().create_session()
         service = IngestionSynchronizationService(
-            SqlAlchemyUnitOfWork(session), registry
+            SqlAlchemyUnitOfWork(session),
+            registry,
+            settings.INGESTION_UPLOAD_DIRECTORY,
         )
         await service.execute(dict(fields))
     except (

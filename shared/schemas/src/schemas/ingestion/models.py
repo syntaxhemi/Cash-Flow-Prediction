@@ -8,6 +8,7 @@ from domain.ingestion import (
     IngestionRunType,
     IngestionSourceStatus,
     IngestionStatus,
+    IngestionUploadCleanupStatus,
 )
 from pydantic import Field
 
@@ -152,3 +153,24 @@ class IngestionRunFilterParams(SchemaModel):
     run_type: IngestionRunType | None = None
     limit: int = Field(default=50, ge=1, le=200)
     offset: int = Field(default=0, ge=0)
+
+
+class IngestionUploadCreateSchema(SchemaModel):
+    """Persisted metadata for a staged ingestion upload."""
+
+    storage_key: str = Field(min_length=1, max_length=500)
+    original_filename: str = Field(min_length=1, max_length=255)
+    file_format: str = Field(min_length=1, max_length=10)
+    content_type: str | None = Field(default=None, max_length=100)
+    size_bytes: int = Field(ge=0)
+    sha256: str = Field(min_length=64, max_length=64, pattern=r'^[a-fA-F0-9]{64}$')
+    sheet_name: str | None = Field(default=None, max_length=255)
+    cleanup_status: IngestionUploadCleanupStatus = IngestionUploadCleanupStatus.STAGED
+
+
+class IngestionUploadUpdateSchema(SchemaModel):
+    """Internal staged-upload lifecycle update schema."""
+
+    cleanup_status: IngestionUploadCleanupStatus | None = None
+    cleaned_at: datetime | None = None
+    cleanup_error: str | None = Field(default=None, max_length=1000)

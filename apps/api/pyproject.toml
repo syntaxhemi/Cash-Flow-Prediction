@@ -12,6 +12,7 @@ dependencies = [
   "cash-flow-schemas",
   "fastapi",
   "pydantic-settings",
+  "python-multipart",
   "uvicorn",
 ]
 

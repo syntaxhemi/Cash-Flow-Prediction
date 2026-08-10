@@ -7,6 +7,7 @@ from database.repositories import (
     IngestionRunRepository,
     IngestionSourceCredentialRepository,
     IngestionSourceRepository,
+    IngestionUploadRepository,
 )
 
 
@@ -26,6 +27,7 @@ class SqlAlchemyUnitOfWork:
         )
         self._ingestion_runs = IngestionRunRepository(session)
         self._financial_transactions = FinancialTransactionRepository(session)
+        self._ingestion_uploads = IngestionUploadRepository(session)
 
     @property
     def counterparties(self) -> CounterpartyRepository:
@@ -56,6 +58,11 @@ class SqlAlchemyUnitOfWork:
     def financial_transactions(self) -> FinancialTransactionRepository:
         """Return the financial-transaction repository."""
         return self._financial_transactions
+
+    @property
+    def ingestion_uploads(self) -> IngestionUploadRepository:
+        """Return the ingestion-upload repository."""
+        return self._ingestion_uploads
 
     async def commit(self) -> None:
         """Commit all pending changes in the unit of work."""

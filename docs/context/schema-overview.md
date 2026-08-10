@@ -139,6 +139,34 @@ Notes:
 - this is useful for traceability and demo visibility
 - uploads and automated syncs should both create runs
 
+### 3a. `ingestion_uploads`
+
+Represents metadata for a staged file associated with an upload ingestion run.
+
+Suggested fields:
+
+- `id`
+- `ingestion_run_id`
+- `storage_key`
+- `original_filename`
+- `file_format`
+- `content_type`
+- `size_bytes`
+- `sha256`
+- `sheet_name`
+- `cleanup_status`
+- `cleaned_at`
+- `cleanup_error`
+- `created_at`
+- `updated_at`
+
+Notes:
+
+- this is a one-to-one child of `ingestion_runs`
+- it stores file metadata only; file contents remain on the configured staging volume
+- ERPNext and other non-file runs do not create a row here
+- `storage_key` must be an opaque generated key rather than a client-supplied path
+
 ### 4. `counterparties`
 
 Represents customers, clients, lenders, or other external parties referenced by financial activity.
@@ -450,6 +478,7 @@ High-level relationships:
 - one `enterprise` has many `ingestion_sources`
 - one `ingestion_source` can have many `ingestion_source_credentials`
 - one `enterprise` has many `ingestion_runs`
+- one `ingestion_run` can have zero or one `ingestion_upload`
 - one `enterprise` has many `counterparties`
 - one `enterprise` has many `financial_transactions`
 - one `enterprise` has many `monthly_cashflow_aggregates`

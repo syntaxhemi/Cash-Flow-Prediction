@@ -88,10 +88,15 @@ This execution plan is the proposed delivery sequence to review before implement
 - [done] Add ingestion-source soft deletion with active filtering and Alembic migration.
 - [done] Implement ERPNext ingestion workflow according to `docs/context/erpnext-ingestion-plan.md`.
 - [done] Implement the source-key ingestion adapter registry in `shared/integrations`.
-- [todo] Implement CSV upload ingestion.
-- [todo] Implement Excel upload ingestion.
-- [todo] Normalize all ingestion paths into a canonical accounting schema.
-- [todo] Persist normalized financial records.
+- [done] Add the adapter-neutral staged-file context and shared file validation helpers.
+- [done] Implement and register CSV and Excel file adapters.
+- [done] Wire API upload staging, upload-run creation, and Redis dispatch.
+- [done] Wire worker staged-file resolution and terminal upload cleanup.
+- [done] Define the CSV and Excel ingestion implementation plan in `docs/context/file-ingestion-plan.md`.
+- [done] Implement CSV upload ingestion through the shared adapter, API, and worker workflow.
+- [done] Implement XLSX upload ingestion through the shared adapter, API, and worker workflow.
+- [done] Normalize all ingestion paths into a canonical accounting schema.
+- [done] Persist normalized financial records through the shared transaction repository.
 - [todo] Build monthly temporal aggregation logic.
 - [todo] Build static financial metric persistence logic.
 
@@ -125,6 +130,7 @@ This execution plan is the proposed delivery sequence to review before implement
 ## Phase 9: Validation and Demo Packaging
 
 - [todo] Add backend tests.
+- [todo] Add API/worker Compose services with a shared upload-volume mount.
 - [todo] Add forecasting and simulation tests.
 - [todo] Add dashboard tests where useful.
 - [done] Add the optional ERPNext Compose demo stack.

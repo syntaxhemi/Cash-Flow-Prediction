@@ -19,6 +19,10 @@ class IngestionAdapterContext:
     configuration: Mapping[str, Any]
     secret_ref: str
     cursor: datetime | None = None
+    file_path: str | None = None
+    file_format: str | None = None
+    file_sha256: str | None = None
+    sheet_name: str | None = None
 
 
 @dataclass(frozen=True, slots=True)

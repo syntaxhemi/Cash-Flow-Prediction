@@ -13,6 +13,7 @@ from database.models.ingestion import (
     IngestionRunModel,
     IngestionSourceCredentialModel,
     IngestionSourceModel,
+    IngestionUploadModel,
 )
 from database.models.simulation import (
     MitigationRecommendationModel,
@@ -31,6 +32,7 @@ __all__ = [
     'IngestionRunModel',
     'IngestionSourceCredentialModel',
     'IngestionSourceModel',
+    'IngestionUploadModel',
     'MitigationRecommendationModel',
     'MonthlyCashflowAggregateModel',
     'ReceivablesRankingModel',

@@ -12,3 +12,7 @@ class IntegrationTransportError(IntegrationAdapterError):
 
 class IntegrationRecordTranslationError(IntegrationAdapterError):
     """Raised when an external record cannot be normalized."""
+
+
+class IntegrationFileError(IntegrationAdapterError):
+    """Raised when a staged file cannot be read or does not match its contract."""

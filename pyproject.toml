@@ -15,6 +15,7 @@ dependencies = [
   "mypy",
   "poethepoet",
   "pre-commit",
+  "python-multipart",
   "pytest",
   "ruff",
   "uvicorn",

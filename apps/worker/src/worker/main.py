@@ -3,7 +3,12 @@ import logging
 
 from database import DatabaseManager
 from event_broker import EventBrokerManager
-from integrations import ERPNextAdapter, IngestionAdapterRegistry
+from integrations import (
+    CSVFileAdapter,
+    ERPNextAdapter,
+    ExcelFileAdapter,
+    IngestionAdapterRegistry,
+)
 
 from worker.core.config import get_worker_settings
 from worker.core.logging import configure_logging
@@ -19,7 +24,13 @@ async def run() -> None:
     database_manager = DatabaseManager(settings.database_settings)
     event_broker_manager = EventBrokerManager(settings.event_broker_settings)
 
-    registry = IngestionAdapterRegistry({'erpnext': ERPNextAdapter()})
+    registry = IngestionAdapterRegistry(
+        {
+            'erpnext': ERPNextAdapter(),
+            'csv': CSVFileAdapter(),
+            'excel': ExcelFileAdapter(),
+        }
+    )
 
     await database_manager.initialize()
     await database_manager.check_connection()

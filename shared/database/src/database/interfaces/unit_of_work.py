@@ -7,6 +7,7 @@ from database.repositories import (
     IngestionRunRepository,
     IngestionSourceCredentialRepository,
     IngestionSourceRepository,
+    IngestionUploadRepository,
 )
 
 
@@ -39,6 +40,11 @@ class IUnitOfWork(Protocol):
     @property
     def financial_transactions(self) -> FinancialTransactionRepository:
         """Return the financial-transaction repository."""
+        ...
+
+    @property
+    def ingestion_uploads(self) -> IngestionUploadRepository:
+        """Return the ingestion-upload repository."""
         ...
 
     async def commit(self) -> None:

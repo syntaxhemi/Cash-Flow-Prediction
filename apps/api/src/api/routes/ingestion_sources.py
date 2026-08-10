@@ -1,7 +1,7 @@
 from typing import Annotated
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, File, Form, UploadFile, status
 from schemas.ingestion import (
     IngestionRunCreateSchema,
     IngestionRunFilterParams,
@@ -50,6 +50,22 @@ async def request_ingestion_sync(
 ) -> IngestionRunSchema:
     """Request an asynchronous synchronization for an ingestion source."""
     return await service.create(enterprise_id, source_id, payload)
+
+
+@router.post(
+    '/{source_id}/upload',
+    response_model=IngestionRunSchema,
+    status_code=status.HTTP_202_ACCEPTED,
+)
+async def upload_ingestion_file(
+    enterprise_id: UUID,
+    source_id: UUID,
+    service: Annotated[IngestionRunService, Depends(get_ingestion_run_service)],
+    file: Annotated[UploadFile, File()],
+    sheet_name: Annotated[str | None, Form()] = None,
+) -> IngestionRunSchema:
+    """Stage and asynchronously process a CSV or XLSX accounting file."""
+    return await service.create_upload(enterprise_id, source_id, file, sheet_name)
 
 
 @router.get('/{source_id}/runs', response_model=IngestionRunListResponse)

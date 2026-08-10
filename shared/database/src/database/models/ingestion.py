@@ -7,8 +7,17 @@ from domain.ingestion import (
     IngestionRunType,
     IngestionSourceStatus,
     IngestionStatus,
+    IngestionUploadCleanupStatus,
 )
-from sqlalchemy import Boolean, ForeignKey, Index, Integer, String, UniqueConstraint
+from sqlalchemy import (
+    BigInteger,
+    Boolean,
+    ForeignKey,
+    Index,
+    Integer,
+    String,
+    UniqueConstraint,
+)
 from sqlalchemy.dialects.postgresql import JSONB, TIMESTAMP
 from sqlalchemy.dialects.postgresql import UUID as PGUUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -127,3 +136,51 @@ class IngestionRunModel(Base):
 
     enterprise: Mapped[EnterpriseModel] = relationship()
     ingestion_source: Mapped[IngestionSourceModel] = relationship()
+    upload: Mapped['IngestionUploadModel | None'] = relationship(
+        back_populates='ingestion_run',
+        uselist=False,
+        cascade='all, delete-orphan',
+    )
+
+
+class IngestionUploadModel(Base):
+    """Persist metadata for a file associated with one ingestion run."""
+
+    __tablename__ = 'ingestion_uploads'
+    __table_args__ = (Index('ix_ingestion_uploads_cleanup_status', 'cleanup_status'),)
+
+    id: Mapped[UUID] = mapped_column(
+        PGUUID(as_uuid=True), primary_key=True, default=uuid4
+    )
+    ingestion_run_id: Mapped[UUID] = mapped_column(
+        ForeignKey('ingestion_runs.id', ondelete='CASCADE'),
+        nullable=False,
+        unique=True,
+    )
+    storage_key: Mapped[str] = mapped_column(String(500), nullable=False)
+    original_filename: Mapped[str] = mapped_column(String(255), nullable=False)
+    file_format: Mapped[str] = mapped_column(String(10), nullable=False)
+    content_type: Mapped[str | None] = mapped_column(String(100))
+    size_bytes: Mapped[int] = mapped_column(BigInteger, nullable=False)
+    sha256: Mapped[str] = mapped_column(String(64), nullable=False)
+    sheet_name: Mapped[str | None] = mapped_column(String(255))
+    cleanup_status: Mapped[IngestionUploadCleanupStatus] = mapped_column(
+        enum_type(
+            IngestionUploadCleanupStatus,
+            name='ingestion_upload_cleanup_status',
+        ),
+        nullable=False,
+    )
+    cleaned_at: Mapped[datetime | None] = mapped_column(TIMESTAMP(timezone=True))
+    cleanup_error: Mapped[str | None] = mapped_column(String(1000))
+    created_at: Mapped[datetime] = mapped_column(
+        TIMESTAMP(timezone=True), server_default=func.now(), nullable=False
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        TIMESTAMP(timezone=True),
+        server_default=func.now(),
+        onupdate=func.now(),
+        nullable=False,
+    )
+
+    ingestion_run: Mapped[IngestionRunModel] = relationship(back_populates='upload')

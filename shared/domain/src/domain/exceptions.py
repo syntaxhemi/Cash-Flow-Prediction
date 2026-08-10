@@ -18,6 +18,14 @@ class IngestionRunNotFoundError(DomainError):
     """Raised when an ingestion run cannot be found."""
 
 
+class IngestionUploadNotFoundError(DomainError):
+    """Raised when an ingestion upload cannot be found."""
+
+
+class IngestionUploadAlreadyExistsError(DomainError):
+    """Raised when an ingestion run already has upload metadata."""
+
+
 class InvalidFinancialRecordError(DomainError):
     """Raised when a financial record violates a domain invariant."""
 

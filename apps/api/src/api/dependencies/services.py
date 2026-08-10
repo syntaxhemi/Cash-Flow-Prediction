@@ -12,6 +12,7 @@ from api.services.ingestion import (
     IngestionRunService,
     IngestionSourceCredentialService,
     IngestionSourceService,
+    UploadStagingService,
 )
 
 
@@ -57,12 +58,32 @@ def get_ingestion_source_credential_service(
     return IngestionSourceCredentialService(uow)
 
 
+def get_upload_staging_service(
+    settings: Annotated[ApiSettings, Depends(get_api_settings)],
+) -> UploadStagingService:
+    """Build the shared upload staging service.
+
+    Args:
+        settings: API settings containing upload limits and directory.
+
+    Returns:
+        Upload staging application service.
+    """
+    return UploadStagingService(
+        settings.INGESTION_UPLOAD_DIRECTORY,
+        settings.INGESTION_UPLOAD_MAX_BYTES,
+    )
+
+
 def get_ingestion_run_service(
     uow: Annotated[IUnitOfWork, Depends(get_unit_of_work)],
     event_broker_manager: Annotated[
         IEventBrokerManager, Depends(get_event_broker_manager)
     ],
     settings: Annotated[ApiSettings, Depends(get_api_settings)],
+    upload_staging_service: Annotated[
+        UploadStagingService, Depends(get_upload_staging_service)
+    ],
 ) -> IngestionRunService:
     """Build an ingestion-run service for the current request.
 
@@ -78,4 +99,5 @@ def get_ingestion_run_service(
         uow,
         event_broker_manager,
         settings.INGESTION_SYNC_STREAM_NAME,
+        upload_staging_service,
     )
