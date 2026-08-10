@@ -6,7 +6,8 @@ ENV UV_COMPILE_BYTECODE=1 \
     UV_LINK_MODE=copy
 
 COPY . .
-RUN uv sync --frozen --no-dev
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync --frozen --no-dev --package cash-flow-api
 
 FROM ghcr.io/astral-sh/uv:python3.13-bookworm-slim
 

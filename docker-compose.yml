@@ -65,16 +65,20 @@ services:
     build:
       context: .
       dockerfile: infra/docker/dashboard.Dockerfile
+      args:
+        VITE_API_URL: http://localhost:8000
     container_name: cash-flow-dashboard
     restart: unless-stopped
-    command: ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
-    environment:
-      VITE_API_URL: http://localhost:8000
     ports:
-      - "5173:5173"
+      - "5173:80"
     depends_on:
       api:
         condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "--quiet", "http://127.0.0.1/"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   postgres:
     image: postgres:17-alpine
