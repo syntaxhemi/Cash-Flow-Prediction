@@ -16,6 +16,9 @@ dependencies = [
   "torch",
 ]
 
+[project.scripts]
+train-model = "training.train:main"
+
 [tool.uv]
 package = true
 

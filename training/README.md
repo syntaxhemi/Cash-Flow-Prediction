@@ -6,7 +6,17 @@ Notebooks under `training/notebooks` are exploratory references and are not inte
 
 ## Run from the repository root
 
-Training entrypoints are not implemented yet. This package currently exists to establish the workspace structure for the future script-based pipeline.
+Place the six source CSV files under `training/artifacts/input`, then run:
+
+```powershell
+uv run --package cash-flow-training train-model --config training/configs/default.yaml
+```
+
+For CPU-only local runs:
+
+```powershell
+uv run --package cash-flow-training train-model --config training/configs/default.yaml --no-gpu
+```
 
 ## Configuration
 
@@ -26,3 +36,6 @@ The training pipeline is expected to cover:
 - model training
 - artifact persistence
 - metrics generation
+
+Each run writes model weights, both fitted scalers, metrics, artifact metadata, and a
+configuration snapshot to `training/artifacts/runs/<run_name>/`.

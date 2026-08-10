@@ -1,0 +1,199 @@
+"""LSTM temporal/static fusion model and training loop."""
+
+from dataclasses import dataclass
+
+import numpy as np
+import torch
+from torch import nn, optim
+from torch.utils.data import DataLoader, Dataset
+
+from training.config import ModelConfig
+
+
+class TemporalStaticFusion(nn.Module):
+    def __init__(
+        self,
+        sequence_input_size: int,
+        static_input_size: int,
+        config: ModelConfig,
+    ) -> None:
+        super().__init__()
+        self.lstm = nn.LSTM(
+            input_size=sequence_input_size,
+            hidden_size=config.lstm_hidden,
+            batch_first=True,
+        )
+        self.sequence_block = nn.Sequential(
+            nn.Linear(config.lstm_hidden, config.dense_hidden),
+            nn.ReLU(),
+            nn.Dropout(config.dropout),
+        )
+        self.static_block = nn.Sequential(
+            nn.Linear(static_input_size, config.dense_hidden),
+            nn.ReLU(),
+            nn.Dropout(config.dropout),
+        )
+        self.fusion_block = nn.Sequential(
+            nn.Linear(config.dense_hidden * 2, config.dense_hidden),
+            nn.ReLU(),
+            nn.Dropout(config.dropout),
+        )
+        self.output_layer = nn.Linear(config.dense_hidden, 1)
+
+    def forward(
+        self, input_sequence: torch.Tensor, input_static: torch.Tensor
+    ) -> torch.Tensor:
+        sequence_output, _ = self.lstm(input_sequence)
+        sequence_features = self.sequence_block(sequence_output[:, -1, :])
+        static_features = self.static_block(input_static)
+        fused = self.fusion_block(
+            torch.cat((sequence_features, static_features), dim=1)
+        )
+        return self.output_layer(fused)
+
+
+class TemporalStaticDataset(Dataset[tuple[torch.Tensor, torch.Tensor, torch.Tensor]]):
+    def __init__(
+        self,
+        sequences: np.ndarray,
+        static_values: np.ndarray,
+        labels: np.ndarray,
+    ) -> None:
+        self.sequences = torch.tensor(sequences, dtype=torch.float32)
+        self.static_values = torch.tensor(static_values, dtype=torch.float32)
+        self.labels = torch.tensor(labels.reshape(-1, 1), dtype=torch.float32)
+
+    def __len__(self) -> int:
+        return len(self.labels)
+
+    def __getitem__(
+        self, index: int
+    ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+        return self.sequences[index], self.static_values[index], self.labels[index]
+
+
+@dataclass(slots=True)
+class TrainingResult:
+    model: TemporalStaticFusion
+    device: str
+    train_losses: list[float]
+    validation_losses: list[float]
+    validation_maes: list[float]
+    best_epoch: int
+
+
+def _evaluate(
+    loader: DataLoader[tuple[torch.Tensor, torch.Tensor, torch.Tensor]],
+    model: TemporalStaticFusion,
+    criterion: nn.Module,
+    device: torch.device,
+) -> tuple[float, float]:
+    model.eval()
+    total_loss = 0.0
+    total_mae = 0.0
+    total_count = 0
+    mae_loss = nn.L1Loss(reduction='sum')
+    with torch.no_grad():
+        for sequences, static_values, labels in loader:
+            sequences = sequences.to(device)
+            static_values = static_values.to(device)
+            labels = labels.to(device)
+            predictions = model(sequences, static_values)
+            count = sequences.size(0)
+            total_loss += float(criterion(predictions, labels).item()) * count
+            total_mae += float(mae_loss(predictions, labels).item())
+            total_count += count
+    return total_loss / total_count, total_mae / total_count
+
+
+def train_model(
+    sequences_train: np.ndarray,
+    static_train: np.ndarray,
+    labels_train: np.ndarray,
+    sequences_validation: np.ndarray,
+    static_validation: np.ndarray,
+    labels_validation: np.ndarray,
+    config: ModelConfig,
+    use_gpu: bool = True,
+) -> TrainingResult:
+    device = torch.device('cuda' if use_gpu and torch.cuda.is_available() else 'cpu')
+    model = TemporalStaticFusion(
+        sequence_input_size=sequences_train.shape[2],
+        static_input_size=static_train.shape[1],
+        config=config,
+    ).to(device)
+    train_loader = DataLoader(
+        TemporalStaticDataset(sequences_train, static_train, labels_train),
+        batch_size=config.batch_size,
+        shuffle=True,
+    )
+    validation_loader = DataLoader(
+        TemporalStaticDataset(
+            sequences_validation, static_validation, labels_validation
+        ),
+        batch_size=config.batch_size,
+        shuffle=False,
+    )
+    criterion = nn.MSELoss()
+    optimizer = optim.Adam(model.parameters(), lr=config.learning_rate)
+    best_loss = float('inf')
+    best_state: dict[str, torch.Tensor] | None = None
+    patience = 0
+    best_epoch = 0
+    train_losses: list[float] = []
+    validation_losses: list[float] = []
+    validation_maes: list[float] = []
+
+    for epoch in range(config.epochs):
+        model.train()
+        total_loss = 0.0
+        total_count = 0
+        for sequences, static_values, labels in train_loader:
+            sequences = sequences.to(device)
+            static_values = static_values.to(device)
+            labels = labels.to(device)
+            optimizer.zero_grad()
+            loss = criterion(model(sequences, static_values), labels)
+            loss.backward()
+            optimizer.step()
+            count = sequences.size(0)
+            total_loss += float(loss.item()) * count
+            total_count += count
+
+        train_loss = total_loss / total_count
+        validation_loss, validation_mae = _evaluate(
+            validation_loader, model, criterion, device
+        )
+        train_losses.append(train_loss)
+        validation_losses.append(validation_loss)
+        validation_maes.append(validation_mae)
+        print(
+            f'Epoch {epoch + 1}/{config.epochs} | '
+            f'Train Loss: {train_loss:.6f} | '
+            f'Val Loss: {validation_loss:.6f} | Val MAE: {validation_mae:.6f}'
+        )
+
+        if validation_loss < best_loss:
+            best_loss = validation_loss
+            best_state = {
+                name: parameter.detach().cpu().clone()
+                for name, parameter in model.state_dict().items()
+            }
+            best_epoch = epoch + 1
+            patience = 0
+        else:
+            patience += 1
+            if patience >= config.early_stopping_patience:
+                print(f'Early stopping triggered at epoch {epoch + 1}')
+                break
+
+    if best_state is not None:
+        model.load_state_dict(best_state)
+    return TrainingResult(
+        model=model,
+        device=str(device),
+        train_losses=train_losses,
+        validation_losses=validation_losses,
+        validation_maes=validation_maes,
+        best_epoch=best_epoch,
+    )

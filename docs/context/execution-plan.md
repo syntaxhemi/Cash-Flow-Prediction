@@ -15,9 +15,9 @@ Unlike the other context files, this document is expected to change frequently o
 
 ## Current Planning State
 
-The repository has not yet been scaffolded.
-
-This execution plan is the proposed delivery sequence to review before implementation starts.
+The repository has been scaffolded through the ingestion foundation and canonical training
+pipeline. Training now has a reproducible script entrypoint; forecasting runtime integration,
+aggregation persistence, simulation, dashboard, and end-to-end validation remain open.
 
 ## Phase 0: Context and Architecture Alignment
 
@@ -27,28 +27,28 @@ This execution plan is the proposed delivery sequence to review before implement
 - [done] Decide that at least one automated ingestion integration is required.
 - [done] Select ERPNext as the preferred primary ingestion target for planning.
 - [done] Create initial architecture and implementation context documents under `docs/context`.
-- [todo] Review and refine the context documents.
-- [todo] Freeze the agreed repository structure and ownership boundaries.
+- [done] Review and refine the context documents.
+- [done] Freeze the agreed repository structure and ownership boundaries.
 
 ## Phase 1: Repository Scaffolding and Tooling
 
-- [todo] Scaffold the agreed top-level repository structure.
-- [todo] Create root `AGENTS.md`.
-- [todo] Set up Python 3.13 `uv` workspace for `apps/api`, `apps/worker`, and shared Python packages.
-- [todo] Add root `pyproject.toml` workspace configuration.
-- [todo] Set up `pre-commit`.
-- [todo] Configure `ruff`.
-- [todo] Configure `mypy`.
-- [todo] Initialize dashboard tooling with ESLint and Prettier.
-- [todo] Add basic CI workflow under `.github`.
+- [done] Scaffold the agreed top-level repository structure.
+- [done] Create root `AGENTS.md`.
+- [done] Set up Python 3.13 `uv` workspace for `apps/api`, `apps/worker`, and shared Python packages.
+- [done] Add root `pyproject.toml` workspace configuration.
+- [done] Set up `pre-commit`.
+- [done] Configure `ruff`.
+- [done] Configure `mypy`.
+- [done] Initialize dashboard tooling with ESLint and Prettier.
+- [done] Add basic CI workflow under `.github`.
 
 ## Phase 2: Training Pipeline Structure
 
-- [todo] Create `training/` structure with `src`, `configs`, `artifacts`, and `notebooks`.
-- [todo] Move any notebook-based research artifacts into `training/notebooks`.
-- [todo] Define the script-based training pipeline shape.
-- [todo] Define artifact metadata contract for inference-time loading.
-- [todo] Document how training outputs are versioned.
+- [done] Create `training/` structure with `src`, `configs`, `artifacts`, and `notebooks`.
+- [done] Move any notebook-based research artifacts into `training/notebooks`.
+- [done] Define and implement the script-based training pipeline shape.
+- [done] Define the artifact metadata contract for inference-time loading.
+- [done] Document how training outputs are versioned.
 
 ## Phase 3: Backend and Shared Foundations
 
