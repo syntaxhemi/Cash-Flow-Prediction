@@ -1,0 +1,10 @@
+.git
+.venv
+.mypy_cache
+.ruff_cache
+__pycache__
+*.py[cod]
+~legacy
+apps/dashboard/node_modules
+training/notebooks
+*.pdf

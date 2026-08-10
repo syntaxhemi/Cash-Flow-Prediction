@@ -58,13 +58,19 @@ npm --prefix apps/dashboard install
 ### Infrastructure
 
 ```bash
-docker compose up -d
+docker compose up -d --build
 ```
 
-This currently starts:
+This starts the complete local application stack:
 
+- API at `http://localhost:8000`
+- Dashboard at `http://localhost:5173`
 - PostgreSQL
 - Redis
+- Worker
+
+The API and worker share a Docker volume for staged file uploads. Compose waits for
+PostgreSQL and Redis health checks before starting the application services.
 
 The local ERPNext demo is optional because it adds several services and can take a
 few minutes to initialize. Start it with:

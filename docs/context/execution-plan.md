@@ -130,7 +130,7 @@ This execution plan is the proposed delivery sequence to review before implement
 ## Phase 9: Validation and Demo Packaging
 
 - [todo] Add backend tests.
-- [todo] Add API/worker Compose services with a shared upload-volume mount.
+- [done] Add API/worker Compose services with a shared upload-volume mount.
 - [todo] Add forecasting and simulation tests.
 - [todo] Add dashboard tests where useful.
 - [done] Add the optional ERPNext Compose demo stack.
