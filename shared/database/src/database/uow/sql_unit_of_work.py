@@ -5,6 +5,7 @@ from database.repositories import (
     CounterpartyRepository,
     EnterpriseRepository,
     FinancialTransactionRepository,
+    ForecastRepository,
     IngestionRunRepository,
     IngestionSourceCredentialRepository,
     IngestionSourceRepository,
@@ -34,6 +35,7 @@ class SqlAlchemyUnitOfWork:
         )
         self._ingestion_runs = IngestionRunRepository(session)
         self._financial_transactions = FinancialTransactionRepository(session)
+        self._forecasts = ForecastRepository(session)
         self._ingestion_uploads = IngestionUploadRepository(session)
         self._static_financial_snapshots = StaticFinancialSnapshotRepository(session)
 
@@ -78,6 +80,11 @@ class SqlAlchemyUnitOfWork:
     def financial_transactions(self) -> FinancialTransactionRepository:
         """Return the financial-transaction repository."""
         return self._financial_transactions
+
+    @property
+    def forecasts(self) -> ForecastRepository:
+        """Return the forecast persistence repository."""
+        return self._forecasts
 
     @property
     def ingestion_uploads(self) -> IngestionUploadRepository:

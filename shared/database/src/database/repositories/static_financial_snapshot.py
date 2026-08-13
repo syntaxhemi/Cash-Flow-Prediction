@@ -2,6 +2,7 @@ from datetime import date
 from uuid import UUID
 
 from domain.exceptions import (
+    InvalidFinancialRecordError,
     StaticFinancialSnapshotAlreadyExistsError,
     StaticFinancialSnapshotNotFoundError,
 )
@@ -55,7 +56,10 @@ class StaticFinancialSnapshotRepository:
                     f'Enterprise "{enterprise_id}" already has a snapshot for '
                     f'"{payload.snapshot_date}".'
                 ) from error
-            raise
+            raise InvalidFinancialRecordError(
+                'Unable to create the static financial snapshot due to a '
+                'database constraint.'
+            ) from error
 
         await self._session.refresh(snapshot)
         return snapshot
@@ -166,6 +170,12 @@ class StaticFinancialSnapshotRepository:
         for field_name, field_value in payload.model_dump(exclude_unset=True).items():
             setattr(snapshot, field_name, field_value)
 
-        await self._session.flush()
+        try:
+            await self._session.flush()
+        except IntegrityError as error:
+            raise InvalidFinancialRecordError(
+                f'Unable to update static financial snapshot "{snapshot_id}" due '
+                'to a database constraint.'
+            ) from error
         await self._session.refresh(snapshot)
         return snapshot

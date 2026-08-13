@@ -24,6 +24,7 @@ class ApiSettings(BaseSettings):
     INGESTION_SYNC_STREAM_NAME: str = 'cash_flow_ingestion_sync'
     INGESTION_UPLOAD_DIRECTORY: str = 'var/uploads'
     INGESTION_UPLOAD_MAX_BYTES: int = 10 * 1024 * 1024
+    FORECAST_ARTIFACT_DIRECTORY: str = 'training/artifacts/runs/baseline'
 
     @field_validator(
         'API_CORS_ALLOW_ORIGINS',

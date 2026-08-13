@@ -2,6 +2,7 @@ from datetime import date
 from uuid import UUID
 
 from domain.exceptions import (
+    InvalidForecastRunError,
     MonthlyCashflowAggregateAlreadyExistsError,
     MonthlyCashflowAggregateNotFoundError,
 )
@@ -47,7 +48,13 @@ class MonthlyCashflowAggregateRepository:
             set_={key: insert_statement.excluded[key] for key in values if key != 'id'},
         ).returning(MonthlyCashflowAggregateModel)
 
-        result = await self._session.execute(statement)
+        try:
+            result = await self._session.execute(statement)
+        except IntegrityError as error:
+            raise InvalidForecastRunError(
+                'Unable to upsert the monthly cash-flow aggregate due to a '
+                'database constraint.'
+            ) from error
         return result.scalar_one()
 
     async def create(
@@ -73,7 +80,10 @@ class MonthlyCashflowAggregateRepository:
                     f'Enterprise "{payload.enterprise_id}" already has an aggregate '
                     f'for "{payload.period_start}" to "{payload.period_end}".'
                 ) from error
-            raise
+            raise InvalidForecastRunError(
+                'Unable to create the monthly cash-flow aggregate due to a '
+                'database constraint.'
+            ) from error
 
         await self._session.refresh(aggregate)
         return aggregate
@@ -139,7 +149,14 @@ class MonthlyCashflowAggregateRepository:
         for field_name, field_value in payload.model_dump().items():
             setattr(aggregate, field_name, field_value)
 
-        await self._session.flush()
+        try:
+            await self._session.flush()
+        except IntegrityError as error:
+            raise InvalidForecastRunError(
+                f'Unable to update monthly cash-flow aggregate "{aggregate_id}" '
+                'due to a database constraint.'
+            ) from error
+
         await self._session.refresh(aggregate)
         return aggregate
 

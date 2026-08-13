@@ -13,6 +13,7 @@ from database.repositories.financial_transaction import (
     FinancialTransactionPersistenceResult,
     FinancialTransactionRepository,
 )
+from database.repositories.forecast import ForecastRepository
 from database.repositories.ingestion_run import (
     IngestionRunListResult,
     IngestionRunRepository,
@@ -42,6 +43,7 @@ __all__ = [
     'FinancialTransactionListResult',
     'FinancialTransactionPersistenceResult',
     'FinancialTransactionRepository',
+    'ForecastRepository',
     'IngestionRunListResult',
     'IngestionRunRepository',
     'IngestionSourceCredentialListResult',

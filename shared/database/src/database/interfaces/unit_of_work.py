@@ -5,6 +5,7 @@ from database.repositories import (
     CounterpartyRepository,
     EnterpriseRepository,
     FinancialTransactionRepository,
+    ForecastRepository,
     IngestionRunRepository,
     IngestionSourceCredentialRepository,
     IngestionSourceRepository,
@@ -55,6 +56,11 @@ class IUnitOfWork(Protocol):
     @property
     def financial_transactions(self) -> FinancialTransactionRepository:
         """Return the financial-transaction repository."""
+        ...
+
+    @property
+    def forecasts(self) -> ForecastRepository:
+        """Return the forecast persistence repository."""
         ...
 
     @property
