@@ -57,7 +57,7 @@ class MonthlyCashflowAggregate:
     total_inflows: Decimal
     total_outflows: Decimal
     monthly_repayment: Decimal
-    average_payment_delay_days: Decimal | None
+    total_payment_delay_days: Decimal
     invoice_count: int
     payment_count: int
     derived_from_run_id: UUID

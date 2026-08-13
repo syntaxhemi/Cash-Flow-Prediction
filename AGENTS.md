@@ -311,6 +311,9 @@ Do not collapse these concerns into one folder.
 - keep code and configuration reproducible
 - do not build features solely for hypothetical production scale
 - when in doubt, choose the simpler design that still demonstrates the architecture cleanly
+- add Google-style docstrings to every newly added public function and method
+- document relevant `Args`, `Returns`, `Raises`, and `Notes` sections in public API docstrings
+- keep docstrings accurate when changing a function or method's behavior or contract
 
 ## Agent Behavior
 

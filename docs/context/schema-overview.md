@@ -256,7 +256,7 @@ Suggested fields:
 - `total_inflows`
 - `total_outflows`
 - `monthly_repayment`
-- `average_payment_delay_days`
+- `total_payment_delay_days`
 - `invoice_count`
 - `payment_count`
 - `derived_from_run_id`
@@ -268,6 +268,7 @@ Notes:
 - one row per enterprise per month
 - this table is derived from `financial_transactions`
 - it exists to support reproducible temporal window reconstruction
+- `total_payment_delay_days` is the sum of settled invoice delays in the month, where each delay is `settlement_date - transaction_date`
 - temporal aggregates are intentionally materialized at the enterprise-month level rather than rebuilt on demand from raw transactions during forecasting requests
 
 ### 7. `counterparty_monthly_receivables`

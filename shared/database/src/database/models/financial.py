@@ -159,7 +159,9 @@ class MonthlyCashflowAggregateModel(Base):
     total_inflows: Mapped[Decimal] = mapped_column(Money, nullable=False)
     total_outflows: Mapped[Decimal] = mapped_column(Money, nullable=False)
     monthly_repayment: Mapped[Decimal] = mapped_column(Money, nullable=False)
-    average_payment_delay_days: Mapped[Decimal | None] = mapped_column(Numeric(10, 2))
+    total_payment_delay_days: Mapped[Decimal] = mapped_column(
+        Numeric(12, 2), nullable=False
+    )
     invoice_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     payment_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     derived_from_run_id: Mapped[UUID] = mapped_column(

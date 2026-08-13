@@ -1,5 +1,5 @@
-import builtins
 from dataclasses import dataclass
+from datetime import date
 from typing import Any, cast
 from uuid import UUID
 
@@ -126,7 +126,7 @@ class FinancialTransactionRepository:
             )
         return transaction
 
-    async def list(
+    async def list_transactions(
         self, enterprise_id: UUID, filters: FinancialTransactionFilterParams
     ) -> FinancialTransactionListResult:
         """Return paginated transactions for an enterprise.
@@ -159,6 +159,53 @@ class FinancialTransactionRepository:
             items=list(result.scalars().all()), total_count=total_count
         )
 
+    async def list_for_period(
+        self, enterprise_id: UUID, period_start: date, period_end: date
+    ) -> list[FinancialTransactionModel]:
+        """Return all transactions dated within an inclusive calendar period.
+
+        Args:
+            enterprise_id: Owning enterprise identifier.
+            period_start: Inclusive first transaction date.
+            period_end: Inclusive last transaction date.
+
+        Returns:
+            Transactions ordered chronologically.
+        """
+        result = await self._session.execute(
+            select(FinancialTransactionModel)
+            .where(
+                FinancialTransactionModel.enterprise_id == enterprise_id,
+                FinancialTransactionModel.transaction_date >= period_start,
+                FinancialTransactionModel.transaction_date <= period_end,
+            )
+            .order_by(
+                FinancialTransactionModel.transaction_date,
+                FinancialTransactionModel.id,
+            )
+        )
+        return list(result.scalars().all())
+
+    async def list_for_ingestion_run(
+        self, enterprise_id: UUID, ingestion_run_id: UUID
+    ) -> list[FinancialTransactionModel]:
+        """Return transactions persisted by one ingestion run.
+
+        Args:
+            enterprise_id: Owning enterprise identifier.
+            ingestion_run_id: Ingestion run identifier.
+
+        Returns:
+            Transactions persisted for the specified run.
+        """
+        result = await self._session.execute(
+            select(FinancialTransactionModel).where(
+                FinancialTransactionModel.enterprise_id == enterprise_id,
+                FinancialTransactionModel.ingestion_run_id == ingestion_run_id,
+            )
+        )
+        return list(result.scalars().all())
+
     async def update(
         self, transaction_id: UUID, payload: FinancialTransactionUpdateSchema
     ) -> FinancialTransactionModel:
@@ -184,7 +231,7 @@ class FinancialTransactionRepository:
         return transaction
 
     async def create_many(
-        self, payloads: builtins.list[FinancialTransactionCreateSchema]
+        self, payloads: list[FinancialTransactionCreateSchema]
     ) -> FinancialTransactionPersistenceResult:
         """Persist a transaction batch idempotently.
 

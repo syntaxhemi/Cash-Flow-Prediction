@@ -15,6 +15,8 @@ from domain.exceptions import (
     InvalidIngestionSourceCredentialStateError,
     InvalidIngestionSourceError,
     InvalidSimulationError,
+    StaticFinancialSnapshotAlreadyExistsError,
+    StaticFinancialSnapshotNotFoundError,
 )
 
 
@@ -36,7 +38,12 @@ def get_domain_error_mapping(error: DomainError) -> DomainErrorMapping:
         HTTP status and stable error code.
     """
     if isinstance(
-        error, (EnterpriseAlreadyExistsError, IngestionSourceAlreadyExistsError)
+        error,
+        (
+            EnterpriseAlreadyExistsError,
+            IngestionSourceAlreadyExistsError,
+            StaticFinancialSnapshotAlreadyExistsError,
+        ),
     ):
         return DomainErrorMapping(409, 'resource_already_exists')
     if isinstance(
@@ -46,6 +53,7 @@ def get_domain_error_mapping(error: DomainError) -> DomainErrorMapping:
             IngestionSourceNotFoundError,
             IngestionSourceCredentialNotFoundError,
             IngestionRunNotFoundError,
+            StaticFinancialSnapshotNotFoundError,
         ),
     ):
         return DomainErrorMapping(404, 'resource_not_found')

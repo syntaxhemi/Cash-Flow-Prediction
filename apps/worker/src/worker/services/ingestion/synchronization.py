@@ -18,6 +18,8 @@ from schemas.ingestion import (
 )
 from sqlalchemy.exc import SQLAlchemyError
 
+from worker.services.forecasting.aggregation import MonthlyAggregationService
+
 
 class IngestionSynchronizationService:
     """Execute one source synchronization command."""
@@ -38,6 +40,7 @@ class IngestionSynchronizationService:
         self._uow = uow
         self._registry = registry
         self._upload_directory = Path(upload_directory).resolve()
+        self._aggregation = MonthlyAggregationService(uow)
 
     async def execute(self, fields: dict[str, str]) -> None:
         """Process one Redis synchronization command.
@@ -172,6 +175,7 @@ class IngestionSynchronizationService:
             )
             if upload_id is not None:
                 await self._cleanup_upload(upload_id)
+            await self._aggregation.rebuild_for_ingestion_run(enterprise_id, run_id)
             await self._uow.commit()
 
         except (DomainError, IntegrationAdapterError, SQLAlchemyError) as error:

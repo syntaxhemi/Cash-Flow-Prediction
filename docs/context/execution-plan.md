@@ -97,8 +97,8 @@ aggregation persistence, simulation, dashboard, and end-to-end validation remain
 - [done] Implement XLSX upload ingestion through the shared adapter, API, and worker workflow.
 - [done] Normalize all ingestion paths into a canonical accounting schema.
 - [done] Persist normalized financial records through the shared transaction repository.
-- [todo] Build monthly temporal aggregation logic.
-- [todo] Build static financial metric persistence logic.
+- [done] Build monthly temporal aggregation logic using `total_payment_delay_days` as the model-compatible delay feature.
+- [done] Build static financial metric persistence logic and enterprise-scoped snapshot API.
 
 ## Phase 6: Forecasting Core
 
@@ -129,9 +129,7 @@ aggregation persistence, simulation, dashboard, and end-to-end validation remain
 
 ## Phase 9: Validation and Demo Packaging
 
-- [todo] Add backend tests.
 - [done] Add API/worker Compose services with a shared upload-volume mount.
-- [todo] Add forecasting and simulation tests.
 - [todo] Add dashboard tests where useful.
 - [done] Add the optional ERPNext Compose demo stack.
 - [todo] Add demo seed data.

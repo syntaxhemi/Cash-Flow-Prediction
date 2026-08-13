@@ -1,6 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.repositories import (
+    CounterpartyMonthlyReceivableRepository,
     CounterpartyRepository,
     EnterpriseRepository,
     FinancialTransactionRepository,
@@ -8,6 +9,8 @@ from database.repositories import (
     IngestionSourceCredentialRepository,
     IngestionSourceRepository,
     IngestionUploadRepository,
+    MonthlyCashflowAggregateRepository,
+    StaticFinancialSnapshotRepository,
 )
 
 
@@ -20,6 +23,10 @@ class SqlAlchemyUnitOfWork:
         """
         self._session = session
         self._counterparties = CounterpartyRepository(session)
+        self._counterparty_monthly_receivables = (
+            CounterpartyMonthlyReceivableRepository(session)
+        )
+        self._monthly_cashflow_aggregates = MonthlyCashflowAggregateRepository(session)
         self._enterprises = EnterpriseRepository(session)
         self._ingestion_sources = IngestionSourceRepository(session)
         self._ingestion_source_credentials = IngestionSourceCredentialRepository(
@@ -28,11 +35,24 @@ class SqlAlchemyUnitOfWork:
         self._ingestion_runs = IngestionRunRepository(session)
         self._financial_transactions = FinancialTransactionRepository(session)
         self._ingestion_uploads = IngestionUploadRepository(session)
+        self._static_financial_snapshots = StaticFinancialSnapshotRepository(session)
 
     @property
     def counterparties(self) -> CounterpartyRepository:
         """Return the counterparty repository."""
         return self._counterparties
+
+    @property
+    def counterparty_monthly_receivables(
+        self,
+    ) -> CounterpartyMonthlyReceivableRepository:
+        """Return the counterparty receivable aggregate repository."""
+        return self._counterparty_monthly_receivables
+
+    @property
+    def monthly_cashflow_aggregates(self) -> MonthlyCashflowAggregateRepository:
+        """Return the enterprise-month aggregate repository."""
+        return self._monthly_cashflow_aggregates
 
     @property
     def enterprises(self) -> EnterpriseRepository:
@@ -63,6 +83,11 @@ class SqlAlchemyUnitOfWork:
     def ingestion_uploads(self) -> IngestionUploadRepository:
         """Return the ingestion-upload repository."""
         return self._ingestion_uploads
+
+    @property
+    def static_financial_snapshots(self) -> StaticFinancialSnapshotRepository:
+        """Return the static-financial-snapshot repository."""
+        return self._static_financial_snapshots
 
     async def commit(self) -> None:
         """Commit all pending changes in the unit of work."""

@@ -22,6 +22,7 @@ def upgrade() -> None:
     cleanup_status = postgresql.ENUM(
         'staged', 'cleaned', 'failed',
         name='ingestion_upload_cleanup_status',
+        create_type=False,
     )
     cleanup_status.create(op.get_bind(), checkfirst=True)
 

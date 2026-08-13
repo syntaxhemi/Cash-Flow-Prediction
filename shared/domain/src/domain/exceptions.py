@@ -46,6 +46,30 @@ class FinancialTransactionAlreadyExistsError(DomainError):
     """Raised when a source transaction has already been persisted."""
 
 
+class StaticFinancialSnapshotNotFoundError(DomainError):
+    """Raised when a static financial snapshot cannot be found."""
+
+
+class StaticFinancialSnapshotAlreadyExistsError(DomainError):
+    """Raised when an enterprise already has a snapshot for a date."""
+
+
+class MonthlyCashflowAggregateNotFoundError(DomainError):
+    """Raised when a monthly cash-flow aggregate cannot be found."""
+
+
+class MonthlyCashflowAggregateAlreadyExistsError(DomainError):
+    """Raised when an enterprise already has an aggregate for a period."""
+
+
+class CounterpartyMonthlyReceivableNotFoundError(DomainError):
+    """Raised when a counterparty receivable aggregate cannot be found."""
+
+
+class CounterpartyMonthlyReceivableAlreadyExistsError(DomainError):
+    """Raised when a counterparty already has a receivable aggregate for a period."""
+
+
 class InvalidForecastRunError(DomainError):
     """Raised when forecast run data is invalid."""
 

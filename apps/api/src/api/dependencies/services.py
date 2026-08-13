@@ -8,6 +8,7 @@ from api.core.config import ApiSettings, get_api_settings
 from api.dependencies.database import get_unit_of_work
 from api.dependencies.event_broker import get_event_broker_manager
 from api.services.enterprise import EnterpriseService
+from api.services.financial import StaticFinancialSnapshotService
 from api.services.ingestion import (
     IngestionRunService,
     IngestionSourceCredentialService,
@@ -28,6 +29,20 @@ def get_enterprise_service(
         Enterprise application service.
     """
     return EnterpriseService(uow)
+
+
+def get_static_financial_snapshot_service(
+    uow: Annotated[IUnitOfWork, Depends(get_unit_of_work)],
+) -> StaticFinancialSnapshotService:
+    """Build the static-financial-snapshot application service.
+
+    Args:
+        uow: Request-scoped database unit of work.
+
+    Returns:
+        Static financial snapshot application service.
+    """
+    return StaticFinancialSnapshotService(uow)
 
 
 def get_ingestion_source_service(
