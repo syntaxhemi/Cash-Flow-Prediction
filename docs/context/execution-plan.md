@@ -102,12 +102,17 @@ aggregation persistence, simulation, dashboard, and end-to-end validation remain
 
 ## Phase 6: Forecasting Core
 
-- [todo] Implement model artifact loading.
-- [todo] Implement scaler loading and validation.
-- [todo] Implement temporal window reconstruction.
-- [todo] Implement static feature vector assembly.
-- [todo] Implement baseline forecast service.
-- [todo] Persist forecast runs and metadata.
+- [done] Define the runtime artifact contract for the selected forecasting model.
+- [done] Implement model artifact, metadata, and scaler loading under `shared/ml`.
+- [done] Implement runtime model reconstruction for the selected artifact architecture.
+- [done] Validate artifact feature names, input dimensions, sequence length, and required files.
+- [done] Implement temporal window and static feature preparation for inference.
+- [done] Implement scaled forecasting inference and a typed prediction result.
+- [todo] Query six monthly aggregates and the applicable static snapshot for a forecast request.
+- [todo] Build the forecasting request through the shared ML runtime.
+- [todo] Calculate the solvency buffer gap from the predicted net cash flow.
+- [todo] Persist forecast runs and the selected forecast-run periods with model and artifact metadata.
+- [todo] Expose the baseline forecast API endpoint.
 
 ## Phase 7: Simulation Services
 
