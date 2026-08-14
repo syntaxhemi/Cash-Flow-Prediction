@@ -21,6 +21,7 @@ from schemas.simulation import (
 from api.services.forecasting.counterfactual import (
     CounterfactualContext,
     CounterfactualEvaluator,
+    build_counterfactual_context,
 )
 
 
@@ -74,7 +75,7 @@ class HealthDeltaSimulationService:
             )
 
         artifacts = self._artifact_loader.load()
-        context = self._build_context(forecast, artifacts.metadata)
+        context = build_counterfactual_context(forecast, artifacts.metadata)
         requested_at = datetime.now(UTC)
         run = await self._uow.simulation_runs.create(
             SimulationRunCreateSchema(
@@ -151,54 +152,6 @@ class HealthDeltaSimulationService:
             scenarios=[
                 SimulationScenarioSchema.model_validate(row) for row in scenarios
             ],
-        )
-
-    @staticmethod
-    def _build_context(forecast: Any, metadata: Any) -> CounterfactualContext:
-        """Build baseline feature values from a loaded forecast run."""
-        periods = sorted(forecast.periods, key=lambda period: period.sequence_index)
-
-        if len(periods) != metadata.sequence_length:
-            raise InvalidSimulationError(
-                'The baseline forecast does not contain the required input periods.'
-            )
-
-        temporal_rows = [
-            {
-                'total_invoice_amount': float(
-                    period.monthly_cashflow_aggregate.total_invoice_amount
-                ),
-                'payment_delay': float(
-                    period.monthly_cashflow_aggregate.total_payment_delay_days
-                ),
-                'monthly_repayment': float(
-                    period.monthly_cashflow_aggregate.monthly_repayment
-                ),
-                'total_inflows': float(period.monthly_cashflow_aggregate.total_inflows),
-                'total_outflows': float(
-                    period.monthly_cashflow_aggregate.total_outflows
-                ),
-            }
-            for period in periods
-        ]
-        snapshot = forecast.static_snapshot
-        static_values = {
-            'capex': float(snapshot.capex or 0),
-            'cogs': float(snapshot.cogs or 0),
-            'current_assets': float(snapshot.current_assets or 0),
-            'current_liabilities': float(snapshot.current_liabilities or 0),
-            'fixed_assets': float(snapshot.fixed_assets or 0),
-            'long_term_liabilities': float(snapshot.long_term_liabilities or 0),
-            'credit_score': float(snapshot.credit_score or 0),
-            'failure_score': float(snapshot.failure_score or 0),
-            'debt_to_revenue_ratio': float(snapshot.debt_to_revenue_ratio or 0),
-            'missed_payments_number': float(snapshot.missed_payments_number or 0),
-        }
-        return CounterfactualContext(
-            temporal_rows=temporal_rows,
-            static_values=static_values,
-            baseline_prediction=forecast.predicted_net_cashflow,
-            solvency_buffer=forecast.solvency_buffer,
         )
 
     @staticmethod

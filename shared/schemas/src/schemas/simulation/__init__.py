@@ -5,6 +5,7 @@ from schemas.simulation.models import (
     MitigationRecommendationCreateSchema,
     MitigationRecommendationUpdateSchema,
     ReceivablesRankingCreateSchema,
+    ReceivablesRankingSchema,
     ReceivablesRankingUpdateSchema,
     SimulationRunCreateSchema,
     SimulationRunSchema,
@@ -12,6 +13,7 @@ from schemas.simulation.models import (
     SimulationScenarioCreateSchema,
     SimulationScenarioSchema,
     SimulationScenarioUpdateSchema,
+    TrappedLiquidityRequestSchema,
 )
 
 __all__ = [
@@ -19,6 +21,7 @@ __all__ = [
     'MitigationRecommendationCreateSchema',
     'MitigationRecommendationUpdateSchema',
     'ReceivablesRankingCreateSchema',
+    'ReceivablesRankingSchema',
     'ReceivablesRankingUpdateSchema',
     'SimulationRunCreateSchema',
     'SimulationRunSchema',
@@ -26,4 +29,5 @@ __all__ = [
     'SimulationScenarioCreateSchema',
     'SimulationScenarioSchema',
     'SimulationScenarioUpdateSchema',
+    'TrappedLiquidityRequestSchema',
 ]

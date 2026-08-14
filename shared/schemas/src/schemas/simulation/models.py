@@ -102,6 +102,25 @@ class ReceivablesRankingUpdateSchema(SchemaModel):
     simulated_cashflow_delta: Decimal | None = None
 
 
+class TrappedLiquidityRequestSchema(SchemaModel):
+    """Request trapped-liquidity analysis for selected counterparties."""
+
+    counterparty_ids: list[UUID] | None = Field(default=None, max_length=50)
+    max_counterparties: int = Field(default=10, ge=1, le=50)
+
+
+class ReceivablesRankingSchema(SchemaModel):
+    """Persisted trapped-liquidity ranking response."""
+
+    id: UUID
+    simulation_run_id: UUID
+    counterparty_id: UUID
+    rank_position: int
+    baseline_outstanding_amount: Decimal
+    simulated_cashflow_delta: Decimal
+    created_at: datetime
+
+
 class MitigationRecommendationCreateSchema(SchemaModel):
     """Persistence payload for a mitigation recommendation."""
 
@@ -149,3 +168,4 @@ class SimulationRunSchema(SchemaModel):
     completed_at: datetime | None
     created_at: datetime
     scenarios: list[SimulationScenarioSchema] = Field(default_factory=list)
+    receivables_rankings: list[ReceivablesRankingSchema] = Field(default_factory=list)

@@ -122,7 +122,7 @@ aggregation persistence, simulation, dashboard, and end-to-end validation remain
 - [done] Implement the reusable application-layer counterfactual simulation workflow
   using completed baseline forecast inputs and the shared ML runtime.
 - [done] Implement health delta simulation over bounded static-feature scenarios.
-- [todo] Implement trapped liquidity simulation and counterparty impact ranking.
+- [done] Implement trapped liquidity simulation and counterparty impact ranking.
 - [todo] Implement liquidity mitigation recommendation logic using bounded outflow
   scenarios.
 - [done] Persist health delta simulation runs, scenario outputs, and failure checkpoints.
