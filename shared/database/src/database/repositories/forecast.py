@@ -8,6 +8,7 @@ from schemas.forecasting import (
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
 from database.models import ForecastRunModel, ForecastRunPeriodModel
 
@@ -97,6 +98,30 @@ class ForecastRepository:
         """
         result = await self._session.execute(
             select(ForecastRunModel).where(ForecastRunModel.id == forecast_run_id)
+        )
+        return result.scalar_one_or_none()
+
+    async def get_by_id_with_inputs(
+        self, forecast_run_id: UUID
+    ) -> ForecastRunModel | None:
+        """Return a forecast run with its persisted model inputs loaded.
+
+        Args:
+            forecast_run_id: Forecast-run identifier.
+
+        Returns:
+            The matching forecast run with periods, aggregates, and static snapshot
+            relationships eagerly loaded, or ``None``.
+        """
+        result = await self._session.execute(
+            select(ForecastRunModel)
+            .where(ForecastRunModel.id == forecast_run_id)
+            .options(
+                selectinload(ForecastRunModel.periods).selectinload(
+                    ForecastRunPeriodModel.monthly_cashflow_aggregate
+                ),
+                selectinload(ForecastRunModel.static_snapshot),
+            )
         )
         return result.scalar_one_or_none()
 

@@ -78,6 +78,26 @@ class InvalidSimulationError(DomainError):
     """Raised when simulation data is invalid."""
 
 
+class SimulationRunNotFoundError(DomainError):
+    """Raised when a simulation run cannot be found."""
+
+
+class SimulationRunHasChildrenError(DomainError):
+    """Raised when a simulation run cannot be deleted while outputs exist."""
+
+
+class SimulationScenarioNotFoundError(DomainError):
+    """Raised when a simulation scenario cannot be found."""
+
+
+class ReceivablesRankingNotFoundError(DomainError):
+    """Raised when a receivables ranking cannot be found."""
+
+
+class MitigationRecommendationNotFoundError(DomainError):
+    """Raised when a mitigation recommendation cannot be found."""
+
+
 class EnterpriseAlreadyExistsError(DomainError):
     """Raised when an enterprise external key already exists."""
 

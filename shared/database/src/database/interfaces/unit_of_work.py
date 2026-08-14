@@ -10,7 +10,11 @@ from database.repositories import (
     IngestionSourceCredentialRepository,
     IngestionSourceRepository,
     IngestionUploadRepository,
+    MitigationRecommendationRepository,
     MonthlyCashflowAggregateRepository,
+    ReceivablesRankingRepository,
+    SimulationRunRepository,
+    SimulationScenarioRepository,
     StaticFinancialSnapshotRepository,
 )
 
@@ -83,4 +87,24 @@ class IUnitOfWork(Protocol):
 
     async def close(self) -> None:
         """Close the underlying session."""
+        ...
+
+    @property
+    def simulation_runs(self) -> SimulationRunRepository:
+        """Return the simulation-run repository."""
+        ...
+
+    @property
+    def simulation_scenarios(self) -> SimulationScenarioRepository:
+        """Return the simulation-scenario repository."""
+        ...
+
+    @property
+    def receivables_rankings(self) -> ReceivablesRankingRepository:
+        """Return the receivables-ranking repository."""
+        ...
+
+    @property
+    def mitigation_recommendations(self) -> MitigationRecommendationRepository:
+        """Return the mitigation-recommendation repository."""
         ...

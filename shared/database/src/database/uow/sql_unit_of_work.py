@@ -10,7 +10,11 @@ from database.repositories import (
     IngestionSourceCredentialRepository,
     IngestionSourceRepository,
     IngestionUploadRepository,
+    MitigationRecommendationRepository,
     MonthlyCashflowAggregateRepository,
+    ReceivablesRankingRepository,
+    SimulationRunRepository,
+    SimulationScenarioRepository,
     StaticFinancialSnapshotRepository,
 )
 
@@ -38,6 +42,10 @@ class SqlAlchemyUnitOfWork:
         self._forecasts = ForecastRepository(session)
         self._ingestion_uploads = IngestionUploadRepository(session)
         self._static_financial_snapshots = StaticFinancialSnapshotRepository(session)
+        self._simulation_runs = SimulationRunRepository(session)
+        self._simulation_scenarios = SimulationScenarioRepository(session)
+        self._receivables_rankings = ReceivablesRankingRepository(session)
+        self._mitigation_recommendations = MitigationRecommendationRepository(session)
 
     @property
     def counterparties(self) -> CounterpartyRepository:
@@ -95,6 +103,26 @@ class SqlAlchemyUnitOfWork:
     def static_financial_snapshots(self) -> StaticFinancialSnapshotRepository:
         """Return the static-financial-snapshot repository."""
         return self._static_financial_snapshots
+
+    @property
+    def simulation_runs(self) -> SimulationRunRepository:
+        """Return the simulation-run repository."""
+        return self._simulation_runs
+
+    @property
+    def simulation_scenarios(self) -> SimulationScenarioRepository:
+        """Return the simulation-scenario repository."""
+        return self._simulation_scenarios
+
+    @property
+    def receivables_rankings(self) -> ReceivablesRankingRepository:
+        """Return the receivables-ranking repository."""
+        return self._receivables_rankings
+
+    @property
+    def mitigation_recommendations(self) -> MitigationRecommendationRepository:
+        """Return the mitigation-recommendation repository."""
+        return self._mitigation_recommendations
 
     async def commit(self) -> None:
         """Commit all pending changes in the unit of work."""

@@ -7,6 +7,15 @@ class SimulationType(StrEnum):
     LIQUIDITY_MITIGATION = 'liquidity_mitigation'
 
 
+class HealthDeltaProfile(StrEnum):
+    """Server-defined sensitivity profile for health delta simulation."""
+
+    CONSERVATIVE = 'conservative'
+    STANDARD = 'standard'
+    STRESS = 'stress'
+    CUSTOM = 'custom'
+
+
 class SimulationStatus(StrEnum):
     PENDING = 'pending'
     RUNNING = 'running'

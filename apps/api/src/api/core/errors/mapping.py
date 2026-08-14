@@ -15,6 +15,11 @@ from domain.exceptions import (
     InvalidIngestionSourceCredentialStateError,
     InvalidIngestionSourceError,
     InvalidSimulationError,
+    MitigationRecommendationNotFoundError,
+    ReceivablesRankingNotFoundError,
+    SimulationRunHasChildrenError,
+    SimulationRunNotFoundError,
+    SimulationScenarioNotFoundError,
     StaticFinancialSnapshotAlreadyExistsError,
     StaticFinancialSnapshotNotFoundError,
 )
@@ -43,6 +48,7 @@ def get_domain_error_mapping(error: DomainError) -> DomainErrorMapping:
             EnterpriseAlreadyExistsError,
             IngestionSourceAlreadyExistsError,
             StaticFinancialSnapshotAlreadyExistsError,
+            SimulationRunHasChildrenError,
         ),
     ):
         return DomainErrorMapping(409, 'resource_already_exists')
@@ -54,6 +60,10 @@ def get_domain_error_mapping(error: DomainError) -> DomainErrorMapping:
             IngestionSourceCredentialNotFoundError,
             IngestionRunNotFoundError,
             StaticFinancialSnapshotNotFoundError,
+            SimulationRunNotFoundError,
+            SimulationScenarioNotFoundError,
+            ReceivablesRankingNotFoundError,
+            MitigationRecommendationNotFoundError,
         ),
     ):
         return DomainErrorMapping(404, 'resource_not_found')

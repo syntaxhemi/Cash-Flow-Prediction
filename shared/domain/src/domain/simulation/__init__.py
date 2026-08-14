@@ -7,12 +7,14 @@ from domain.simulation.entities import (
     SimulationScenario,
 )
 from domain.simulation.enums import (
+    HealthDeltaProfile,
     RecommendationActionType,
     SimulationStatus,
     SimulationType,
 )
 
 __all__ = [
+    'HealthDeltaProfile',
     'MitigationRecommendation',
     'ReceivablesRanking',
     'RecommendationActionType',

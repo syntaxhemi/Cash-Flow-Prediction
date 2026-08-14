@@ -3,9 +3,16 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends, status
 from schemas.forecasting import ForecastRequestSchema, ForecastRunSchema
+from schemas.simulation import HealthDeltaRequestSchema, SimulationRunSchema
 
-from api.dependencies.services import get_baseline_forecast_service
-from api.services.forecasting import BaselineForecastService
+from api.dependencies.services import (
+    get_baseline_forecast_service,
+    get_health_delta_simulation_service,
+)
+from api.services.forecasting import (
+    BaselineForecastService,
+    HealthDeltaSimulationService,
+)
 
 router = APIRouter(prefix='/enterprises/{enterprise_id}/forecasts', tags=['forecasts'])
 
@@ -18,3 +25,20 @@ async def create_baseline_forecast(
 ) -> ForecastRunSchema:
     """Run and persist a baseline forecast for an enterprise."""
     return await service.create(enterprise_id, payload)
+
+
+@router.post(
+    '/{forecast_run_id}/simulations/health-delta',
+    response_model=SimulationRunSchema,
+    status_code=status.HTTP_201_CREATED,
+)
+async def create_health_delta_simulation(
+    enterprise_id: UUID,
+    forecast_run_id: UUID,
+    payload: HealthDeltaRequestSchema,
+    service: Annotated[
+        HealthDeltaSimulationService, Depends(get_health_delta_simulation_service)
+    ],
+) -> SimulationRunSchema:
+    """Run and persist health delta scenarios for a baseline forecast."""
+    return await service.create(enterprise_id, forecast_run_id, payload)

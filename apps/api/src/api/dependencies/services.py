@@ -9,7 +9,10 @@ from api.dependencies.database import get_unit_of_work
 from api.dependencies.event_broker import get_event_broker_manager
 from api.services.enterprise import EnterpriseService
 from api.services.financial import StaticFinancialSnapshotService
-from api.services.forecasting import BaselineForecastService
+from api.services.forecasting import (
+    BaselineForecastService,
+    HealthDeltaSimulationService,
+)
 from api.services.ingestion import (
     IngestionRunService,
     IngestionSourceCredentialService,
@@ -60,6 +63,22 @@ def get_baseline_forecast_service(
         Baseline forecasting application service.
     """
     return BaselineForecastService(uow, settings.FORECAST_ARTIFACT_DIRECTORY)
+
+
+def get_health_delta_simulation_service(
+    uow: Annotated[IUnitOfWork, Depends(get_unit_of_work)],
+    settings: Annotated[ApiSettings, Depends(get_api_settings)],
+) -> HealthDeltaSimulationService:
+    """Build the health delta simulation application service.
+
+    Args:
+        uow: Request-scoped database unit of work.
+        settings: API settings containing the artifact directory.
+
+    Returns:
+        Health delta simulation application service.
+    """
+    return HealthDeltaSimulationService(uow, settings.FORECAST_ARTIFACT_DIRECTORY)
 
 
 def get_ingestion_source_service(

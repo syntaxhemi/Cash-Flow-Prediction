@@ -1,0 +1,311 @@
+from datetime import UTC, datetime
+from decimal import Decimal
+from pathlib import Path
+from typing import Any
+from uuid import UUID
+
+from database import IUnitOfWork
+from domain.exceptions import InvalidForecastRunError, InvalidSimulationError
+from domain.forecasting import ForecastStatus
+from domain.simulation import HealthDeltaProfile, SimulationStatus, SimulationType
+from ml import ModelArtifactLoader
+from schemas.simulation import (
+    HealthDeltaRequestSchema,
+    SimulationRunCreateSchema,
+    SimulationRunSchema,
+    SimulationRunUpdateSchema,
+    SimulationScenarioCreateSchema,
+    SimulationScenarioSchema,
+)
+
+from api.services.forecasting.counterfactual import (
+    CounterfactualContext,
+    CounterfactualEvaluator,
+)
+
+
+class HealthDeltaSimulationService:
+    """Orchestrate and persist health delta simulations."""
+
+    def __init__(self, uow: IUnitOfWork, artifact_directory: str) -> None:
+        """Initialize the health delta simulation service.
+
+        Args:
+            uow: Unit of work used to load baseline inputs and persist simulation data.
+            artifact_directory: Directory containing the selected model artifacts.
+        """
+        self._uow = uow
+        self._artifact_loader = ModelArtifactLoader(Path(artifact_directory))
+        self._evaluator = CounterfactualEvaluator()
+
+    async def create(
+        self,
+        enterprise_id: UUID,
+        forecast_run_id: UUID,
+        payload: HealthDeltaRequestSchema,
+    ) -> SimulationRunSchema:
+        """Create and execute one health delta simulation.
+
+        Args:
+            enterprise_id: Owning enterprise identifier.
+            forecast_run_id: Completed baseline forecast identifier.
+            payload: Bounded static-feature scenarios to evaluate.
+
+        Returns:
+            The completed simulation run and its persisted scenarios.
+
+        Raises:
+            InvalidForecastRunError: If the baseline forecast is missing, belongs to a
+                different enterprise, or is not completed.
+            InvalidSimulationError: If baseline inputs or a scenario are invalid.
+        """
+        await self._uow.enterprises.get_active_by_id_or_raise(enterprise_id)
+
+        forecast = await self._uow.forecasts.get_by_id_with_inputs(forecast_run_id)
+
+        if forecast is None or forecast.enterprise_id != enterprise_id:
+            raise InvalidForecastRunError(
+                f'Forecast run "{forecast_run_id}" does not belong to the enterprise.'
+            )
+
+        if forecast.status is not ForecastStatus.COMPLETED:
+            raise InvalidForecastRunError(
+                'Health delta simulation requires a completed baseline forecast.'
+            )
+
+        artifacts = self._artifact_loader.load()
+        context = self._build_context(forecast, artifacts.metadata)
+        requested_at = datetime.now(UTC)
+        run = await self._uow.simulation_runs.create(
+            SimulationRunCreateSchema(
+                enterprise_id=enterprise_id,
+                forecast_run_id=forecast_run_id,
+                simulation_type=SimulationType.HEALTH_DELTA,
+                status=SimulationStatus.PENDING,
+                requested_at=requested_at,
+            )
+        )
+        await self._uow.commit()
+
+        try:
+            await self._uow.simulation_runs.update(
+                run.id,
+                payload=SimulationRunUpdateSchema(status=SimulationStatus.RUNNING),
+            )
+            await self._uow.commit()
+            scenario_payloads = []
+
+            for index, (label, input_patch) in enumerate(
+                self._build_scenario_specs(context, payload)
+            ):
+                evaluation = self._evaluator.evaluate(context, input_patch, artifacts)
+                scenario_payloads.append(
+                    SimulationScenarioCreateSchema(
+                        scenario_index=index,
+                        scenario_label=label,
+                        input_patch_json={
+                            name: str(value) for name, value in input_patch.items()
+                        },
+                        predicted_net_cashflow=evaluation.predicted_net_cashflow,
+                        delta_from_baseline=evaluation.delta_from_baseline,
+                        meets_buffer=evaluation.meets_buffer,
+                    )
+                )
+
+            await self._uow.simulation_scenarios.create_many(run.id, scenario_payloads)
+            summary = self._build_summary(context, payload.profile, scenario_payloads)
+            run = await self._uow.simulation_runs.update(
+                run.id,
+                payload=SimulationRunUpdateSchema(
+                    status=SimulationStatus.COMPLETED,
+                    summary_result=summary,
+                    completed_at=datetime.now(UTC),
+                ),
+            )
+            await self._uow.commit()
+
+        except Exception as error:
+            await self._uow.rollback()
+            await self._uow.simulation_runs.update(
+                run.id,
+                payload=SimulationRunUpdateSchema(
+                    status=SimulationStatus.FAILED,
+                    summary_result={'error': str(error)},
+                    completed_at=datetime.now(UTC),
+                ),
+            )
+            await self._uow.commit()
+            raise
+
+        scenarios = await self._uow.simulation_scenarios.list_for_run(run.id)
+        return SimulationRunSchema(
+            id=run.id,
+            enterprise_id=run.enterprise_id,
+            forecast_run_id=run.forecast_run_id,
+            simulation_type=run.simulation_type,
+            status=run.status,
+            summary_result=run.summary_result,
+            requested_at=run.requested_at,
+            completed_at=run.completed_at,
+            created_at=run.created_at,
+            scenarios=[
+                SimulationScenarioSchema.model_validate(row) for row in scenarios
+            ],
+        )
+
+    @staticmethod
+    def _build_context(forecast: Any, metadata: Any) -> CounterfactualContext:
+        """Build baseline feature values from a loaded forecast run."""
+        periods = sorted(forecast.periods, key=lambda period: period.sequence_index)
+
+        if len(periods) != metadata.sequence_length:
+            raise InvalidSimulationError(
+                'The baseline forecast does not contain the required input periods.'
+            )
+
+        temporal_rows = [
+            {
+                'total_invoice_amount': float(
+                    period.monthly_cashflow_aggregate.total_invoice_amount
+                ),
+                'payment_delay': float(
+                    period.monthly_cashflow_aggregate.total_payment_delay_days
+                ),
+                'monthly_repayment': float(
+                    period.monthly_cashflow_aggregate.monthly_repayment
+                ),
+                'total_inflows': float(period.monthly_cashflow_aggregate.total_inflows),
+                'total_outflows': float(
+                    period.monthly_cashflow_aggregate.total_outflows
+                ),
+            }
+            for period in periods
+        ]
+        snapshot = forecast.static_snapshot
+        static_values = {
+            'capex': float(snapshot.capex or 0),
+            'cogs': float(snapshot.cogs or 0),
+            'current_assets': float(snapshot.current_assets or 0),
+            'current_liabilities': float(snapshot.current_liabilities or 0),
+            'fixed_assets': float(snapshot.fixed_assets or 0),
+            'long_term_liabilities': float(snapshot.long_term_liabilities or 0),
+            'credit_score': float(snapshot.credit_score or 0),
+            'failure_score': float(snapshot.failure_score or 0),
+            'debt_to_revenue_ratio': float(snapshot.debt_to_revenue_ratio or 0),
+            'missed_payments_number': float(snapshot.missed_payments_number or 0),
+        }
+        return CounterfactualContext(
+            temporal_rows=temporal_rows,
+            static_values=static_values,
+            baseline_prediction=forecast.predicted_net_cashflow,
+            solvency_buffer=forecast.solvency_buffer,
+        )
+
+    @staticmethod
+    def _build_summary(
+        context: CounterfactualContext,
+        profile: HealthDeltaProfile,
+        scenarios: list[SimulationScenarioCreateSchema],
+    ) -> dict[str, Any]:
+        """Build a compact persisted health delta summary.
+
+        Args:
+            context: Baseline simulation context.
+            profile: Server-defined profile used to generate scenarios.
+            scenarios: Evaluated scenario persistence payloads.
+
+        Returns:
+            JSON-compatible summary values.
+        """
+        best = max(scenarios, key=lambda scenario: scenario.delta_from_baseline)
+        return {
+            'profile': profile.value,
+            'baseline_prediction': str(context.baseline_prediction),
+            'solvency_buffer': str(context.solvency_buffer),
+            'best_scenario_index': best.scenario_index,
+            'best_delta_from_baseline': str(best.delta_from_baseline),
+            'best_predicted_net_cashflow': str(best.predicted_net_cashflow),
+            'best_meets_buffer': best.meets_buffer,
+        }
+
+    @staticmethod
+    def _build_scenario_specs(
+        context: CounterfactualContext,
+        payload: HealthDeltaRequestSchema,
+    ) -> list[tuple[str, dict[str, Decimal]]]:
+        """Generate bounded scenarios from a profile and optional feature targets.
+
+        Args:
+            context: Baseline static values used for relative scenarios.
+            payload: Profile and optional user-selected feature targets.
+
+        Returns:
+            Scenario labels and static-feature patches.
+
+        Raises:
+            InvalidSimulationError: If the profile or selected features is invalid.
+        """
+        eligible_features = (
+            'credit_score',
+            'failure_score',
+            'debt_to_revenue_ratio',
+            'missed_payments_number',
+        )
+        selected_features = list(payload.features) or list(eligible_features)
+        unknown_features = set(selected_features) - set(eligible_features)
+
+        if unknown_features:
+            names = ', '.join(sorted(unknown_features))
+            raise InvalidSimulationError(f'Unsupported health features: {names}.')
+
+        if payload.profile is HealthDeltaProfile.CUSTOM and not payload.features:
+            raise InvalidSimulationError(
+                'The custom health delta profile requires selected feature targets.'
+            )
+
+        if payload.features:
+            for feature, target in payload.features.items():
+                baseline = Decimal(str(context.static_values[feature]))
+                upper_bound = max(Decimal(1), baseline * Decimal(2))
+
+                if target > upper_bound:
+                    raise InvalidSimulationError(
+                        f'Target for "{feature}" exceeds the configured simulation '
+                        f'bound of {upper_bound}.'
+                    )
+
+            return [
+                (f'{feature} target', {feature: target})
+                for feature, target in payload.features.items()
+            ]
+
+        profile_delta = {
+            HealthDeltaProfile.CONSERVATIVE: Decimal('0.05'),
+            HealthDeltaProfile.STANDARD: Decimal('0.10'),
+            HealthDeltaProfile.STRESS: Decimal('0.20'),
+        }.get(payload.profile)
+        if profile_delta is None:
+            raise InvalidSimulationError(
+                'A non-custom health delta profile is required when no targets are '
+                'provided.'
+            )
+
+        scenarios: list[tuple[str, dict[str, Decimal]]] = []
+        for feature in selected_features:
+            baseline = Decimal(str(context.static_values[feature]))
+            if baseline == 0:
+                lower = Decimal(0)
+                upper = Decimal(1)
+            else:
+                lower = max(Decimal(0), baseline * (Decimal(1) - profile_delta))
+                upper = min(
+                    baseline * Decimal(2),
+                    baseline * (Decimal(1) + profile_delta),
+                )
+            scenarios.extend(
+                [
+                    (f'{feature} lower sensitivity', {feature: lower}),
+                    (f'{feature} upper sensitivity', {feature: upper}),
+                ]
+            )
+        return scenarios

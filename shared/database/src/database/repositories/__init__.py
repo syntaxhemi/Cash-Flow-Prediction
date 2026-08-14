@@ -27,9 +27,15 @@ from database.repositories.ingestion_source_credential import (
     IngestionSourceCredentialRepository,
 )
 from database.repositories.ingestion_upload import IngestionUploadRepository
+from database.repositories.mitigation_recommendation import (
+    MitigationRecommendationRepository,
+)
 from database.repositories.monthly_cashflow_aggregate import (
     MonthlyCashflowAggregateRepository,
 )
+from database.repositories.receivables_ranking import ReceivablesRankingRepository
+from database.repositories.simulation_run import SimulationRunRepository
+from database.repositories.simulation_scenario import SimulationScenarioRepository
 from database.repositories.static_financial_snapshot import (
     StaticFinancialSnapshotRepository,
 )
@@ -53,4 +59,8 @@ __all__ = [
     'IngestionUploadRepository',
     'MonthlyCashflowAggregateRepository',
     'StaticFinancialSnapshotRepository',
+    'MitigationRecommendationRepository',
+    'ReceivablesRankingRepository',
+    'SimulationRunRepository',
+    'SimulationScenarioRepository',
 ]

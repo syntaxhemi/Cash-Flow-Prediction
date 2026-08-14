@@ -116,11 +116,18 @@ aggregation persistence, simulation, dashboard, and end-to-end validation remain
 
 ## Phase 7: Simulation Services
 
-- [todo] Implement health delta simulation.
-- [todo] Implement trapped liquidity simulation.
-- [todo] Implement liquidity mitigation recommendation logic.
-- [todo] Persist simulation checkpoints and outputs.
-- [todo] Define solvency buffer configuration strategy.
+- [done] Define the shared simulation request and response contracts.
+- [done] Implement simulation persistence operations through entity-specific repositories,
+  shared unit-of-work wiring, and simulation lifecycle support.
+- [done] Implement the reusable application-layer counterfactual simulation workflow
+  using completed baseline forecast inputs and the shared ML runtime.
+- [done] Implement health delta simulation over bounded static-feature scenarios.
+- [todo] Implement trapped liquidity simulation and counterparty impact ranking.
+- [todo] Implement liquidity mitigation recommendation logic using bounded outflow
+  scenarios.
+- [done] Persist health delta simulation runs, scenario outputs, and failure checkpoints.
+- [todo] Define solvency buffer configuration and simulation comparison rules.
+- [todo] Expose simulation request and result APIs.
 
 ## Phase 8: Dashboard
 
