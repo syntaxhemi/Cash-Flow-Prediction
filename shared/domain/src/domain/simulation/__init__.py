@@ -8,6 +8,7 @@ from domain.simulation.entities import (
 )
 from domain.simulation.enums import (
     HealthDeltaProfile,
+    LiquidityMitigationProfile,
     RecommendationActionType,
     SimulationStatus,
     SimulationType,
@@ -15,6 +16,7 @@ from domain.simulation.enums import (
 
 __all__ = [
     'HealthDeltaProfile',
+    'LiquidityMitigationProfile',
     'MitigationRecommendation',
     'ReceivablesRanking',
     'RecommendationActionType',

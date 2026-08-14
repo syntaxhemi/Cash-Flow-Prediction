@@ -6,11 +6,12 @@ from uuid import UUID
 
 from domain.simulation import (
     HealthDeltaProfile,
+    LiquidityMitigationProfile,
     RecommendationActionType,
     SimulationStatus,
     SimulationType,
 )
-from pydantic import Field, field_validator
+from pydantic import Field, field_validator, model_validator
 
 from schemas.base import SchemaModel
 
@@ -147,6 +148,58 @@ class MitigationRecommendationUpdateSchema(SchemaModel):
     meets_buffer: bool | None = None
 
 
+class LiquidityMitigationRequestSchema(SchemaModel):
+    """Request bounded liquidity mitigation recommendations."""
+
+    profile: LiquidityMitigationProfile = LiquidityMitigationProfile.STANDARD
+    max_recommendations: int = Field(default=3, ge=1, le=3)
+
+
+class SimulationFilterParams(SchemaModel):
+    """Filters for enterprise-scoped simulation result listings."""
+
+    simulation_type: SimulationType | None = None
+    status: SimulationStatus | None = None
+    created_from: datetime | None = None
+    created_to: datetime | None = None
+    limit: int = Field(default=50, ge=1, le=200)
+    offset: int = Field(default=0, ge=0)
+
+    @model_validator(mode='after')
+    def validate_created_window(self) -> 'SimulationFilterParams':
+        """Ensure the created-time window is ordered.
+
+        Returns:
+            The validated filter parameters.
+
+        Raises:
+            ValueError: If ``created_from`` is after ``created_to``.
+        """
+        if (
+            self.created_from is not None
+            and self.created_to is not None
+            and self.created_from > self.created_to
+        ):
+            raise ValueError('created_from must not be after created_to.')
+        return self
+
+
+class MitigationRecommendationSchema(SchemaModel):
+    """Persisted liquidity mitigation recommendation response."""
+
+    id: UUID
+    simulation_run_id: UUID
+    priority_rank: int
+    action_type: RecommendationActionType
+    parameter_name: str
+    original_value: Decimal
+    recommended_value: Decimal
+    expected_cashflow_delta: Decimal
+    expected_post_action_cashflow: Decimal
+    meets_buffer: bool
+    created_at: datetime
+
+
 class SimulationScenarioSchema(SimulationScenarioCreateSchema):
     """Persisted simulation scenario response."""
 
@@ -169,3 +222,6 @@ class SimulationRunSchema(SchemaModel):
     created_at: datetime
     scenarios: list[SimulationScenarioSchema] = Field(default_factory=list)
     receivables_rankings: list[ReceivablesRankingSchema] = Field(default_factory=list)
+    mitigation_recommendations: list[MitigationRecommendationSchema] = Field(
+        default_factory=list
+    )

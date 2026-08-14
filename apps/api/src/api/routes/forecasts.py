@@ -5,6 +5,7 @@ from fastapi import APIRouter, Depends, status
 from schemas.forecasting import ForecastRequestSchema, ForecastRunSchema
 from schemas.simulation import (
     HealthDeltaRequestSchema,
+    LiquidityMitigationRequestSchema,
     SimulationRunSchema,
     TrappedLiquidityRequestSchema,
 )
@@ -12,11 +13,13 @@ from schemas.simulation import (
 from api.dependencies.services import (
     get_baseline_forecast_service,
     get_health_delta_simulation_service,
+    get_liquidity_mitigation_service,
     get_trapped_liquidity_simulation_service,
 )
 from api.services.forecasting import (
     BaselineForecastService,
     HealthDeltaSimulationService,
+    LiquidityMitigationService,
     TrappedLiquiditySimulationService,
 )
 
@@ -65,4 +68,21 @@ async def create_trapped_liquidity_simulation(
     ],
 ) -> SimulationRunSchema:
     """Run trapped-liquidity analysis for a baseline forecast."""
+    return await service.create(enterprise_id, forecast_run_id, payload)
+
+
+@router.post(
+    '/{forecast_run_id}/simulations/liquidity-mitigation',
+    response_model=SimulationRunSchema,
+    status_code=status.HTTP_201_CREATED,
+)
+async def create_liquidity_mitigation_simulation(
+    enterprise_id: UUID,
+    forecast_run_id: UUID,
+    payload: LiquidityMitigationRequestSchema,
+    service: Annotated[
+        LiquidityMitigationService, Depends(get_liquidity_mitigation_service)
+    ],
+) -> SimulationRunSchema:
+    """Generate bounded liquidity mitigation recommendations."""
     return await service.create(enterprise_id, forecast_run_id, payload)

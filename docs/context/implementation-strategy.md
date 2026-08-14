@@ -218,6 +218,12 @@ This path should:
 - permute bounded discretionary outflow changes
 - return ranked recommended actions
 
+Initial action mappings should remain distinct:
+
+- `delay_capex` changes the static `capex` input substantially.
+- `reduce_outflows` changes the temporal `total_outflows` input by a bounded amount.
+- `adjust_repayment` changes the temporal `monthly_repayment` input.
+
 This should be described as recommendation logic, not autonomous optimization.
 
 ## Training and Artifact Strategy

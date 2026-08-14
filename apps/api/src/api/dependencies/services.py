@@ -12,6 +12,8 @@ from api.services.financial import StaticFinancialSnapshotService
 from api.services.forecasting import (
     BaselineForecastService,
     HealthDeltaSimulationService,
+    LiquidityMitigationService,
+    SimulationResultService,
     TrappedLiquiditySimulationService,
 )
 from api.services.ingestion import (
@@ -96,6 +98,36 @@ def get_trapped_liquidity_simulation_service(
         Trapped-liquidity simulation application service.
     """
     return TrappedLiquiditySimulationService(uow, settings.FORECAST_ARTIFACT_DIRECTORY)
+
+
+def get_liquidity_mitigation_service(
+    uow: Annotated[IUnitOfWork, Depends(get_unit_of_work)],
+    settings: Annotated[ApiSettings, Depends(get_api_settings)],
+) -> LiquidityMitigationService:
+    """Build the liquidity mitigation application service.
+
+    Args:
+        uow: Request-scoped database unit of work.
+        settings: API settings containing the artifact directory.
+
+    Returns:
+        Liquidity mitigation application service.
+    """
+    return LiquidityMitigationService(uow, settings.FORECAST_ARTIFACT_DIRECTORY)
+
+
+def get_simulation_result_service(
+    uow: Annotated[IUnitOfWork, Depends(get_unit_of_work)],
+) -> SimulationResultService:
+    """Build the simulation result retrieval service.
+
+    Args:
+        uow: Request-scoped database unit of work.
+
+    Returns:
+        Simulation result retrieval service.
+    """
+    return SimulationResultService(uow)
 
 
 def get_ingestion_source_service(

@@ -16,6 +16,14 @@ class HealthDeltaProfile(StrEnum):
     CUSTOM = 'custom'
 
 
+class LiquidityMitigationProfile(StrEnum):
+    """Server-defined intervention range for mitigation recommendations."""
+
+    CONSERVATIVE = 'conservative'
+    STANDARD = 'standard'
+    STRESS = 'stress'
+
+
 class SimulationStatus(StrEnum):
     PENDING = 'pending'
     RUNNING = 'running'
@@ -25,6 +33,6 @@ class SimulationStatus(StrEnum):
 
 class RecommendationActionType(StrEnum):
     DELAY_CAPEX = 'delay_capex'
-    REDUCE_CAPEX = 'reduce_capex'
+    REDUCE_OUTFLOWS = 'reduce_outflows'
     ADJUST_REPAYMENT = 'adjust_repayment'
     OTHER = 'other'

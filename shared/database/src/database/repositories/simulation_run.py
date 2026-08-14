@@ -6,10 +6,15 @@ from domain.exceptions import (
     SimulationRunHasChildrenError,
     SimulationRunNotFoundError,
 )
-from schemas.simulation import SimulationRunCreateSchema, SimulationRunUpdateSchema
+from schemas.simulation import (
+    SimulationFilterParams,
+    SimulationRunCreateSchema,
+    SimulationRunUpdateSchema,
+)
 from sqlalchemy import delete, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
 from database.models import SimulationRunModel
 
@@ -75,6 +80,27 @@ class SimulationRunRepository:
         )
         return result.scalar_one_or_none()
 
+    async def get_by_id_with_outputs(self, run_id: UUID) -> SimulationRunModel | None:
+        """Return a simulation run with all persisted outputs loaded.
+
+        Args:
+            run_id: Simulation-run identifier.
+
+        Returns:
+            The matching simulation run with scenarios, rankings, and
+            recommendations loaded, or ``None``.
+        """
+        result = await self._session.execute(
+            select(SimulationRunModel)
+            .where(SimulationRunModel.id == run_id)
+            .options(
+                selectinload(SimulationRunModel.scenarios),
+                selectinload(SimulationRunModel.receivables_rankings),
+                selectinload(SimulationRunModel.mitigation_recommendations),
+            )
+        )
+        return result.scalar_one_or_none()
+
     async def get_by_id_or_raise(self, run_id: UUID) -> SimulationRunModel:
         """Return a simulation run or raise when it is missing.
 
@@ -109,6 +135,46 @@ class SimulationRunRepository:
             select(SimulationRunModel)
             .where(SimulationRunModel.enterprise_id == enterprise_id)
             .order_by(SimulationRunModel.created_at.desc())
+        )
+        return list(result.scalars().all())
+
+    async def list_for_enterprise_with_outputs(
+        self, enterprise_id: UUID, filters: SimulationFilterParams
+    ) -> list[SimulationRunModel]:
+        """List simulation runs with persisted outputs for an enterprise.
+
+        Args:
+            enterprise_id: Owning enterprise identifier.
+
+        Returns:
+            Matching simulation runs with child outputs loaded newest first.
+        """
+        statement = select(SimulationRunModel).where(
+            SimulationRunModel.enterprise_id == enterprise_id
+        )
+        if filters.simulation_type is not None:
+            statement = statement.where(
+                SimulationRunModel.simulation_type == filters.simulation_type
+            )
+        if filters.status is not None:
+            statement = statement.where(SimulationRunModel.status == filters.status)
+        if filters.created_from is not None:
+            statement = statement.where(
+                SimulationRunModel.created_at >= filters.created_from
+            )
+        if filters.created_to is not None:
+            statement = statement.where(
+                SimulationRunModel.created_at <= filters.created_to
+            )
+        result = await self._session.execute(
+            statement.options(
+                selectinload(SimulationRunModel.scenarios),
+                selectinload(SimulationRunModel.receivables_rankings),
+                selectinload(SimulationRunModel.mitigation_recommendations),
+            )
+            .order_by(SimulationRunModel.created_at.desc())
+            .limit(filters.limit)
+            .offset(filters.offset)
         )
         return list(result.scalars().all())
 

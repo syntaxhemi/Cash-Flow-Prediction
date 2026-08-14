@@ -464,7 +464,7 @@ Suggested fields:
 Suggested `action_type` values:
 
 - `delay_capex`
-- `reduce_capex`
+- `reduce_outflows`
 - `adjust_repayment`
 - `other`
 

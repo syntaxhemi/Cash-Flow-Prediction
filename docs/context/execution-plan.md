@@ -123,11 +123,12 @@ aggregation persistence, simulation, dashboard, and end-to-end validation remain
   using completed baseline forecast inputs and the shared ML runtime.
 - [done] Implement health delta simulation over bounded static-feature scenarios.
 - [done] Implement trapped liquidity simulation and counterparty impact ranking.
-- [todo] Implement liquidity mitigation recommendation logic using bounded outflow
+- [done] Implement liquidity mitigation recommendation logic using bounded outflow
   scenarios.
 - [done] Persist health delta simulation runs, scenario outputs, and failure checkpoints.
-- [todo] Define solvency buffer configuration and simulation comparison rules.
-- [todo] Expose simulation request and result APIs.
+- [done] Define solvency buffer configuration and simulation comparison rules.
+- [done] Expose simulation request and result APIs for health delta, trapped liquidity,
+  and liquidity mitigation workflows.
 
 ## Phase 8: Dashboard
 
