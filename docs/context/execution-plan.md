@@ -138,7 +138,7 @@ aggregation persistence, simulation, dashboard, and end-to-end validation remain
 - [todo] Build health delta view.
 - [todo] Build trapped liquidity ranking view.
 - [todo] Build liquidity mitigation planning view.
-- [todo] Add generated or shared API contracts for frontend use.
+- [done] Add generated TypeScript API contracts from the FastAPI OpenAPI schema.
 
 ## Phase 9: Validation and Demo Packaging
 
