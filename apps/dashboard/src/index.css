@@ -1,34 +1,5 @@
 @import 'tailwindcss';
-
-:root {
-	--color-ink: #24211f;
-	--color-text-muted: #766e69;
-	--color-canvas: #f7f2ea;
-	--color-surface: #fffdf8;
-	--color-border: #e7ded4;
-	--color-primary: #9d2b2b;
-	--color-primary-soft: #f4e6e1;
-	--color-simulation: #705a6b;
-	--color-positive: #39715a;
-	--color-warning: #b47c2c;
-	--color-risk: #b53d35;
-
-	--font-family-ui: 'Instrument Sans Variable', 'Instrument Sans', sans-serif;
-	--font-family-display: 'Newsreader Variable', Newsreader, serif;
-	--font-family-mono: 'IBM Plex Mono', monospace;
-
-	font-family: var(--font-family-ui);
-	font-synthesis: none;
-	text-rendering: optimizeLegibility;
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
-}
-
-@theme inline {
-	--font-sans: var(--font-family-ui);
-	--font-serif: var(--font-family-display);
-	--font-mono: var(--font-family-mono);
-}
+@import '@/styles/tokens.css';
 
 * {
 	box-sizing: border-box;

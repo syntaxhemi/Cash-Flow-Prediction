@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title desc">
+  <title id="title">Cash Flow ledger mark</title>
+  <desc id="desc">A simple rounded oxblood ledger icon.</desc>
+
+  <g fill="none" stroke="#9D2B2B" stroke-linecap="round" stroke-linejoin="round" stroke-width="4.5">
+    <path d="M14 10h30c6 0 10 4 10 10v26c0 6-4 10-10 10H15c-5 0-8-3-8-8V18c0-5 3-8 7-8Z" />
+    <path d="M20 11v34c0 6 3 9 8 11" />
+    <path d="M31 25h12M31 35h15" />
+  </g>
+</svg>

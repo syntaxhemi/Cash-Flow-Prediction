@@ -12,6 +12,9 @@ The current visual reference is:
 - [Desktop mockup](assets/desktop-mockup.png)
 - [Mobile responsive mockup](assets/mobile-mockup.png)
 
+The page responsibilities and navigation source of truth are documented in
+[Dashboard Page Map](page-map.md).
+
 ## Product Design Idea
 
 Functional product name: **Cash Flow**.
@@ -72,9 +75,10 @@ not color alone.
 
 ### 6. Prefer progressive disclosure
 
-The overview should remain compact. Assumptions, model metadata, source records, and
-technical identifiers should be available through drill-downs, drawers, or detail
-sections rather than competing with the primary signal.
+The overview should remain compact. Detailed assumptions and source records should be
+available through drill-downs, drawers, or detail sections rather than competing with
+the primary signal. Model versions, artifact identifiers, and runtime diagnostics are
+internal concerns and should not be shown in the dashboard.
 
 ## Visual Direction
 
@@ -258,7 +262,8 @@ the primary cash-flow value is a supporting KPI, not a hero display; keep it aro
 ### Forecast
 
 The forecast view should provide the baseline forecast, the input period used, the
-selected static snapshot, model/artifact metadata, and the buffer comparison.
+selected static snapshot, source freshness, and the buffer comparison. Model versions,
+artifact identifiers, and runtime diagnostics remain outside the dashboard.
 
 ### Covenant Health
 

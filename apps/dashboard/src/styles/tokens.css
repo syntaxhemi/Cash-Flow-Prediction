@@ -1,0 +1,43 @@
+:root {
+	--space-unit: 4px;
+	--space-component: 12px;
+	--space-component-loose: 20px;
+	--space-section-desktop: 64px;
+	--space-section-desktop-loose: 96px;
+	--space-section-mobile: 48px;
+	--space-section-mobile-loose: 72px;
+	--space-shell-content: 32px;
+	--space-shell-content-loose: 40px;
+
+	--radius-control: 8px;
+	--radius-card: 16px;
+	--radius-pill: 999px;
+
+	font-family: var(--font-sans);
+	font-synthesis: none;
+	text-rendering: optimizeLegibility;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+@theme {
+	--color-ink: #24211f;
+	--color-text-muted: #766e69;
+	--color-canvas: #f7f2ea;
+	--color-surface: #fffdf8;
+	--color-border: #e7ded4;
+	--color-primary: #9d2b2b;
+	--color-primary-soft: #f4e6e1;
+	--color-simulation: #705a6b;
+	--color-positive: #39715a;
+	--color-warning: #b47c2c;
+	--color-risk: #b53d35;
+
+	--font-sans: 'Instrument Sans Variable', 'Instrument Sans', sans-serif;
+	--font-serif: 'Newsreader Variable', Newsreader, serif;
+	--font-mono: 'IBM Plex Mono', monospace;
+
+	--radius-control: 8px;
+	--radius-card: 16px;
+	--radius-pill: 999px;
+}
