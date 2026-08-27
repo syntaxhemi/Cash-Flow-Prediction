@@ -175,7 +175,7 @@ Initial spacing direction:
 - common spacing: `8px`, `12px`, `16px`, `24px`, `32px`
 - component spacing: `12px` to `20px` within a content group
 - section separation: `64px` to `96px` on desktop; `48px` to `72px` on mobile
-- shell-to-content separation: `32px` to `40px` below the navbar and context row
+- shell-to-content separation: `32px` to `40px` below the navbar; Overview may include an additional context row
 - card radius: `16px`
 - control radius: `8px`
 - pill radius: `999px`
@@ -208,6 +208,11 @@ Suggested navigation:
 
 The header should expose the current enterprise, synchronization status, and a
 contextual primary action such as `Run forecast` or `Create simulation`.
+
+The Overview page may use a detached enterprise/freshness context row beneath the
+navbar. Other pages should not repeat this row as breadcrumbs; they should begin
+with their own page-specific heading and controls. Enterprise and freshness context
+may still appear inline where it directly supports that page's workflow.
 
 The navigation should collapse into a compact menu on smaller screens. A permanent
 dark sidebar is not the default shell direction.

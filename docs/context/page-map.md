@@ -142,7 +142,8 @@ not yet available.
 
 Every page should preserve:
 
-- current enterprise context
+- current enterprise context where it supports the page workflow; the detached
+  breadcrumb-style context row is an Overview-only pattern
 - source freshness where relevant
 - explicit modeled-versus-recorded labeling
 - accessible loading, empty, error, and unavailable states

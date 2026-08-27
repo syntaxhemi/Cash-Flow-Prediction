@@ -14,7 +14,7 @@ function TopNavigation() {
 	return (
 		<header className="border-b border-border bg-surface">
 			<nav
-				className="mx-auto flex max-w-360 items-center justify-between px-6 py-4 sm:px-10 lg:px-14"
+				className="mx-auto flex w-full items-center justify-between px-6 py-4 sm:px-10 lg:px-14"
 				aria-label="Primary navigation"
 			>
 				<NavLink to="/" className="flex items-center gap-2 no-underline">
@@ -45,11 +45,9 @@ function TopNavigation() {
 				</div>
 
 				<div className="flex items-center gap-4">
-					<span className="hidden text-sm text-ink sm:inline">
+					<span className="hidden items-center gap-2 text-sm text-ink sm:flex">
 						Northstar Manufacturing
-					</span>
-					<span className="hidden h-9 w-9 items-center justify-center rounded-full bg-primary-soft text-xs font-semibold text-primary lg:flex">
-						NM
+						<span aria-hidden="true">⌄</span>
 					</span>
 					<button
 						type="button"
