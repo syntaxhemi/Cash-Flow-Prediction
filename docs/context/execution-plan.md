@@ -135,7 +135,7 @@ aggregation persistence, simulation, dashboard, and end-to-end validation remain
 - [todo] Scaffold dashboard routes and shell.
 - [todo] Integrate dashboard with backend APIs.
 - [todo] Build baseline forecast view.
-- [todo] Build health delta view.
+- [in_progress] Build health delta view.
 - [todo] Build trapped liquidity ranking view.
 - [todo] Build liquidity mitigation planning view.
 - [done] Add generated TypeScript API contracts from the FastAPI OpenAPI schema.

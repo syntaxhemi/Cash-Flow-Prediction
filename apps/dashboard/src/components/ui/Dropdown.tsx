@@ -17,7 +17,7 @@ type DropdownProps = {
 };
 
 const dropdownButton = cva(
-	'inline-flex w-full items-center justify-between rounded-pill border border-border bg-surface text-left text-ink transition hover:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary',
+	'inline-flex w-full items-center justify-between rounded-pill border border-border bg-surface text-left text-ink transition hover:border-border active:border-border focus:border-border focus-visible:border-border focus-visible:outline-none focus-visible:ring-0',
 	{
 		variants: {
 			size: {
