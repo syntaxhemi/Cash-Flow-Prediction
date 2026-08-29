@@ -94,7 +94,9 @@ function Dropdown({
 				aria-controls={listboxId}
 				onClick={() => setIsOpen((open) => !open)}
 			>
-				<span>{selectedOption?.label ?? label}</span>
+				<span className="min-w-0 truncate whitespace-nowrap">
+					{selectedOption?.label ?? label}
+				</span>
 				<ChevronDown />
 			</button>
 			{isOpen && (
