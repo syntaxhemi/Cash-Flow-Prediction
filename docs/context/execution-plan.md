@@ -15,9 +15,10 @@ Unlike the other context files, this document is expected to change frequently o
 
 ## Current Planning State
 
-The repository has been scaffolded through the ingestion foundation and canonical training
-pipeline. Training now has a reproducible script entrypoint; forecasting runtime integration,
-aggregation persistence, simulation, dashboard, and end-to-end validation remain open.
+The repository has been scaffolded through the ingestion, forecasting, simulation, and
+dashboard design foundations. The dashboard now has a typed API client, enterprise scope
+provider, and reusable resource/mutation hooks. Page-level API adapters, end-to-end dashboard
+integration, and demo validation remain open.
 
 ## Phase 0: Context and Architecture Alignment
 
@@ -132,13 +133,17 @@ aggregation persistence, simulation, dashboard, and end-to-end validation remain
 
 ## Phase 8: Dashboard
 
-- [todo] Scaffold dashboard routes and shell.
+- [done] Scaffold dashboard routes and shell.
+- [done] Add the dashboard API client with generated OpenAPI contract aliases.
+- [done] Add generated TypeScript API contracts from the FastAPI OpenAPI schema.
+- [done] Add reusable async resource and mutation state hooks.
+- [done] Add enterprise selection context/provider with persisted active enterprise state.
+- [done] Add enterprise-scoped ingestion, snapshot, forecast, and simulation data hooks.
 - [todo] Integrate dashboard with backend APIs.
 - [todo] Build baseline forecast view.
 - [in_progress] Build health delta view.
 - [todo] Build trapped liquidity ranking view.
 - [todo] Build liquidity mitigation planning view.
-- [done] Add generated TypeScript API contracts from the FastAPI OpenAPI schema.
 
 ## Phase 9: Validation and Demo Packaging
 
