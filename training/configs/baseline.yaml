@@ -5,19 +5,26 @@ data:
   credit_card_history_path: training/artifacts/input/Credit_Card_History.csv
   credit_rating_path: training/artifacts/input/Credit_Rating.csv
   loan_path: training/artifacts/input/Loan.csv
+  input_format: processed
 
 split:
   test_quantile: 0.80
   random_state: 32
 
 model:
-  epochs: 25
+  epochs: 50
   batch_size: 32
-  learning_rate: 0.001
-  lstm_hidden: 128
-  dense_hidden: 64
-  dropout: 0.30
-  early_stopping_patience: 7
+  learning_rate: 0.0001
+  lstm_hidden: 96
+  dense_hidden: 48
+  dropout: 0.40
+  early_stopping_patience: 5
+  smooth_l1_beta: 1.0
+  weight_decay: 0.001
+  scheduler_factor: 0.5
+  scheduler_patience: 1
+  gradient_clip_norm: 1.0
+  target_scaling: false
 
 features:
   sequence_length: 6

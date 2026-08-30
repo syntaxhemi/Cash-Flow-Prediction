@@ -1,0 +1,48 @@
+data:
+  account_receivable_path: training\artifacts\input\Account_Receivable.csv
+  businesses_path: training\artifacts\input\Businesses.csv
+  credit_account_history_path: training\artifacts\input\Credit_Account_History.csv
+  credit_card_history_path: training\artifacts\input\Credit_Card_History.csv
+  credit_rating_path: training\artifacts\input\Credit_Rating.csv
+  loan_path: training\artifacts\input\Loan.csv
+  input_format: processed
+split:
+  test_quantile: 0.8
+  random_state: 32
+model:
+  epochs: 50
+  batch_size: 32
+  learning_rate: 0.0001
+  lstm_hidden: 96
+  dense_hidden: 48
+  dropout: 0.4
+  early_stopping_patience: 5
+  smooth_l1_beta: 1.0
+  weight_decay: 0.001
+  scheduler_factor: 0.5
+  scheduler_patience: 1
+  gradient_clip_norm: 1.0
+  target_scaling: false
+features:
+  sequence_length: 6
+  temporal_features:
+  - total_invoice_amount
+  - payment_delay
+  - monthly_repayment
+  - total_inflows
+  - total_outflows
+  static_features:
+  - capex
+  - cogs
+  - current_assets
+  - current_liabilities
+  - fixed_assets
+  - long_term_liabilities
+  - credit_score
+  - failure_score
+  - debt_to_revenue_ratio
+  - missed_payments_number
+  label_column: net_cash_flow
+artifacts:
+  output_dir: training\artifacts\runs
+  run_name: baseline

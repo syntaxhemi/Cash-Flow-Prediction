@@ -87,6 +87,8 @@ def _evaluate(
     model: TemporalStaticFusion,
     criterion: nn.Module,
     device: torch.device,
+    target_center: float,
+    target_scale: float,
 ) -> tuple[float, float]:
     model.eval()
     total_loss = 0.0
@@ -101,7 +103,9 @@ def _evaluate(
             predictions = model(sequences, static_values)
             count = sequences.size(0)
             total_loss += float(criterion(predictions, labels).item()) * count
-            total_mae += float(mae_loss(predictions, labels).item())
+            predictions_original = predictions * target_scale + target_center
+            labels_original = labels * target_scale + target_center
+            total_mae += float(mae_loss(predictions_original, labels_original).item())
             total_count += count
     return total_loss / total_count, total_mae / total_count
 
@@ -115,7 +119,32 @@ def train_model(
     labels_validation: np.ndarray,
     config: ModelConfig,
     use_gpu: bool = True,
+    target_center: float = 0.0,
+    target_scale: float = 1.0,
 ) -> TrainingResult:
+    """Train the LSTM model on optionally target-scaled labels.
+
+    Args:
+        sequences_train: Scaled temporal training sequences.
+        static_train: Scaled static training features.
+        labels_train: Training labels in the model's target space.
+        sequences_validation: Scaled temporal validation sequences.
+        static_validation: Scaled static validation features.
+        labels_validation: Validation labels in the model's target space.
+        config: Model and optimization configuration.
+        use_gpu: Whether CUDA may be used when available.
+        target_center: Original-unit target mean used for validation metrics.
+        target_scale: Original-unit target standard deviation used for validation
+            metrics.
+
+    Returns:
+        Training result containing the best model state and metric histories.
+
+        Notes:
+        Optimization occurs in the target space supplied through ``labels_train``.
+        Validation MAE is restored to original target units using ``target_center``
+        and ``target_scale``.
+    """
     device = torch.device('cuda' if use_gpu and torch.cuda.is_available() else 'cpu')
     model = TemporalStaticFusion(
         sequence_input_size=sequences_train.shape[2],
@@ -134,9 +163,19 @@ def train_model(
         batch_size=config.batch_size,
         shuffle=False,
     )
-    criterion = nn.MSELoss()
-    optimizer = optim.Adam(model.parameters(), lr=config.learning_rate)
-    best_loss = float('inf')
+    criterion = nn.SmoothL1Loss(beta=config.smooth_l1_beta)
+    optimizer: optim.Optimizer = optim.AdamW(
+        model.parameters(),
+        lr=config.learning_rate,
+        weight_decay=config.weight_decay,
+    )
+    scheduler = optim.lr_scheduler.ReduceLROnPlateau(
+        optimizer,
+        mode='min',
+        factor=config.scheduler_factor,
+        patience=config.scheduler_patience,
+    )
+    best_mae = float('inf')
     best_state: dict[str, torch.Tensor] | None = None
     patience = 0
     best_epoch = 0
@@ -155,6 +194,8 @@ def train_model(
             optimizer.zero_grad()
             loss = criterion(model(sequences, static_values), labels)
             loss.backward()
+            if config.gradient_clip_norm > 0:
+                nn.utils.clip_grad_norm_(model.parameters(), config.gradient_clip_norm)
             optimizer.step()
             count = sequences.size(0)
             total_loss += float(loss.item()) * count
@@ -162,7 +203,12 @@ def train_model(
 
         train_loss = total_loss / total_count
         validation_loss, validation_mae = _evaluate(
-            validation_loader, model, criterion, device
+            validation_loader,
+            model,
+            criterion,
+            device,
+            target_center,
+            target_scale,
         )
         train_losses.append(train_loss)
         validation_losses.append(validation_loss)
@@ -173,8 +219,9 @@ def train_model(
             f'Val Loss: {validation_loss:.6f} | Val MAE: {validation_mae:.6f}'
         )
 
-        if validation_loss < best_loss:
-            best_loss = validation_loss
+        scheduler.step(validation_mae)
+        if validation_mae < best_mae:
+            best_mae = validation_mae
             best_state = {
                 name: parameter.detach().cpu().clone()
                 for name, parameter in model.state_dict().items()

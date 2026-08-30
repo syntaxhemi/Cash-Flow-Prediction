@@ -5,7 +5,7 @@ from dataclasses import dataclass
 import numpy as np
 import pandas as pd
 
-from training.config import FeatureConfig
+from training.config import FeatureConfig, InputFormat
 
 
 @dataclass(slots=True)
@@ -155,15 +155,89 @@ def _prepare_loan(frame: pd.DataFrame) -> pd.DataFrame:
     return result
 
 
-def prepare_datasets(datasets: dict[str, pd.DataFrame]) -> PreparedData:
-    accounts = _prepare_account_receivable(datasets['account_receivable'])
-    businesses = _prepare_businesses(datasets['businesses'])
-    credit_accounts = _prepare_credit_account_history(
-        datasets['credit_account_history']
-    )
-    credit_cards = _prepare_credit_card_history(datasets['credit_card_history'])
-    ratings = _prepare_credit_rating(datasets['credit_rating'])
-    loans = _prepare_loan(datasets['loan'])
+def _prepare_processed_account_receivable(frame: pd.DataFrame) -> pd.DataFrame:
+    """Normalize an account-receivable table produced by the research notebook."""
+    result = frame.copy()
+    if 'month' not in result:
+        result['invoice_date'] = pd.to_datetime(
+            result['invoice_date'], format='mixed', dayfirst=True
+        )
+        result['month'] = result['invoice_date'].dt.to_period('M')
+    else:
+        result['month'] = pd.to_datetime(
+            result['month'].astype(str), format='%Y-%m'
+        ).dt.to_period('M')
+    if 'payment_delay' not in result:
+        invoice_date = pd.to_datetime(
+            result['invoice_date'], format='mixed', dayfirst=True
+        )
+        end_date = pd.to_datetime(result['end_date'], format='mixed', dayfirst=True)
+        result['payment_delay'] = (end_date - invoice_date).dt.days
+    return result
+
+
+def _prepare_processed_businesses(frame: pd.DataFrame) -> pd.DataFrame:
+    """Return normalized business features produced by the research notebook."""
+    return frame.copy()
+
+
+def _prepare_processed_credit_rating(frame: pd.DataFrame) -> pd.DataFrame:
+    """Return normalized credit-rating features produced by the research notebook."""
+    return frame.copy()
+
+
+def _prepare_processed_loan(frame: pd.DataFrame) -> pd.DataFrame:
+    """Normalize a loan table produced by the research notebook."""
+    result = frame.copy()
+    if 'month' in result:
+        result['month'] = pd.to_datetime(
+            result['month'].astype(str), format='%Y-%m'
+        ).dt.to_period('M')
+    else:
+        result['loan_start_date'] = pd.to_datetime(
+            result['loan_start_date'], format='mixed'
+        )
+        result['month'] = result['loan_start_date'].dt.to_period('M')
+    return result
+
+
+def prepare_datasets(
+    datasets: dict[str, pd.DataFrame], input_format: InputFormat = 'raw'
+) -> PreparedData:
+    """Prepare source tables and build temporal/static training datasets.
+
+    Args:
+        datasets: Source tables keyed by their configured dataset names.
+        input_format: ``raw`` for original research files or ``processed`` for
+            notebook-generated normalized files.
+
+    Returns:
+        Prepared temporal and static feature tables.
+
+    Raises:
+        ValueError: If the input format is unsupported.
+    """
+    if input_format == 'raw':
+        accounts = _prepare_account_receivable(datasets['account_receivable'])
+        businesses = _prepare_businesses(datasets['businesses'])
+        credit_accounts = _prepare_credit_account_history(
+            datasets['credit_account_history']
+        )
+        credit_cards = _prepare_credit_card_history(datasets['credit_card_history'])
+        ratings = _prepare_credit_rating(datasets['credit_rating'])
+        loans = _prepare_loan(datasets['loan'])
+    elif input_format == 'processed':
+        accounts = _prepare_processed_account_receivable(datasets['account_receivable'])
+        businesses = _prepare_processed_businesses(datasets['businesses'])
+        credit_accounts = datasets['credit_account_history'].copy()
+        credit_cards = datasets['credit_card_history'].copy()
+        credit_cards['cc_missed_payments'] = credit_cards['cc_missed_payments'].fillna(
+            0
+        )
+        ratings = _prepare_processed_credit_rating(datasets['credit_rating'])
+        loans = _prepare_processed_loan(datasets['loan'])
+    else:
+        raise ValueError(f'Unsupported input format: {input_format}.')
 
     monthly_invoices = (
         accounts.groupby(['company_reg_number', 'month'])
@@ -189,16 +263,14 @@ def prepare_datasets(datasets: dict[str, pd.DataFrame]) -> PreparedData:
         .reset_index()
     )
 
-    temporal = monthly_invoices.merge(credit_history, on='company_reg_number')
-    temporal = temporal.merge(
+    # Credit-account history has no monthly timestamp.  Use it only to estimate
+    # the fallback outflow ratio; merging company-level totals into each month
+    # would repeat the same totals across the whole temporal sequence.
+    temporal = monthly_invoices.merge(
         loan_monthly, on=['company_reg_number', 'month'], how='left'
     ).fillna(0)
-    temporal['total_inflows'] = (
-        temporal['total_invoice_amount'] + temporal['pay_in_amount']
-    )
-    temporal['total_outflows'] = (
-        temporal['pay_out_amount'] + temporal['monthly_repayment']
-    )
+    temporal['total_inflows'] = temporal['total_invoice_amount']
+    temporal['total_outflows'] = temporal['monthly_repayment']
     zero_outflows = temporal['total_outflows'] == 0
     total_pay_in = credit_history['pay_in_amount'].sum()
     total_pay_out = credit_history['pay_out_amount'].sum()

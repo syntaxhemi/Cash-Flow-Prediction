@@ -43,8 +43,16 @@ class ForecastInferenceService:
         with torch.no_grad():
             prediction = artifacts.model(temporal_tensor, static_tensor)
 
+        prediction_value = float(prediction.squeeze().item())
+        if artifacts.target_scaler is not None:
+            prediction_value = float(
+                artifacts.target_scaler.inverse_transform(
+                    np.asarray([[prediction_value]])
+                )[0, 0]
+            )
+
         return ForecastPrediction(
-            predicted_net_cashflow=float(prediction.squeeze().item()),
+            predicted_net_cashflow=prediction_value,
             model_version=artifacts.metadata.model_version,
             artifact_version=artifacts.metadata.artifact_version,
         )

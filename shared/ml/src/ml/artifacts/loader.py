@@ -57,6 +57,7 @@ class LoadedForecastArtifacts:
     model: RuntimeForecastModel
     temporal_scaler: Any
     static_scaler: Any
+    target_scaler: Any | None
 
 
 class ModelArtifactLoader:
@@ -106,8 +107,15 @@ class ModelArtifactLoader:
         static_scaler = self._load_pickle(
             self._required_path(metadata, 'static_scaler')
         )
+        target_scaler = None
+        if 'target_scaler' in metadata.artifact_files:
+            target_scaler = self._load_pickle(
+                self._required_path(metadata, 'target_scaler')
+            )
         self._validate_scaler(temporal_scaler, metadata.sequence_input_size, 'temporal')
         self._validate_scaler(static_scaler, metadata.static_input_size, 'static')
+        if target_scaler is not None:
+            self._validate_scaler(target_scaler, 1, 'target')
 
         self._loaded_artifacts = LoadedForecastArtifacts(
             run_directory=self._run_directory,
@@ -115,6 +123,7 @@ class ModelArtifactLoader:
             model=model,
             temporal_scaler=temporal_scaler,
             static_scaler=static_scaler,
+            target_scaler=target_scaler,
         )
         return self._loaded_artifacts
 

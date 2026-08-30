@@ -2,9 +2,11 @@
 
 from dataclasses import asdict, dataclass
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal
 
 import yaml
+
+InputFormat = Literal['raw', 'processed']
 
 
 @dataclass(slots=True)
@@ -15,6 +17,7 @@ class DataConfig:
     credit_card_history_path: Path
     credit_rating_path: Path
     loan_path: Path
+    input_format: InputFormat = 'raw'
 
 
 @dataclass(slots=True)
@@ -32,6 +35,12 @@ class ModelConfig:
     dense_hidden: int
     dropout: float
     early_stopping_patience: int
+    smooth_l1_beta: float = 10.0
+    weight_decay: float = 0.0001
+    scheduler_factor: float = 0.5
+    scheduler_patience: int = 4
+    gradient_clip_norm: float = 1.0
+    target_scaling: bool = True
 
 
 @dataclass(slots=True)
@@ -59,6 +68,9 @@ class TrainingConfig:
 
 def load_config(config_path: Path) -> TrainingConfig:
     raw_config = yaml.safe_load(config_path.read_text(encoding='utf-8'))
+    input_format = raw_config['data'].get('input_format', 'raw')
+    if input_format not in ('raw', 'processed'):
+        raise ValueError('data.input_format must be either "raw" or "processed".')
 
     return TrainingConfig(
         data=DataConfig(
@@ -72,6 +84,7 @@ def load_config(config_path: Path) -> TrainingConfig:
             ),
             credit_rating_path=Path(raw_config['data']['credit_rating_path']),
             loan_path=Path(raw_config['data']['loan_path']),
+            input_format=input_format,
         ),
         split=SplitConfig(
             test_quantile=raw_config['split']['test_quantile'],

@@ -32,12 +32,27 @@ def save_training_artifacts(
     model_state: dict[str, Any],
     temporal_scaler: Any,
     static_scaler: Any,
+    target_scaler: Any | None,
     metrics: dict[str, Any],
     metadata: dict[str, Any],
 ) -> None:
+    """Persist model, feature scalers, target scaler, and run metadata.
+
+    Args:
+        run_directory: Directory receiving the artifact bundle.
+        config: Configuration to serialize as a reproducibility snapshot.
+        model_state: Model state dictionary.
+        temporal_scaler: Fitted temporal feature scaler.
+        static_scaler: Fitted static feature scaler.
+        target_scaler: Fitted target scaler used during training.
+        metrics: Training and validation metrics.
+        metadata: Artifact contract and provenance metadata.
+    """
     torch.save(model_state, run_directory / 'model.pth')
     save_pickle(run_directory / 'temporal_scaler.pkl', temporal_scaler)
     save_pickle(run_directory / 'static_scaler.pkl', static_scaler)
+    if target_scaler is not None:
+        save_pickle(run_directory / 'target_scaler.pkl', target_scaler)
     save_json(run_directory / 'metrics.json', metrics)
     save_json(run_directory / 'artifact_metadata.json', metadata)
     (run_directory / 'config.snapshot.yaml').write_text(

@@ -1,0 +1,40 @@
+{
+  "model_version": "baseline",
+  "artifact_version": 1,
+  "training_run_name": "baseline",
+  "created_at": "2026-08-30T18:34:21.316075+00:00",
+  "sequence_length": 6,
+  "temporal_features": [
+    "total_invoice_amount",
+    "payment_delay",
+    "monthly_repayment",
+    "total_inflows",
+    "total_outflows"
+  ],
+  "static_features": [
+    "capex",
+    "cogs",
+    "current_assets",
+    "current_liabilities",
+    "fixed_assets",
+    "long_term_liabilities",
+    "credit_score",
+    "failure_score",
+    "debt_to_revenue_ratio",
+    "missed_payments_number"
+  ],
+  "label_column": "net_cash_flow",
+  "sequence_input_size": 5,
+  "static_input_size": 10,
+  "random_state": 32,
+  "input_format": "processed",
+  "target_scaling": "none",
+  "artifact_files": {
+    "model": "model.pth",
+    "temporal_scaler": "temporal_scaler.pkl",
+    "static_scaler": "static_scaler.pkl",
+    "metrics": "metrics.json",
+    "metadata": "artifact_metadata.json",
+    "config_snapshot": "config.snapshot.yaml"
+  }
+}
