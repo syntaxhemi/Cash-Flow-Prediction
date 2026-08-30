@@ -1,5 +1,11 @@
 import type { Receivable } from './types';
 
+export const horizonOptions = [
+	{ label: '30 days', value: '30' },
+	{ label: '60 days', value: '60' },
+	{ label: '90 days', value: '90' },
+] as const;
+
 export const receivablesMockData: Receivable[] = [
 	{
 		id: 'apex-retail',
