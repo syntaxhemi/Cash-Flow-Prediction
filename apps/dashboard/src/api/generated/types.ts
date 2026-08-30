@@ -145,13 +145,45 @@ export interface paths {
 			path?: never;
 			cookie?: never;
 		};
-		get?: never;
+		/**
+		 * List Forecasts
+		 * @description List forecast history and the recorded periods used by each run.
+		 *
+		 *     Args:
+		 *         enterprise_id: Owning enterprise identifier.
+		 *         filters: Run filters and pagination parameters.
+		 *         service: Baseline forecast application service.
+		 *
+		 *     Returns:
+		 *         Paginated forecast history.
+		 */
+		get: operations['list_forecasts_enterprises__enterprise_id__forecasts_get'];
 		put?: never;
 		/**
 		 * Create Baseline Forecast
 		 * @description Run and persist a baseline forecast for an enterprise.
 		 */
 		post: operations['create_baseline_forecast_enterprises__enterprise_id__forecasts_post'];
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	'/enterprises/{enterprise_id}/forecasts/{forecast_run_id}': {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		/**
+		 * Get Forecast
+		 * @description Return one forecast with its model inputs and derived observations.
+		 */
+		get: operations['get_forecast_enterprises__enterprise_id__forecasts__forecast_run_id__get'];
+		put?: never;
+		post?: never;
 		delete?: never;
 		options?: never;
 		head?: never;
@@ -587,6 +619,27 @@ export interface components {
 		 */
 		EntryMode: 'source' | 'manual' | 'adjusted';
 		/**
+		 * ForecastListResponse
+		 * @description Paginated forecast-run response.
+		 */
+		ForecastListResponse: {
+			/** Items */
+			items: components['schemas']['ForecastRunSchema'][];
+			pagination: components['schemas']['OffsetPaginationSchema'];
+		};
+		/**
+		 * ForecastObservationDriverSchema
+		 * @description One observed input driver used by the forecast model.
+		 */
+		ForecastObservationDriverSchema: {
+			/** Label */
+			label: string;
+			/** Value */
+			value: string;
+			/** Detail */
+			detail: string;
+		};
+		/**
 		 * ForecastRequestSchema
 		 * @description Request a baseline forecast for one target month.
 		 */
@@ -628,6 +681,32 @@ export interface components {
 			 * Format: uuid
 			 */
 			forecast_run_id: string;
+			/**
+			 * Period Start
+			 * Format: date
+			 */
+			period_start: string;
+			/**
+			 * Period End
+			 * Format: date
+			 */
+			period_end: string;
+			/** Total Invoice Amount */
+			total_invoice_amount: string;
+			/** Total Inflows */
+			total_inflows: string;
+			/** Total Outflows */
+			total_outflows: string;
+			/** Monthly Repayment */
+			monthly_repayment: string;
+			/** Total Payment Delay Days */
+			total_payment_delay_days: string;
+			/** Invoice Count */
+			invoice_count: number;
+			/** Payment Count */
+			payment_count: number;
+			/** Net Cashflow */
+			net_cashflow: string;
 		};
 		/**
 		 * ForecastRunSchema
@@ -687,6 +766,22 @@ export interface components {
 			created_at: string;
 			/** Periods */
 			periods?: components['schemas']['ForecastRunPeriodSchema'][];
+			static_snapshot?:
+				components['schemas']['StaticFinancialSnapshotSchema'] | null;
+			/**
+			 * Expected Inflows
+			 * @default 0
+			 */
+			expected_inflows: string;
+			/**
+			 * Expected Outflows
+			 * @default 0
+			 */
+			expected_outflows: string;
+			/** Observation Drivers */
+			observation_drivers?: components['schemas']['ForecastObservationDriverSchema'][];
+			/** Observations */
+			observations?: string[];
 		};
 		/**
 		 * ForecastRunType
@@ -1636,6 +1731,42 @@ export interface operations {
 			};
 		};
 	};
+	list_forecasts_enterprises__enterprise_id__forecasts_get: {
+		parameters: {
+			query?: {
+				run_type?: components['schemas']['ForecastRunType'] | null;
+				status?: components['schemas']['ForecastStatus'] | null;
+				limit?: number;
+				offset?: number;
+			};
+			header?: never;
+			path: {
+				enterprise_id: string;
+			};
+			cookie?: never;
+		};
+		requestBody?: never;
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['ForecastListResponse'];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['HTTPValidationError'];
+				};
+			};
+		};
+	};
 	create_baseline_forecast_enterprises__enterprise_id__forecasts_post: {
 		parameters: {
 			query?: never;
@@ -1653,6 +1784,38 @@ export interface operations {
 		responses: {
 			/** @description Successful Response */
 			201: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['ForecastRunSchema'];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['HTTPValidationError'];
+				};
+			};
+		};
+	};
+	get_forecast_enterprises__enterprise_id__forecasts__forecast_run_id__get: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path: {
+				enterprise_id: string;
+				forecast_run_id: string;
+			};
+			cookie?: never;
+		};
+		requestBody?: never;
+		responses: {
+			/** @description Successful Response */
+			200: {
 				headers: {
 					[name: string]: unknown;
 				};

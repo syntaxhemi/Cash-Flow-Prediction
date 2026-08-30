@@ -1,6 +1,8 @@
 """Forecasting DTOs."""
 
 from schemas.forecasting.models import (
+    ForecastFilterParams,
+    ForecastObservationDriverSchema,
     ForecastRequestSchema,
     ForecastRunCreateSchema,
     ForecastRunPeriodCreateSchema,
@@ -9,6 +11,8 @@ from schemas.forecasting.models import (
 )
 
 __all__ = [
+    'ForecastFilterParams',
+    'ForecastObservationDriverSchema',
     'ForecastRequestSchema',
     'ForecastRunCreateSchema',
     'ForecastRunPeriodCreateSchema',

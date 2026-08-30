@@ -5,6 +5,8 @@ import type {
 	EnterpriseListResponse,
 	EnterpriseUpdate,
 	ForecastRequest,
+	ForecastListParams,
+	ForecastListResponse,
 	ForecastRun,
 	HealthDeltaRequest,
 	IngestionRun,
@@ -46,6 +48,12 @@ function errorMessage(detail: unknown, status: number): string {
 	}
 	if (detail && typeof detail === 'object' && 'detail' in detail) {
 		return errorMessage(detail.detail, status);
+	}
+	if (detail && typeof detail === 'object' && 'error' in detail) {
+		return errorMessage(detail.error, status);
+	}
+	if (detail && typeof detail === 'object' && 'message' in detail) {
+		return String(detail.message);
 	}
 	return `Request failed (${status})`;
 }
@@ -208,6 +216,14 @@ export const api = {
 			method: 'POST',
 			body: JSON.stringify(body),
 		}),
+	listForecasts: (enterpriseId: string, params: ForecastListParams = {}) =>
+		request<ForecastListResponse>(
+			`/enterprises/${enterpriseId}/forecasts${query(params)}`,
+		),
+	getForecast: (enterpriseId: string, forecastRunId: string) =>
+		request<ForecastRun>(
+			`/enterprises/${enterpriseId}/forecasts/${forecastRunId}`,
+		),
 	createHealthDeltaSimulation: (
 		enterpriseId: string,
 		forecastRunId: string,

@@ -1,4 +1,5 @@
 import type { ForecastChartData, ForecastPoint } from './types';
+import { formatCurrency } from '@/utils/formatCurrency';
 
 type Plot = { left: number; right: number; top: number; bottom: number };
 
@@ -10,15 +11,25 @@ function xFor(date: string, dates: string[], plot: Plot) {
 	return plot.left + (position / range) * (plot.right - plot.left);
 }
 
-function yFor(value: number, plot: Plot) {
-	return plot.top + ((400000 - value) / 800000) * (plot.bottom - plot.top);
+function yFor(value: number, plot: Plot, minimum: number, maximum: number) {
+	return (
+		plot.top +
+		((maximum - value) / Math.max(maximum - minimum, 1)) *
+			(plot.bottom - plot.top)
+	);
 }
 
-function pathFor(points: ForecastPoint[], dates: string[], plot: Plot) {
+function pathFor(
+	points: ForecastPoint[],
+	dates: string[],
+	plot: Plot,
+	minimum: number,
+	maximum: number,
+) {
 	return points
 		.map(
 			(point, index) =>
-				`${index ? 'L' : 'M'} ${xFor(point.date, dates, plot)} ${yFor(point.value, plot)}`,
+				`${index ? 'L' : 'M'} ${xFor(point.date, dates, plot)} ${yFor(point.value, plot, minimum, maximum)}`,
 		)
 		.join(' ');
 }
@@ -28,13 +39,15 @@ function bandFor(
 	lower: ForecastPoint[],
 	dates: string[],
 	plot: Plot,
+	minimum: number,
+	maximum: number,
 ) {
-	return `${pathFor(upper, dates, plot)} ${lower
+	return `${pathFor(upper, dates, plot, minimum, maximum)} ${lower
 		.slice()
 		.reverse()
 		.map(
 			(point) =>
-				`L ${xFor(point.date, dates, plot)} ${yFor(point.value, plot)}`,
+				`L ${xFor(point.date, dates, plot)} ${yFor(point.value, plot, minimum, maximum)}`,
 		)
 		.join(' ')} Z`;
 }
@@ -51,8 +64,20 @@ function ChartSvg({
 	const plot = mobile
 		? { left: 52, right: 346, top: 38, bottom: 238 }
 		: { left: 72, right: 972, top: 42, bottom: 292 };
-	const dates = data.series[0]?.points.map((point) => point.date) ?? [];
-	const todayX = xFor(data.today, dates, plot);
+	const dates = [
+		...new Set(
+			data.series.flatMap((series) => series.points).map((point) => point.date),
+		),
+	].sort();
+	const targetStart = data.targetPeriod?.start ?? data.today;
+	const targetEnd = data.targetPeriod?.end ?? data.today;
+	const forecastValue =
+		data.forecastValue ?? data.series[1]?.points.at(-1)?.value ?? 0;
+	const axisValues = data.yAxisLabels.map((label) => label.value);
+	const minimum = Math.min(...axisValues);
+	const maximum = Math.max(...axisValues);
+	const todayX = xFor(targetStart, dates, plot);
+	const targetEndX = xFor(targetEnd, dates, plot);
 	return (
 		<svg
 			viewBox={`0 0 ${width} ${height}`}
@@ -60,8 +85,16 @@ function ChartSvg({
 			role="img"
 			aria-label="Detailed baseline cash flow forecast"
 		>
+			<rect
+				x={todayX}
+				y={plot.top}
+				width={Math.max(targetEndX - todayX, 0)}
+				height={plot.bottom - plot.top}
+				fill="var(--color-primary-soft)"
+				opacity=".35"
+			/>
 			{data.yAxisLabels.map((label) => {
-				const y = yFor(label.value, plot);
+				const y = yFor(label.value, plot, minimum, maximum);
 				return (
 					<line
 						key={label.value}
@@ -69,15 +102,18 @@ function ChartSvg({
 						x2={plot.right}
 						y1={y}
 						y2={y}
-						stroke={
-							label.value === data.buffer
-								? 'var(--color-ink)'
-								: 'var(--color-border)'
-						}
-						strokeDasharray={label.value === data.buffer ? '5 6' : undefined}
+						stroke="var(--color-border)"
 					/>
 				);
 			})}
+			<line
+				x1={plot.left}
+				x2={plot.right}
+				y1={yFor(data.buffer, plot, minimum, maximum)}
+				y2={yFor(data.buffer, plot, minimum, maximum)}
+				stroke="var(--color-ink)"
+				strokeDasharray="5 6"
+			/>
 			<line
 				x1={todayX}
 				x2={todayX}
@@ -86,15 +122,24 @@ function ChartSvg({
 				stroke="var(--color-text-muted)"
 				strokeDasharray="4 5"
 			/>
-			<path
-				d={bandFor(data.uncertainty.upper, data.uncertainty.lower, dates, plot)}
-				fill={data.uncertainty.color}
-				opacity=".7"
-			/>
+			{data.uncertainty ? (
+				<path
+					d={bandFor(
+						data.uncertainty.upper,
+						data.uncertainty.lower,
+						dates,
+						plot,
+						minimum,
+						maximum,
+					)}
+					fill={data.uncertainty.color}
+					opacity=".7"
+				/>
+			) : null}
 			{data.series.map((series) => (
 				<path
 					key={series.id}
-					d={pathFor(series.points, dates, plot)}
+					d={pathFor(series.points, dates, plot, minimum, maximum)}
 					fill="none"
 					stroke={series.color}
 					strokeLinecap="round"
@@ -103,15 +148,20 @@ function ChartSvg({
 				/>
 			))}
 			<circle
-				cx={todayX}
-				cy={yFor(
-					data.series[1]?.points.find((point) => point.date === data.today)
-						?.value ?? 0,
-					plot,
-				)}
+				cx={targetEndX}
+				cy={yFor(forecastValue, plot, minimum, maximum)}
 				r={mobile ? 5 : 6}
 				fill="var(--color-primary)"
 			/>
+			<text
+				x={targetEndX - 8}
+				y={yFor(forecastValue, plot, minimum, maximum) - 10}
+				textAnchor="end"
+				fill="var(--color-primary)"
+				fontSize={mobile ? 10 : 12}
+			>
+				{formatCurrency(forecastValue)}
+			</text>
 			<text
 				x={plot.left}
 				y={plot.top - 24}
@@ -124,7 +174,7 @@ function ChartSvg({
 				<text
 					key={`y-${label.value}`}
 					x={plot.left - 10}
-					y={yFor(label.value, plot) + 4}
+					y={yFor(label.value, plot, minimum, maximum) + 4}
 					textAnchor="end"
 					fill="var(--color-text-muted)"
 					fontSize={mobile ? 11 : 12}
@@ -139,7 +189,7 @@ function ChartSvg({
 				fill="var(--color-ink)"
 				fontSize="13"
 			>
-				Today
+				Forecast starts
 			</text>
 			<text
 				x={plot.right}
@@ -148,16 +198,7 @@ function ChartSvg({
 				fill="var(--color-primary)"
 				fontSize={mobile ? 11 : 13}
 			>
-				Above buffer through June
-			</text>
-			<text
-				x={plot.right}
-				y={yFor(data.buffer, plot) - 8}
-				textAnchor="end"
-				fill="var(--color-ink)"
-				fontSize={mobile ? 11 : 13}
-			>
-				Buffer
+				{data.annotations.aboveBuffer.join(' ')}
 			</text>
 			{data.xAxisLabels
 				.filter(
@@ -203,13 +244,15 @@ function DetailedForecastChart({ data }: { data: ForecastChartData }) {
 						{series.label}
 					</span>
 				))}
-				<span className="inline-flex items-center gap-2">
-					<span
-						className="h-3 w-6 rounded-sm"
-						style={{ backgroundColor: data.uncertainty.color }}
-					/>
-					Uncertainty
-				</span>
+				{data.uncertainty ? (
+					<span className="inline-flex items-center gap-2">
+						<span
+							className="h-3 w-6 rounded-sm"
+							style={{ backgroundColor: data.uncertainty.color }}
+						/>
+						Uncertainty
+					</span>
+				) : null}
 				<span className="inline-flex items-center gap-2">
 					<span className="h-0.5 w-6 border-t border-dashed border-ink" />
 					Buffer

@@ -1,7 +1,6 @@
 import { useMemo, useState } from 'react';
 import Button from '@/components/ui/Button';
 import DatePicker from '@/components/ui/DatePicker';
-import Dropdown, { type DropdownOption } from '@/components/ui/Dropdown';
 import SegmentedControl from '@/components/ui/SegmentedControl';
 
 const horizonOptions = [30, 60, 90] as const;
@@ -9,21 +8,24 @@ const mobileHorizonOptions = horizonOptions.map((option) => ({
 	label: `${option}d`,
 	value: option,
 }));
-const scenarioOptions: DropdownOption[] = [
-	{ label: 'Baseline', value: 'baseline' },
-	{ label: 'Conservative', value: 'conservative' },
-	{ label: 'Optimistic', value: 'optimistic' },
-];
-const customScenarioOptions: DropdownOption[] = [
-	{ label: 'None', value: 'none' },
-	{ label: 'Delayed collections', value: 'delayed-collections' },
-	{ label: 'Earlier collections', value: 'earlier-collections' },
-];
+
+export type ForecastRange = { startDate: Date; endDate: Date };
+
+type ForecastFilterBarProps = {
+	pending?: boolean;
+	disabled?: boolean;
+	onRun?: (range: ForecastRange) => void;
+};
 
 function addDays(date: Date, days: number) {
 	const result = new Date(date);
 	result.setDate(result.getDate() + days);
 	return result;
+}
+
+function startOfCurrentMonth() {
+	const now = new Date();
+	return new Date(now.getFullYear(), now.getMonth(), 1);
 }
 
 function formatRange(startDate: Date, horizon: number) {
@@ -34,24 +36,28 @@ function formatRange(startDate: Date, horizon: number) {
 }
 
 /**
- * Provides the Forecast page's horizon, date, and scenario controls.
+ * Provides the Forecast page's horizon and date controls.
  *
  * The date field controls the start date, while the selected horizon derives the
- * displayed end date so the page can later pass a normalized range to the API.
+ * end date passed to the forecast request.
  */
-function ForecastFilterBar() {
-	const [startDate, setStartDate] = useState(new Date(2025, 4, 13));
+function ForecastFilterBar({
+	pending = false,
+	disabled = false,
+	onRun,
+}: ForecastFilterBarProps) {
+	const [startDate, setStartDate] = useState(startOfCurrentMonth);
 	const [horizon, setHorizon] = useState<(typeof horizonOptions)[number]>(30);
-	const [scenario, setScenario] = useState('baseline');
-	const [customScenario, setCustomScenario] = useState('none');
 	const rangeLabel = useMemo(
 		() => formatRange(startDate, horizon),
 		[startDate, horizon],
 	);
+	const run = () =>
+		onRun?.({ startDate, endDate: addDays(startDate, horizon) });
 
 	return (
 		<section className="mt-10" aria-label="Forecast controls">
-			<div className="hidden items-center justify-between gap-6 lg:flex">
+			<div className="hidden items-center justify-between gap-6 md:flex">
 				<div className="flex items-center gap-3">
 					<span className="text-sm font-medium text-ink">Forecast horizon</span>
 					<DatePicker
@@ -72,30 +78,20 @@ function ForecastFilterBar() {
 						size="sm"
 					/>
 				</div>
-				<div className="flex items-center gap-3">
-					<span className="text-sm font-medium text-ink">Scenario</span>
-					<Dropdown
-						label="Scenario"
-						options={scenarioOptions}
-						value={scenario}
-						onChange={setScenario}
-						className="w-40"
-						size="sm"
-					/>
-					<span className="text-sm font-medium text-ink">Custom Scenario</span>
-					<Dropdown
-						label="Custom Scenario"
-						options={customScenarioOptions}
-						value={customScenario}
-						onChange={setCustomScenario}
-						className="w-40"
-						size="sm"
-					/>
-					<Button size="sm">Run forecast</Button>
-				</div>
+				<Button size="sm" onClick={run} disabled={disabled || pending}>
+					{pending ? 'Running…' : 'Run forecast'}
+				</Button>
 			</div>
-			<div className="flex flex-col gap-4 lg:hidden">
+			<div className="flex flex-col gap-4 md:hidden">
 				<div className="grid grid-cols-2 gap-3">
+					<DatePicker
+						value={startDate}
+						onChange={setStartDate}
+						label="forecast start date"
+						displayValue={rangeLabel}
+						className="w-full"
+						popoverClassName="max-lg:left-0 max-lg:right-auto"
+					/>
 					<SegmentedControl
 						options={mobileHorizonOptions}
 						value={horizon}
@@ -103,33 +99,14 @@ function ForecastFilterBar() {
 						size="xs"
 						className="w-full"
 					/>
-					<DatePicker
-						value={startDate}
-						onChange={setStartDate}
-						label="forecast start date"
-						displayValue={rangeLabel}
-						className="w-full"
-						popoverClassName="max-lg:left-auto max-lg:right-0"
-					/>
 				</div>
-				<div className="grid grid-cols-2 gap-3">
-					<Dropdown
-						label="Scenario"
-						options={scenarioOptions}
-						value={scenario}
-						onChange={setScenario}
-						className="w-full"
-					/>
-					<Dropdown
-						label="Compare scenario"
-						options={customScenarioOptions}
-						value={customScenario}
-						onChange={setCustomScenario}
-						className="w-full"
-					/>
-				</div>
-				<Button size="lg" className="w-full">
-					Run forecast
+				<Button
+					size="lg"
+					className="w-full"
+					onClick={run}
+					disabled={disabled || pending}
+				>
+					{pending ? 'Running…' : 'Run forecast'}
 				</Button>
 			</div>
 		</section>

@@ -5,7 +5,11 @@ from pathlib import Path
 from uuid import UUID
 
 from database import IUnitOfWork
-from database.models import MonthlyCashflowAggregateModel
+from database.models import (
+    ForecastRunModel,
+    ForecastRunPeriodModel,
+    MonthlyCashflowAggregateModel,
+)
 from domain.exceptions import InvalidForecastRunError
 from domain.forecasting import ForecastStatus
 from ml import (
@@ -13,13 +17,19 @@ from ml import (
     ForecastInferenceService,
     ModelArtifactLoader,
 )
+from schemas.financial import StaticFinancialSnapshotSchema
 from schemas.forecasting import (
+    ForecastFilterParams,
+    ForecastObservationDriverSchema,
     ForecastRequestSchema,
     ForecastRunCreateSchema,
     ForecastRunPeriodCreateSchema,
     ForecastRunPeriodSchema,
     ForecastRunSchema,
 )
+
+from api.core.pagination import OffsetPaginationSchema
+from api.schemas.forecasts import ForecastListResponse
 
 
 class BaselineForecastService:
@@ -151,11 +161,222 @@ class BaselineForecastService:
 
         await self._uow.commit()
 
-        response = ForecastRunSchema.model_validate(run)
+        response = self._run_schema(run)
+        response.static_snapshot = StaticFinancialSnapshotSchema.model_validate(
+            snapshot
+        )
         response.periods = [
-            ForecastRunPeriodSchema.model_validate(period) for period in period_models
+            self._period_schema(period, aggregates_by_start) for period in period_models
+        ]
+        return await self._add_derived_data(response)
+
+    async def get(
+        self, enterprise_id: UUID, forecast_run_id: UUID
+    ) -> ForecastRunSchema:
+        """Retrieve one forecast with its persisted inputs and observations.
+
+        Args:
+            enterprise_id: Owning enterprise identifier.
+            forecast_run_id: Forecast-run identifier.
+
+        Returns:
+            Forecast metadata, input periods, static snapshot, expected cash
+            movements, observation drivers, and generic observations.
+
+        Raises:
+            InvalidForecastRunError: If the forecast does not belong to the
+                enterprise or its input data is unavailable.
+        """
+        await self._uow.enterprises.get_active_by_id_or_raise(enterprise_id)
+        run = await self._uow.forecasts.get_by_id_with_inputs(
+            enterprise_id, forecast_run_id
+        )
+        if run is None:
+            raise InvalidForecastRunError(
+                f'Forecast run "{forecast_run_id}" does not exist.'
+            )
+        return await self._enrich_response(run)
+
+    async def list_forecasts(
+        self, enterprise_id: UUID, filters: ForecastFilterParams
+    ) -> ForecastListResponse:
+        """List persisted forecast runs and their recorded input periods.
+
+        Args:
+            enterprise_id: Owning enterprise identifier.
+            filters: Run filters and pagination parameters.
+
+        Returns:
+            Paginated forecast history for the dashboard.
+        """
+        await self._uow.enterprises.get_active_by_id_or_raise(enterprise_id)
+        result = await self._uow.forecasts.list_for_enterprise(enterprise_id, filters)
+        items = [await self._enrich_response(run) for run in result.items]
+        return ForecastListResponse(
+            items=items,
+            pagination=OffsetPaginationSchema(
+                limit=filters.limit,
+                offset=filters.offset,
+                total_count=result.total_count,
+                has_next=filters.offset + len(items) < result.total_count,
+                has_prev=filters.offset > 0,
+            ),
+        )
+
+    @classmethod
+    def _to_schema(cls, run: ForecastRunModel) -> ForecastRunSchema:
+        """Convert a forecast model with loaded inputs to its response schema."""
+        response = cls._run_schema(run)
+        response.periods = [
+            cls._period_schema(period)
+            for period in sorted(run.periods, key=lambda item: item.sequence_index)
         ]
         return response
+
+    async def _enrich_response(self, run: ForecastRunModel) -> ForecastRunSchema:
+        """Add joined financial context and derived dashboard observations."""
+        response = self._to_schema(run)
+        if run.static_snapshot is not None:
+            response.static_snapshot = StaticFinancialSnapshotSchema.model_validate(
+                run.static_snapshot
+            )
+
+        return await self._add_derived_data(response)
+
+    async def _add_derived_data(self, response: ForecastRunSchema) -> ForecastRunSchema:
+        """Add expected cash movements and cautious forecast observations."""
+
+        expected = await self._uow.financial_transactions.get_expected_cashflow(
+            response.enterprise_id,
+            response.target_period_start,
+            response.target_period_end,
+        )
+        response.expected_inflows = expected.inflows
+        response.expected_outflows = expected.outflows
+        response.observation_drivers = self._observation_drivers(response)
+        response.observations = self._observations(response)
+        return response
+
+    @staticmethod
+    def _observation_drivers(
+        run: ForecastRunSchema,
+    ) -> list[ForecastObservationDriverSchema]:
+        """Build the three most intuitive observed model-input drivers."""
+        periods = run.periods
+        return [
+            ForecastObservationDriverSchema(
+                label='Receivables',
+                value=sum(
+                    (period.total_invoice_amount for period in periods), Decimal()
+                ),
+                detail='Invoice value recorded across the six-month model window.',
+            ),
+            ForecastObservationDriverSchema(
+                label='Collections',
+                value=sum((period.total_inflows for period in periods), Decimal()),
+                detail='Recorded inflows across the six-month model window.',
+            ),
+            ForecastObservationDriverSchema(
+                label='Operating costs',
+                value=sum((period.total_outflows for period in periods), Decimal()),
+                detail='Recorded outflows across the six-month model window.',
+            ),
+        ]
+
+    @staticmethod
+    def _observations(run: ForecastRunSchema) -> list[str]:
+        """Generate cautious, trend-based statements from persisted values."""
+        observations = [
+            (
+                'The baseline remains above the solvency buffer for the selected '
+                'period.'
+                if run.buffer_gap >= 0
+                else 'The baseline falls below the solvency buffer for the selected '
+                'period.'
+            )
+        ]
+        periods = run.periods
+        if len(periods) >= 2:
+            first, latest = periods[0], periods[-1]
+            if latest.total_inflows > first.total_inflows:
+                observations.append(
+                    'Recorded inflows are trending upward across the model window.'
+                )
+            elif latest.total_inflows < first.total_inflows:
+                observations.append(
+                    'Recorded inflows are trending downward across the model window.'
+                )
+            if latest.total_outflows > first.total_outflows:
+                observations.append(
+                    'Recorded outflows are trending upward across the model window.'
+                )
+            elif latest.total_outflows < first.total_outflows:
+                observations.append(
+                    'Recorded outflows are easing across the model window.'
+                )
+        return observations
+
+    @staticmethod
+    def _run_schema(run: ForecastRunModel) -> ForecastRunSchema:
+        """Convert forecast-run scalar fields without traversing input relations."""
+        return ForecastRunSchema(
+            id=run.id,
+            enterprise_id=run.enterprise_id,
+            run_type=run.run_type,
+            target_period_start=run.target_period_start,
+            target_period_end=run.target_period_end,
+            sequence_window_months=run.sequence_window_months,
+            static_snapshot_id=run.static_snapshot_id,
+            model_version=run.model_version,
+            artifact_version=run.artifact_version,
+            predicted_net_cashflow=run.predicted_net_cashflow,
+            solvency_buffer=run.solvency_buffer,
+            buffer_gap=run.buffer_gap,
+            status=run.status,
+            requested_at=run.requested_at,
+            completed_at=run.completed_at,
+            created_at=run.created_at,
+            periods=[],
+        )
+
+    @staticmethod
+    def _period_schema(
+        period: ForecastRunPeriodModel,
+        aggregates_by_start: dict[date, MonthlyCashflowAggregateModel] | None = None,
+    ) -> ForecastRunPeriodSchema:
+        """Convert one persisted forecast period and aggregate to a response DTO."""
+        aggregate = None
+        if aggregates_by_start is not None:
+            aggregate = next(
+                (
+                    item
+                    for item in aggregates_by_start.values()
+                    if item.id == period.monthly_cashflow_aggregate_id
+                ),
+                None,
+            )
+        else:
+            aggregate = period.monthly_cashflow_aggregate
+        if aggregate is None:
+            raise InvalidForecastRunError(
+                'Forecast period input data is unavailable for the selected run.'
+            )
+        return ForecastRunPeriodSchema(
+            id=period.id,
+            forecast_run_id=period.forecast_run_id,
+            monthly_cashflow_aggregate_id=aggregate.id,
+            sequence_index=period.sequence_index,
+            period_start=aggregate.period_start,
+            period_end=aggregate.period_end,
+            total_invoice_amount=aggregate.total_invoice_amount,
+            total_inflows=aggregate.total_inflows,
+            total_outflows=aggregate.total_outflows,
+            monthly_repayment=aggregate.monthly_repayment,
+            total_payment_delay_days=aggregate.total_payment_delay_days,
+            invoice_count=aggregate.invoice_count,
+            payment_count=aggregate.payment_count,
+            net_cashflow=aggregate.total_inflows - aggregate.total_outflows,
+        )
 
     @staticmethod
     def _build_period_payloads(
@@ -189,15 +410,10 @@ class BaselineForecastService:
 
     @staticmethod
     def _validate_target_period(period_start: date, period_end: date) -> None:
-        """Validate that the target range is one complete calendar month."""
-        expected_end = period_start.replace(
-            day=monthrange(period_start.year, period_start.month)[1]
-        )
-
-        if period_start.day != 1 or period_end != expected_end:
+        """Validate that the target range is ordered."""
+        if period_end < period_start:
             raise InvalidForecastRunError(
-                'Forecast target must start on the first day and end on the last '
-                'day of one calendar month.'
+                'Forecast target end cannot precede the target start.'
             )
 
 

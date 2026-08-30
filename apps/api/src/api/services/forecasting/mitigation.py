@@ -82,7 +82,9 @@ class LiquidityMitigationService:
         """
         await self._uow.enterprises.get_active_by_id_or_raise(enterprise_id)
 
-        forecast = await self._uow.forecasts.get_by_id_with_inputs(forecast_run_id)
+        forecast = await self._uow.forecasts.get_by_id_with_inputs(
+            enterprise_id, forecast_run_id
+        )
         if forecast is None or forecast.enterprise_id != enterprise_id:
             raise InvalidForecastRunError(
                 f'Forecast run "{forecast_run_id}" does not belong to the enterprise.'

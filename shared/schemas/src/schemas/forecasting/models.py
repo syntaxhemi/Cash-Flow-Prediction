@@ -6,6 +6,7 @@ from domain.forecasting import ForecastRunType, ForecastStatus
 from pydantic import Field, model_validator
 
 from schemas.base import SchemaModel
+from schemas.financial import StaticFinancialSnapshotSchema
 
 
 class ForecastRequestSchema(SchemaModel):
@@ -18,13 +19,9 @@ class ForecastRequestSchema(SchemaModel):
 
     @model_validator(mode='after')
     def validate_target_period(self) -> 'ForecastRequestSchema':
-        """Ensure the target range describes exactly one calendar month."""
-        if self.target_period_start.day != 1:
-            raise ValueError('target_period_start must be the first day of a month.')
+        """Ensure the target range is ordered."""
         if self.target_period_end < self.target_period_start:
             raise ValueError('target_period_end cannot precede target_period_start.')
-        if self.target_period_end.month != self.target_period_start.month:
-            raise ValueError('Forecast target must contain one calendar month.')
         return self
 
 
@@ -59,6 +56,33 @@ class ForecastRunPeriodSchema(ForecastRunPeriodCreateSchema):
 
     id: UUID
     forecast_run_id: UUID
+    period_start: date
+    period_end: date
+    total_invoice_amount: Decimal
+    total_inflows: Decimal
+    total_outflows: Decimal
+    monthly_repayment: Decimal
+    total_payment_delay_days: Decimal
+    invoice_count: int = Field(ge=0)
+    payment_count: int = Field(ge=0)
+    net_cashflow: Decimal
+
+
+class ForecastObservationDriverSchema(SchemaModel):
+    """One observed input driver used by the forecast model."""
+
+    label: str
+    value: Decimal
+    detail: str
+
+
+class ForecastFilterParams(SchemaModel):
+    """Filters and pagination parameters for forecast history."""
+
+    run_type: ForecastRunType | None = None
+    status: ForecastStatus | None = None
+    limit: int = Field(default=50, ge=1, le=200)
+    offset: int = Field(default=0, ge=0)
 
 
 class ForecastRunSchema(SchemaModel):
@@ -81,3 +105,10 @@ class ForecastRunSchema(SchemaModel):
     completed_at: datetime | None
     created_at: datetime
     periods: list[ForecastRunPeriodSchema] = Field(default_factory=list)
+    static_snapshot: StaticFinancialSnapshotSchema | None = None
+    expected_inflows: Decimal = Decimal(0)
+    expected_outflows: Decimal = Decimal(0)
+    observation_drivers: list[ForecastObservationDriverSchema] = Field(
+        default_factory=list
+    )
+    observations: list[str] = Field(default_factory=list)

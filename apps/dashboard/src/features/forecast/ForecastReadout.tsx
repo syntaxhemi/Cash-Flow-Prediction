@@ -1,4 +1,9 @@
-function ForecastReadout() {
+type ForecastReadoutProps = {
+	heading: string;
+	description: string;
+};
+
+function ForecastReadout({ heading, description }: ForecastReadoutProps) {
 	return (
 		<aside
 			className="mt-12 lg:mt-0 lg:self-stretch lg:border-l lg:border-border lg:pl-12"
@@ -11,10 +16,10 @@ function ForecastReadout() {
 				id="forecast-readout-title"
 				className="mt-5 max-w-sm font-serif text-3xl leading-tight text-ink"
 			>
-				The baseline stays clear of the buffer.
+				{heading}
 			</h2>
 			<p className="mt-5 max-w-sm text-base leading-relaxed text-text-muted">
-				The projected path improves gradually as receivables convert.
+				{description}
 			</p>
 			<a
 				href="/receivables"

@@ -12,11 +12,13 @@ export type ForecastAxisLabel = { date: string; label: string };
 
 export type ForecastChartData = {
 	series: ForecastSeries[];
-	uncertainty: {
+	uncertainty?: {
 		upper: ForecastPoint[];
 		lower: ForecastPoint[];
 		color: string;
 	};
+	targetPeriod?: { start: string; end: string };
+	forecastValue?: number;
 	today: string;
 	buffer: number;
 	yAxisLabels: Array<{ label: string; value: number }>;

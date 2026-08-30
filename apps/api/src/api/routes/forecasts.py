@@ -2,7 +2,11 @@ from typing import Annotated
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, status
-from schemas.forecasting import ForecastRequestSchema, ForecastRunSchema
+from schemas.forecasting import (
+    ForecastFilterParams,
+    ForecastRequestSchema,
+    ForecastRunSchema,
+)
 from schemas.simulation import (
     HealthDeltaRequestSchema,
     LiquidityMitigationRequestSchema,
@@ -16,6 +20,7 @@ from api.dependencies.services import (
     get_liquidity_mitigation_service,
     get_trapped_liquidity_simulation_service,
 )
+from api.schemas.forecasts import ForecastListResponse
 from api.services.forecasting import (
     BaselineForecastService,
     HealthDeltaSimulationService,
@@ -34,6 +39,35 @@ async def create_baseline_forecast(
 ) -> ForecastRunSchema:
     """Run and persist a baseline forecast for an enterprise."""
     return await service.create(enterprise_id, payload)
+
+
+@router.get('', response_model=ForecastListResponse)
+async def list_forecasts(
+    enterprise_id: UUID,
+    filters: Annotated[ForecastFilterParams, Depends()],
+    service: Annotated[BaselineForecastService, Depends(get_baseline_forecast_service)],
+) -> ForecastListResponse:
+    """List forecast history and the recorded periods used by each run.
+
+    Args:
+        enterprise_id: Owning enterprise identifier.
+        filters: Run filters and pagination parameters.
+        service: Baseline forecast application service.
+
+    Returns:
+        Paginated forecast history.
+    """
+    return await service.list_forecasts(enterprise_id, filters)
+
+
+@router.get('/{forecast_run_id}', response_model=ForecastRunSchema)
+async def get_forecast(
+    enterprise_id: UUID,
+    forecast_run_id: UUID,
+    service: Annotated[BaselineForecastService, Depends(get_baseline_forecast_service)],
+) -> ForecastRunSchema:
+    """Return one forecast with its model inputs and derived observations."""
+    return await service.get(enterprise_id, forecast_run_id)
 
 
 @router.post(

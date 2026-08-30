@@ -1,16 +1,31 @@
+from dataclasses import dataclass
+from typing import Any
 from uuid import UUID
 
 from domain.exceptions import InvalidForecastRunError
 from schemas.forecasting import (
+    ForecastFilterParams,
     ForecastRunCreateSchema,
     ForecastRunPeriodCreateSchema,
 )
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from database.models import ForecastRunModel, ForecastRunPeriodModel
+from database.models import (
+    ForecastRunModel,
+    ForecastRunPeriodModel,
+    StaticFinancialSnapshotModel,
+)
+
+
+@dataclass(slots=True)
+class ForecastListResult:
+    """Paginated forecast query result."""
+
+    items: list[ForecastRunModel]
+    total_count: int
 
 
 class ForecastRepository:
@@ -102,11 +117,12 @@ class ForecastRepository:
         return result.scalar_one_or_none()
 
     async def get_by_id_with_inputs(
-        self, forecast_run_id: UUID
+        self, enterprise_id: UUID, forecast_run_id: UUID
     ) -> ForecastRunModel | None:
-        """Return a forecast run with its persisted model inputs loaded.
+        """Return an enterprise-owned forecast with its model inputs loaded.
 
         Args:
+            enterprise_id: Owning enterprise identifier.
             forecast_run_id: Forecast-run identifier.
 
         Returns:
@@ -115,7 +131,15 @@ class ForecastRepository:
         """
         result = await self._session.execute(
             select(ForecastRunModel)
-            .where(ForecastRunModel.id == forecast_run_id)
+            .join(
+                StaticFinancialSnapshotModel,
+                ForecastRunModel.static_snapshot_id == StaticFinancialSnapshotModel.id,
+            )
+            .where(
+                ForecastRunModel.id == forecast_run_id,
+                ForecastRunModel.enterprise_id == enterprise_id,
+                StaticFinancialSnapshotModel.enterprise_id == enterprise_id,
+            )
             .options(
                 selectinload(ForecastRunModel.periods).selectinload(
                     ForecastRunPeriodModel.monthly_cashflow_aggregate
@@ -125,18 +149,48 @@ class ForecastRepository:
         )
         return result.scalar_one_or_none()
 
-    async def list_for_enterprise(self, enterprise_id: UUID) -> list[ForecastRunModel]:
+    async def list_for_enterprise(
+        self, enterprise_id: UUID, filters: ForecastFilterParams
+    ) -> ForecastListResult:
         """List forecast runs for an enterprise newest first.
 
         Args:
             enterprise_id: Owning enterprise identifier.
+            filters: Run filters and pagination parameters.
 
         Returns:
-            Forecast runs ordered by creation time descending.
+            Paginated forecast runs with their input periods loaded.
         """
-        result = await self._session.execute(
-            select(ForecastRunModel)
-            .where(ForecastRunModel.enterprise_id == enterprise_id)
-            .order_by(ForecastRunModel.created_at.desc())
+        statement: Any = select(ForecastRunModel).where(
+            ForecastRunModel.enterprise_id == enterprise_id
         )
-        return list(result.scalars().all())
+        count_statement: Any = (
+            select(func.count())
+            .select_from(ForecastRunModel)
+            .where(ForecastRunModel.enterprise_id == enterprise_id)
+        )
+
+        if filters.run_type is not None:
+            condition = ForecastRunModel.run_type == filters.run_type
+            statement = statement.where(condition)
+            count_statement = count_statement.where(condition)
+        if filters.status is not None:
+            condition = ForecastRunModel.status == filters.status
+            statement = statement.where(condition)
+            count_statement = count_statement.where(condition)
+
+        result = await self._session.execute(
+            statement.options(
+                selectinload(ForecastRunModel.periods).selectinload(
+                    ForecastRunPeriodModel.monthly_cashflow_aggregate
+                ),
+                selectinload(ForecastRunModel.static_snapshot),
+            )
+            .order_by(ForecastRunModel.created_at.desc(), ForecastRunModel.id)
+            .limit(filters.limit)
+            .offset(filters.offset)
+        )
+        total_count = (await self._session.execute(count_statement)).scalar_one()
+        return ForecastListResult(
+            items=list(result.scalars().all()), total_count=total_count
+        )

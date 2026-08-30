@@ -41,6 +41,10 @@ export type StaticFinancialSnapshotUpdate =
 
 export type ForecastRequest = components['schemas']['ForecastRequestSchema'];
 export type ForecastRun = components['schemas']['ForecastRunSchema'];
+export type ForecastListResponse = {
+	items: ForecastRun[];
+	pagination: components['schemas']['OffsetPaginationSchema'];
+};
 
 export type HealthDeltaRequest =
 	components['schemas']['HealthDeltaRequestSchema'];
@@ -64,4 +68,7 @@ export type IngestionSourceCredentialListParams = NonNullable<
 >;
 export type SimulationListParams = NonNullable<
 	operations['list_simulation_results_enterprises__enterprise_id__simulations_get']['parameters']['query']
+>;
+export type ForecastListParams = NonNullable<
+	operations['list_forecasts_enterprises__enterprise_id__forecasts_get']['parameters']['query']
 >;

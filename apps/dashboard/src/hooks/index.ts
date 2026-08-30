@@ -4,6 +4,7 @@ export { useIngestionRuns } from './useIngestionRuns';
 export { useIngestionSources } from './useIngestionSources';
 export { useLatestStaticFinancialSnapshot } from './useLatestStaticFinancialSnapshot';
 export { useForecastMutations } from './useForecastMutations';
+export { useForecasts } from './useForecasts';
 export { useIngestionMutations } from './useIngestionMutations';
 export { useMutation } from './useMutation';
 export { useSimulationResults } from './useSimulationResults';

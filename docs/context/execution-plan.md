@@ -139,17 +139,18 @@ integration, and demo validation remain open.
 - [done] Add reusable async resource and mutation state hooks.
 - [done] Add enterprise selection context/provider with persisted active enterprise state.
 - [done] Add enterprise-scoped ingestion, snapshot, forecast, and simulation data hooks.
+- [done] Add paginated forecast history API data with recorded model-input periods.
+- [done] Integrate the Forecast page with baseline forecast history and run APIs.
 - [todo] Integrate dashboard with backend APIs.
-- [todo] Build baseline forecast view.
-- [in_progress] Build health delta view.
+- [done] Build baseline forecast view.
+- [done] Build health delta view.
 - [todo] Build trapped liquidity ranking view.
 - [todo] Build liquidity mitigation planning view.
 
 ## Phase 9: Validation and Demo Packaging
 
 - [done] Add API/worker Compose services with a shared upload-volume mount.
-- [todo] Add dashboard tests where useful.
 - [done] Add the optional ERPNext Compose demo stack.
-- [todo] Add demo seed data.
+- [done] Add demo seed data.
 - [todo] Add operator runbook and presentation notes.
 - [todo] Validate the end-to-end ERPNext-to-dashboard demo flow.

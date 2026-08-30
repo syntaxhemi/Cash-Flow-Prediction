@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from datetime import date
+from decimal import Decimal
 from typing import Any, cast
 from uuid import UUID
 
@@ -7,12 +8,13 @@ from domain.exceptions import (
     FinancialTransactionAlreadyExistsError,
     FinancialTransactionNotFoundError,
 )
+from domain.financial import TransactionDirection, TransactionStatus
 from schemas.financial import (
     FinancialTransactionCreateSchema,
     FinancialTransactionFilterParams,
     FinancialTransactionUpdateSchema,
 )
-from sqlalchemy import func, select
+from sqlalchemy import case, func, select
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.engine import CursorResult
 from sqlalchemy.exc import IntegrityError
@@ -35,6 +37,14 @@ class FinancialTransactionListResult:
 
     items: list[FinancialTransactionModel]
     total_count: int
+
+
+@dataclass(frozen=True, slots=True)
+class ExpectedCashflowResult:
+    """Expected unsettled cash movements for a date range."""
+
+    inflows: Decimal
+    outflows: Decimal
 
 
 class FinancialTransactionRepository:
@@ -185,6 +195,66 @@ class FinancialTransactionRepository:
             )
         )
         return list(result.scalars().all())
+
+    async def get_expected_cashflow(
+        self, enterprise_id: UUID, period_start: date, period_end: date
+    ) -> ExpectedCashflowResult:
+        """Sum unsettled cash movements scheduled within a date range.
+
+        Args:
+            enterprise_id: Owning enterprise identifier.
+            period_start: Inclusive expected movement date.
+            period_end: Inclusive expected movement date.
+
+        Returns:
+            Expected inflow and outflow totals. Transactions without a due date
+            use their transaction date.
+        """
+        expected_date = func.coalesce(
+            FinancialTransactionModel.due_date,
+            FinancialTransactionModel.transaction_date,
+        )
+        statement = select(
+            func.coalesce(
+                func.sum(
+                    case(
+                        (
+                            FinancialTransactionModel.direction
+                            == TransactionDirection.INFLOW,
+                            FinancialTransactionModel.amount,
+                        ),
+                        else_=0,
+                    )
+                ),
+                0,
+            ).label('inflows'),
+            func.coalesce(
+                func.sum(
+                    case(
+                        (
+                            FinancialTransactionModel.direction
+                            == TransactionDirection.OUTFLOW,
+                            FinancialTransactionModel.amount,
+                        ),
+                        else_=0,
+                    )
+                ),
+                0,
+            ).label('outflows'),
+        ).where(
+            FinancialTransactionModel.enterprise_id == enterprise_id,
+            FinancialTransactionModel.status.in_(
+                (TransactionStatus.PENDING, TransactionStatus.OVERDUE)
+            ),
+            expected_date >= period_start,
+            expected_date <= period_end,
+        )
+        result = await self._session.execute(statement)
+        row = result.one()
+        return ExpectedCashflowResult(
+            inflows=row.inflows,
+            outflows=row.outflows,
+        )
 
     async def list_for_ingestion_run(
         self, enterprise_id: UUID, ingestion_run_id: UUID
