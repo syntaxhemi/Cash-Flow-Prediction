@@ -125,3 +125,9 @@ cmd = "uv run alembic -c infra/migrations/alembic.ini current"
 
 [tool.poe.tasks.db-history]
 cmd = "uv run alembic -c infra/migrations/alembic.ini history"
+
+[tool.poe.tasks.seed-api]
+cmd = "uv run python infra/seed/seed_api.py"
+
+[tool.poe.tasks.seed-database]
+cmd = "uv run python infra/seed/seed_database.py"

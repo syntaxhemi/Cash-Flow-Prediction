@@ -1,5 +1,6 @@
 ~legacy/
 .playwright-mcp/
+infra/seed/seed-state.json
 
 # Python
 __pycache__/
