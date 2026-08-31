@@ -4,6 +4,7 @@ from math import isfinite
 from typing import Any
 from uuid import UUID
 
+from domain.scoring import HealthStatus
 from domain.simulation import (
     HealthDeltaProfile,
     LiquidityMitigationProfile,
@@ -74,6 +75,9 @@ class SimulationScenarioCreateSchema(SchemaModel):
     predicted_net_cashflow: Decimal
     delta_from_baseline: Decimal
     meets_buffer: bool
+    health_score: Decimal | None = Field(default=None, ge=0, le=100)
+    health_score_delta: Decimal | None = Field(default=None, ge=-100, le=100)
+    health_status: HealthStatus | None = None
 
 
 class SimulationScenarioUpdateSchema(SchemaModel):

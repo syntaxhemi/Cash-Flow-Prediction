@@ -1,5 +1,8 @@
 export type HealthScenarioKey =
-	'delayed-collections' | 'operating-costs' | 'cash-buffer';
+	| 'credit_score'
+	| 'failure_score'
+	| 'debt_to_revenue_ratio'
+	| 'missed_payments_number';
 
 export type HealthScenario = {
 	label: string;
@@ -8,10 +11,11 @@ export type HealthScenario = {
 
 export type HealthScenarioInput = {
 	label: string;
-	unit: 'days' | 'percent';
+	unit?: string;
 	min: number;
 	max: number;
 	defaultValue: number;
+	step?: number;
 };
 
 export type HealthStat = {
@@ -40,5 +44,6 @@ export type HealthPageData = {
 	stats: HealthStat[];
 	scores: HealthScore[];
 	healthDelta: string;
+	healthDeltaValue: number;
 	impacts: HealthImpact[];
 };

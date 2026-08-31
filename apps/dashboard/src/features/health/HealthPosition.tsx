@@ -4,6 +4,7 @@ import type { HealthScore } from './types';
 type HealthPositionProps = {
 	scores: HealthScore[];
 	healthDelta: string;
+	healthDeltaValue: number;
 	className?: string;
 };
 
@@ -11,8 +12,12 @@ type HealthPositionProps = {
 function HealthPosition({
 	scores,
 	healthDelta,
+	healthDeltaValue,
 	className,
 }: HealthPositionProps) {
+	const direction =
+		healthDeltaValue > 0 ? '↑' : healthDeltaValue < 0 ? '↓' : '→';
+
 	return (
 		<section
 			className={cn('mt-16 sm:mt-20 lg:mt-24', className)}
@@ -63,7 +68,7 @@ function HealthPosition({
 			</div>
 			<p className="mt-6 flex items-center gap-3 text-sm font-medium text-primary sm:text-base xl:ml-[21.25rem]">
 				<span className="text-xl leading-none" aria-hidden="true">
-					↓
+					{direction}
 				</span>
 				{healthDelta}
 			</p>

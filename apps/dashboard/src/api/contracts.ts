@@ -41,6 +41,8 @@ export type StaticFinancialSnapshotUpdate =
 
 export type ForecastRequest = components['schemas']['ForecastRequestSchema'];
 export type ForecastRun = components['schemas']['ForecastRunSchema'];
+export type ForecastObservationDriver =
+	components['schemas']['ForecastObservationDriverSchema'];
 export type ForecastListResponse = {
 	items: ForecastRun[];
 	pagination: components['schemas']['OffsetPaginationSchema'];

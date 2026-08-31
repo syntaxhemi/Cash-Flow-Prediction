@@ -96,6 +96,11 @@ class SimulationScenarioModel(Base):
     )
     delta_from_baseline: Mapped[Decimal] = mapped_column(Numeric(19, 4), nullable=False)
     meets_buffer: Mapped[bool] = mapped_column(Boolean, nullable=False)
+    health_score: Mapped[Decimal | None] = mapped_column(Numeric(5, 2), nullable=True)
+    health_score_delta: Mapped[Decimal | None] = mapped_column(
+        Numeric(6, 2), nullable=True
+    )
+    health_status: Mapped[str | None] = mapped_column(String(32), nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         TIMESTAMP(timezone=True), server_default=func.now(), nullable=False
     )

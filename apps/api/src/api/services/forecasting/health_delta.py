@@ -7,6 +7,11 @@ from uuid import UUID
 from database import IUnitOfWork
 from domain.exceptions import InvalidForecastRunError, InvalidSimulationError
 from domain.forecasting import ForecastStatus
+from domain.scoring import (
+    HEALTH_SCORE_FEATURES,
+    calculate_health_score,
+    classify_health_score,
+)
 from domain.simulation import HealthDeltaProfile, SimulationStatus, SimulationType
 from ml import ModelArtifactLoader
 from schemas.simulation import (
@@ -78,6 +83,7 @@ class HealthDeltaSimulationService:
 
         artifacts = self._artifact_loader.load()
         context = build_counterfactual_context(forecast, artifacts.metadata)
+        baseline_health_score = calculate_health_score(context.static_values)
         requested_at = datetime.now(UTC)
         run = await self._uow.simulation_runs.create(
             SimulationRunCreateSchema(
@@ -102,6 +108,11 @@ class HealthDeltaSimulationService:
                 self._build_scenario_specs(context, payload)
             ):
                 evaluation = self._evaluator.evaluate(context, input_patch, artifacts)
+                scenario_values: dict[str, Decimal | float] = dict(
+                    context.static_values
+                )
+                scenario_values.update(input_patch)
+                scenario_health_score = calculate_health_score(scenario_values)
                 scenario_payloads.append(
                     SimulationScenarioCreateSchema(
                         scenario_index=index,
@@ -112,11 +123,17 @@ class HealthDeltaSimulationService:
                         predicted_net_cashflow=evaluation.predicted_net_cashflow,
                         delta_from_baseline=evaluation.delta_from_baseline,
                         meets_buffer=evaluation.meets_buffer,
+                        health_score=scenario_health_score,
+                        health_score_delta=scenario_health_score
+                        - baseline_health_score,
+                        health_status=classify_health_score(scenario_health_score),
                     )
                 )
 
             await self._uow.simulation_scenarios.create_many(run.id, scenario_payloads)
-            summary = self._build_summary(context, payload.profile, scenario_payloads)
+            summary = self._build_summary(
+                context, payload.profile, baseline_health_score, scenario_payloads
+            )
             run = await self._uow.simulation_runs.update(
                 run.id,
                 payload=SimulationRunUpdateSchema(
@@ -160,6 +177,7 @@ class HealthDeltaSimulationService:
     def _build_summary(
         context: CounterfactualContext,
         profile: HealthDeltaProfile,
+        baseline_health_score: Decimal,
         scenarios: list[SimulationScenarioCreateSchema],
     ) -> dict[str, Any]:
         """Build a compact persisted health delta summary.
@@ -173,14 +191,29 @@ class HealthDeltaSimulationService:
             JSON-compatible summary values.
         """
         best = max(scenarios, key=lambda scenario: scenario.delta_from_baseline)
+        best_health = max(
+            scenarios,
+            key=lambda scenario: (
+                scenario.health_score_delta
+                if scenario.health_score_delta is not None
+                else Decimal('-Infinity')
+            ),
+        )
         return {
             'profile': profile.value,
             'baseline_prediction': str(context.baseline_prediction),
             'solvency_buffer': str(context.solvency_buffer),
+            'baseline_health_score': str(baseline_health_score),
             'best_scenario_index': best.scenario_index,
             'best_delta_from_baseline': str(best.delta_from_baseline),
             'best_predicted_net_cashflow': str(best.predicted_net_cashflow),
             'best_meets_buffer': best.meets_buffer,
+            'best_health_scenario_index': best_health.scenario_index,
+            'best_health_score': str(best_health.health_score),
+            'best_health_delta': str(best_health.health_score_delta),
+            'best_health_status': best_health.health_status.value
+            if best_health.health_status is not None
+            else None,
         }
 
     @staticmethod
@@ -200,12 +233,7 @@ class HealthDeltaSimulationService:
         Raises:
             InvalidSimulationError: If the profile or selected features is invalid.
         """
-        eligible_features = (
-            'credit_score',
-            'failure_score',
-            'debt_to_revenue_ratio',
-            'missed_payments_number',
-        )
+        eligible_features = HEALTH_SCORE_FEATURES
         selected_features = list(payload.features) or list(eligible_features)
         unknown_features = set(selected_features) - set(eligible_features)
 

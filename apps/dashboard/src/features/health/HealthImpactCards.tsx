@@ -3,6 +3,7 @@ import type { HealthImpact } from './types';
 
 type HealthImpactCardsProps = {
 	impacts: HealthImpact[];
+	description?: string;
 	className?: string;
 };
 
@@ -12,8 +13,12 @@ const impactSurface = {
 	soft: 'bg-primary-soft/50',
 } as const;
 
-/** Presents health drivers using the Forecast page's featured-card pattern. */
-function HealthImpactCards({ impacts, className }: HealthImpactCardsProps) {
+/** Presents the three observed drivers behind the latest forecast result. */
+function HealthImpactCards({
+	impacts,
+	description = 'Observed drivers across the forecast window.',
+	className,
+}: HealthImpactCardsProps) {
 	return (
 		<section
 			className={cn('mt-16 sm:mt-20 lg:mt-24', className)}
@@ -25,9 +30,7 @@ function HealthImpactCards({ impacts, className }: HealthImpactCardsProps) {
 			>
 				What changed the result
 			</h2>
-			<p className="mt-2 text-sm text-text-muted sm:text-base">
-				Receivables account for most of the directional change.
-			</p>
+			<p className="mt-2 text-sm text-text-muted sm:text-base">{description}</p>
 			<div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
 				{impacts.map((impact) => (
 					<article

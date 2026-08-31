@@ -4,2537 +4,2545 @@
  */
 
 export interface paths {
-	'/enterprises': {
-		parameters: {
-			query?: never;
-			header?: never;
-			path?: never;
-			cookie?: never;
-		};
-		/**
-		 * List Enterprises
-		 * @description List enterprises matching query filters.
-		 */
-		get: operations['list_enterprises_enterprises_get'];
-		put?: never;
-		/**
-		 * Create Enterprise
-		 * @description Create an enterprise.
-		 *
-		 *     Args:
-		 *         payload: Enterprise creation payload.
-		 *         service: Enterprise application service.
-		 *
-		 *     Returns:
-		 *         Created enterprise response.
-		 */
-		post: operations['create_enterprise_enterprises_post'];
-		delete?: never;
-		options?: never;
-		head?: never;
-		patch?: never;
-		trace?: never;
-	};
-	'/enterprises/{enterprise_id}': {
-		parameters: {
-			query?: never;
-			header?: never;
-			path?: never;
-			cookie?: never;
-		};
-		/**
-		 * Get Enterprise
-		 * @description Return an enterprise by identifier.
-		 */
-		get: operations['get_enterprise_enterprises__enterprise_id__get'];
-		put?: never;
-		post?: never;
-		/**
-		 * Delete Enterprise
-		 * @description Soft-delete an enterprise by deactivating it.
-		 *
-		 *     Args:
-		 *         enterprise_id: Enterprise identifier to deactivate.
-		 *         service: Enterprise application service.
-		 *
-		 *     Returns:
-		 *         Empty no-content response.
-		 */
-		delete: operations['delete_enterprise_enterprises__enterprise_id__delete'];
-		options?: never;
-		head?: never;
-		/**
-		 * Update Enterprise
-		 * @description Update an enterprise by identifier.
-		 */
-		patch: operations['update_enterprise_enterprises__enterprise_id__patch'];
-		trace?: never;
-	};
-	'/enterprises/{enterprise_id}/financial/static-snapshots': {
-		parameters: {
-			query?: never;
-			header?: never;
-			path?: never;
-			cookie?: never;
-		};
-		/**
-		 * List Static Snapshots
-		 * @description List static financial snapshots for an enterprise.
-		 */
-		get: operations['list_static_snapshots_enterprises__enterprise_id__financial_static_snapshots_get'];
-		put?: never;
-		/**
-		 * Create Static Snapshot
-		 * @description Create a static financial snapshot.
-		 */
-		post: operations['create_static_snapshot_enterprises__enterprise_id__financial_static_snapshots_post'];
-		delete?: never;
-		options?: never;
-		head?: never;
-		patch?: never;
-		trace?: never;
-	};
-	'/enterprises/{enterprise_id}/financial/static-snapshots/latest': {
-		parameters: {
-			query?: never;
-			header?: never;
-			path?: never;
-			cookie?: never;
-		};
-		/**
-		 * Get Latest Static Snapshot
-		 * @description Return the latest applicable static financial snapshot.
-		 */
-		get: operations['get_latest_static_snapshot_enterprises__enterprise_id__financial_static_snapshots_latest_get'];
-		put?: never;
-		post?: never;
-		delete?: never;
-		options?: never;
-		head?: never;
-		patch?: never;
-		trace?: never;
-	};
-	'/enterprises/{enterprise_id}/financial/static-snapshots/{snapshot_id}': {
-		parameters: {
-			query?: never;
-			header?: never;
-			path?: never;
-			cookie?: never;
-		};
-		/**
-		 * Get Static Snapshot
-		 * @description Return one static financial snapshot.
-		 */
-		get: operations['get_static_snapshot_enterprises__enterprise_id__financial_static_snapshots__snapshot_id__get'];
-		put?: never;
-		post?: never;
-		delete?: never;
-		options?: never;
-		head?: never;
-		/**
-		 * Update Static Snapshot
-		 * @description Update one static financial snapshot.
-		 */
-		patch: operations['update_static_snapshot_enterprises__enterprise_id__financial_static_snapshots__snapshot_id__patch'];
-		trace?: never;
-	};
-	'/enterprises/{enterprise_id}/forecasts': {
-		parameters: {
-			query?: never;
-			header?: never;
-			path?: never;
-			cookie?: never;
-		};
-		/**
-		 * List Forecasts
-		 * @description List forecast history and the recorded periods used by each run.
-		 *
-		 *     Args:
-		 *         enterprise_id: Owning enterprise identifier.
-		 *         filters: Run filters and pagination parameters.
-		 *         service: Baseline forecast application service.
-		 *
-		 *     Returns:
-		 *         Paginated forecast history.
-		 */
-		get: operations['list_forecasts_enterprises__enterprise_id__forecasts_get'];
-		put?: never;
-		/**
-		 * Create Baseline Forecast
-		 * @description Run and persist a baseline forecast for an enterprise.
-		 */
-		post: operations['create_baseline_forecast_enterprises__enterprise_id__forecasts_post'];
-		delete?: never;
-		options?: never;
-		head?: never;
-		patch?: never;
-		trace?: never;
-	};
-	'/enterprises/{enterprise_id}/forecasts/{forecast_run_id}': {
-		parameters: {
-			query?: never;
-			header?: never;
-			path?: never;
-			cookie?: never;
-		};
-		/**
-		 * Get Forecast
-		 * @description Return one forecast with its model inputs and derived observations.
-		 */
-		get: operations['get_forecast_enterprises__enterprise_id__forecasts__forecast_run_id__get'];
-		put?: never;
-		post?: never;
-		delete?: never;
-		options?: never;
-		head?: never;
-		patch?: never;
-		trace?: never;
-	};
-	'/enterprises/{enterprise_id}/forecasts/{forecast_run_id}/simulations/health-delta': {
-		parameters: {
-			query?: never;
-			header?: never;
-			path?: never;
-			cookie?: never;
-		};
-		get?: never;
-		put?: never;
-		/**
-		 * Create Health Delta Simulation
-		 * @description Run and persist health delta scenarios for a baseline forecast.
-		 */
-		post: operations['create_health_delta_simulation_enterprises__enterprise_id__forecasts__forecast_run_id__simulations_health_delta_post'];
-		delete?: never;
-		options?: never;
-		head?: never;
-		patch?: never;
-		trace?: never;
-	};
-	'/enterprises/{enterprise_id}/forecasts/{forecast_run_id}/simulations/trapped-liquidity': {
-		parameters: {
-			query?: never;
-			header?: never;
-			path?: never;
-			cookie?: never;
-		};
-		get?: never;
-		put?: never;
-		/**
-		 * Create Trapped Liquidity Simulation
-		 * @description Run trapped-liquidity analysis for a baseline forecast.
-		 */
-		post: operations['create_trapped_liquidity_simulation_enterprises__enterprise_id__forecasts__forecast_run_id__simulations_trapped_liquidity_post'];
-		delete?: never;
-		options?: never;
-		head?: never;
-		patch?: never;
-		trace?: never;
-	};
-	'/enterprises/{enterprise_id}/forecasts/{forecast_run_id}/simulations/liquidity-mitigation': {
-		parameters: {
-			query?: never;
-			header?: never;
-			path?: never;
-			cookie?: never;
-		};
-		get?: never;
-		put?: never;
-		/**
-		 * Create Liquidity Mitigation Simulation
-		 * @description Generate bounded liquidity mitigation recommendations.
-		 */
-		post: operations['create_liquidity_mitigation_simulation_enterprises__enterprise_id__forecasts__forecast_run_id__simulations_liquidity_mitigation_post'];
-		delete?: never;
-		options?: never;
-		head?: never;
-		patch?: never;
-		trace?: never;
-	};
-	'/enterprises/{enterprise_id}/ingestion-sources/{source_id}/sync': {
-		parameters: {
-			query?: never;
-			header?: never;
-			path?: never;
-			cookie?: never;
-		};
-		get?: never;
-		put?: never;
-		/**
-		 * Request Ingestion Sync
-		 * @description Request an asynchronous synchronization for an ingestion source.
-		 */
-		post: operations['request_ingestion_sync_enterprises__enterprise_id__ingestion_sources__source_id__sync_post'];
-		delete?: never;
-		options?: never;
-		head?: never;
-		patch?: never;
-		trace?: never;
-	};
-	'/enterprises/{enterprise_id}/ingestion-sources/{source_id}/upload': {
-		parameters: {
-			query?: never;
-			header?: never;
-			path?: never;
-			cookie?: never;
-		};
-		get?: never;
-		put?: never;
-		/**
-		 * Upload Ingestion File
-		 * @description Stage and asynchronously process a CSV or XLSX accounting file.
-		 */
-		post: operations['upload_ingestion_file_enterprises__enterprise_id__ingestion_sources__source_id__upload_post'];
-		delete?: never;
-		options?: never;
-		head?: never;
-		patch?: never;
-		trace?: never;
-	};
-	'/enterprises/{enterprise_id}/ingestion-sources/{source_id}/runs': {
-		parameters: {
-			query?: never;
-			header?: never;
-			path?: never;
-			cookie?: never;
-		};
-		/**
-		 * List Ingestion Runs
-		 * @description List synchronization runs for an ingestion source.
-		 */
-		get: operations['list_ingestion_runs_enterprises__enterprise_id__ingestion_sources__source_id__runs_get'];
-		put?: never;
-		post?: never;
-		delete?: never;
-		options?: never;
-		head?: never;
-		patch?: never;
-		trace?: never;
-	};
-	'/enterprises/{enterprise_id}/ingestion-sources/{source_id}/runs/{run_id}': {
-		parameters: {
-			query?: never;
-			header?: never;
-			path?: never;
-			cookie?: never;
-		};
-		/**
-		 * Get Ingestion Run
-		 * @description Return a synchronization run for an ingestion source.
-		 */
-		get: operations['get_ingestion_run_enterprises__enterprise_id__ingestion_sources__source_id__runs__run_id__get'];
-		put?: never;
-		post?: never;
-		delete?: never;
-		options?: never;
-		head?: never;
-		patch?: never;
-		trace?: never;
-	};
-	'/enterprises/{enterprise_id}/ingestion-sources/{source_id}/credentials': {
-		parameters: {
-			query?: never;
-			header?: never;
-			path?: never;
-			cookie?: never;
-		};
-		/**
-		 * List Ingestion Source Credentials
-		 * @description List credentials configured for an ingestion source.
-		 */
-		get: operations['list_ingestion_source_credentials_enterprises__enterprise_id__ingestion_sources__source_id__credentials_get'];
-		put?: never;
-		/**
-		 * Create Ingestion Source Credential
-		 * @description Create a credential for an ingestion source.
-		 */
-		post: operations['create_ingestion_source_credential_enterprises__enterprise_id__ingestion_sources__source_id__credentials_post'];
-		delete?: never;
-		options?: never;
-		head?: never;
-		patch?: never;
-		trace?: never;
-	};
-	'/enterprises/{enterprise_id}/ingestion-sources/{source_id}/credentials/{credential_id}': {
-		parameters: {
-			query?: never;
-			header?: never;
-			path?: never;
-			cookie?: never;
-		};
-		/**
-		 * Get Ingestion Source Credential
-		 * @description Return credential metadata for an ingestion source.
-		 */
-		get: operations['get_ingestion_source_credential_enterprises__enterprise_id__ingestion_sources__source_id__credentials__credential_id__get'];
-		put?: never;
-		post?: never;
-		delete?: never;
-		options?: never;
-		head?: never;
-		/**
-		 * Update Ingestion Source Credential
-		 * @description Update ingestion-source credential metadata.
-		 */
-		patch: operations['update_ingestion_source_credential_enterprises__enterprise_id__ingestion_sources__source_id__credentials__credential_id__patch'];
-		trace?: never;
-	};
-	'/enterprises/{enterprise_id}/ingestion-sources/{source_id}/credentials/{credential_id}/rotate': {
-		parameters: {
-			query?: never;
-			header?: never;
-			path?: never;
-			cookie?: never;
-		};
-		get?: never;
-		put?: never;
-		/**
-		 * Rotate Ingestion Source Credential
-		 * @description Replace an active ingestion-source credential value.
-		 */
-		post: operations['rotate_ingestion_source_credential_enterprises__enterprise_id__ingestion_sources__source_id__credentials__credential_id__rotate_post'];
-		delete?: never;
-		options?: never;
-		head?: never;
-		patch?: never;
-		trace?: never;
-	};
-	'/enterprises/{enterprise_id}/ingestion-sources/{source_id}/credentials/{credential_id}/revoke': {
-		parameters: {
-			query?: never;
-			header?: never;
-			path?: never;
-			cookie?: never;
-		};
-		get?: never;
-		put?: never;
-		/**
-		 * Revoke Ingestion Source Credential
-		 * @description Revoke an ingestion-source credential.
-		 */
-		post: operations['revoke_ingestion_source_credential_enterprises__enterprise_id__ingestion_sources__source_id__credentials__credential_id__revoke_post'];
-		delete?: never;
-		options?: never;
-		head?: never;
-		patch?: never;
-		trace?: never;
-	};
-	'/enterprises/{enterprise_id}/ingestion-sources': {
-		parameters: {
-			query?: never;
-			header?: never;
-			path?: never;
-			cookie?: never;
-		};
-		/**
-		 * List Ingestion Sources
-		 * @description List ingestion sources for an enterprise.
-		 */
-		get: operations['list_ingestion_sources_enterprises__enterprise_id__ingestion_sources_get'];
-		put?: never;
-		/**
-		 * Create Ingestion Source
-		 * @description Create an ingestion source for an enterprise.
-		 */
-		post: operations['create_ingestion_source_enterprises__enterprise_id__ingestion_sources_post'];
-		delete?: never;
-		options?: never;
-		head?: never;
-		patch?: never;
-		trace?: never;
-	};
-	'/enterprises/{enterprise_id}/ingestion-sources/{source_id}': {
-		parameters: {
-			query?: never;
-			header?: never;
-			path?: never;
-			cookie?: never;
-		};
-		/**
-		 * Get Ingestion Source
-		 * @description Return an ingestion source belonging to an enterprise.
-		 */
-		get: operations['get_ingestion_source_enterprises__enterprise_id__ingestion_sources__source_id__get'];
-		put?: never;
-		post?: never;
-		/**
-		 * Delete Ingestion Source
-		 * @description Soft-delete an ingestion source belonging to an enterprise.
-		 */
-		delete: operations['delete_ingestion_source_enterprises__enterprise_id__ingestion_sources__source_id__delete'];
-		options?: never;
-		head?: never;
-		/**
-		 * Update Ingestion Source
-		 * @description Update an ingestion source belonging to an enterprise.
-		 */
-		patch: operations['update_ingestion_source_enterprises__enterprise_id__ingestion_sources__source_id__patch'];
-		trace?: never;
-	};
-	'/enterprises/{enterprise_id}/simulations': {
-		parameters: {
-			query?: never;
-			header?: never;
-			path?: never;
-			cookie?: never;
-		};
-		/**
-		 * List Simulation Results
-		 * @description List persisted simulation results for an enterprise.
-		 */
-		get: operations['list_simulation_results_enterprises__enterprise_id__simulations_get'];
-		put?: never;
-		post?: never;
-		delete?: never;
-		options?: never;
-		head?: never;
-		patch?: never;
-		trace?: never;
-	};
-	'/enterprises/{enterprise_id}/simulations/{simulation_run_id}': {
-		parameters: {
-			query?: never;
-			header?: never;
-			path?: never;
-			cookie?: never;
-		};
-		/**
-		 * Get Simulation Result
-		 * @description Return one persisted simulation result for an enterprise.
-		 */
-		get: operations['get_simulation_result_enterprises__enterprise_id__simulations__simulation_run_id__get'];
-		put?: never;
-		post?: never;
-		delete?: never;
-		options?: never;
-		head?: never;
-		patch?: never;
-		trace?: never;
-	};
+    "/enterprises": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Enterprises
+         * @description List enterprises matching query filters.
+         */
+        get: operations["list_enterprises_enterprises_get"];
+        put?: never;
+        /**
+         * Create Enterprise
+         * @description Create an enterprise.
+         *
+         *     Args:
+         *         payload: Enterprise creation payload.
+         *         service: Enterprise application service.
+         *
+         *     Returns:
+         *         Created enterprise response.
+         */
+        post: operations["create_enterprise_enterprises_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/enterprises/{enterprise_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Enterprise
+         * @description Return an enterprise by identifier.
+         */
+        get: operations["get_enterprise_enterprises__enterprise_id__get"];
+        put?: never;
+        post?: never;
+        /**
+         * Delete Enterprise
+         * @description Soft-delete an enterprise by deactivating it.
+         *
+         *     Args:
+         *         enterprise_id: Enterprise identifier to deactivate.
+         *         service: Enterprise application service.
+         *
+         *     Returns:
+         *         Empty no-content response.
+         */
+        delete: operations["delete_enterprise_enterprises__enterprise_id__delete"];
+        options?: never;
+        head?: never;
+        /**
+         * Update Enterprise
+         * @description Update an enterprise by identifier.
+         */
+        patch: operations["update_enterprise_enterprises__enterprise_id__patch"];
+        trace?: never;
+    };
+    "/enterprises/{enterprise_id}/financial/static-snapshots": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Static Snapshots
+         * @description List static financial snapshots for an enterprise.
+         */
+        get: operations["list_static_snapshots_enterprises__enterprise_id__financial_static_snapshots_get"];
+        put?: never;
+        /**
+         * Create Static Snapshot
+         * @description Create a static financial snapshot.
+         */
+        post: operations["create_static_snapshot_enterprises__enterprise_id__financial_static_snapshots_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/enterprises/{enterprise_id}/financial/static-snapshots/latest": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Latest Static Snapshot
+         * @description Return the latest applicable static financial snapshot.
+         */
+        get: operations["get_latest_static_snapshot_enterprises__enterprise_id__financial_static_snapshots_latest_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/enterprises/{enterprise_id}/financial/static-snapshots/{snapshot_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Static Snapshot
+         * @description Return one static financial snapshot.
+         */
+        get: operations["get_static_snapshot_enterprises__enterprise_id__financial_static_snapshots__snapshot_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Update Static Snapshot
+         * @description Update one static financial snapshot.
+         */
+        patch: operations["update_static_snapshot_enterprises__enterprise_id__financial_static_snapshots__snapshot_id__patch"];
+        trace?: never;
+    };
+    "/enterprises/{enterprise_id}/forecasts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Forecasts
+         * @description List forecast history and the recorded periods used by each run.
+         *
+         *     Args:
+         *         enterprise_id: Owning enterprise identifier.
+         *         filters: Run filters and pagination parameters.
+         *         service: Baseline forecast application service.
+         *
+         *     Returns:
+         *         Paginated forecast history.
+         */
+        get: operations["list_forecasts_enterprises__enterprise_id__forecasts_get"];
+        put?: never;
+        /**
+         * Create Baseline Forecast
+         * @description Run and persist a baseline forecast for an enterprise.
+         */
+        post: operations["create_baseline_forecast_enterprises__enterprise_id__forecasts_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/enterprises/{enterprise_id}/forecasts/{forecast_run_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Forecast
+         * @description Return one forecast with its model inputs and derived observations.
+         */
+        get: operations["get_forecast_enterprises__enterprise_id__forecasts__forecast_run_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/enterprises/{enterprise_id}/forecasts/{forecast_run_id}/simulations/health-delta": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Create Health Delta Simulation
+         * @description Run and persist health delta scenarios for a baseline forecast.
+         */
+        post: operations["create_health_delta_simulation_enterprises__enterprise_id__forecasts__forecast_run_id__simulations_health_delta_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/enterprises/{enterprise_id}/forecasts/{forecast_run_id}/simulations/trapped-liquidity": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Create Trapped Liquidity Simulation
+         * @description Run trapped-liquidity analysis for a baseline forecast.
+         */
+        post: operations["create_trapped_liquidity_simulation_enterprises__enterprise_id__forecasts__forecast_run_id__simulations_trapped_liquidity_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/enterprises/{enterprise_id}/forecasts/{forecast_run_id}/simulations/liquidity-mitigation": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Create Liquidity Mitigation Simulation
+         * @description Generate bounded liquidity mitigation recommendations.
+         */
+        post: operations["create_liquidity_mitigation_simulation_enterprises__enterprise_id__forecasts__forecast_run_id__simulations_liquidity_mitigation_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/enterprises/{enterprise_id}/ingestion-sources/{source_id}/sync": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Request Ingestion Sync
+         * @description Request an asynchronous synchronization for an ingestion source.
+         */
+        post: operations["request_ingestion_sync_enterprises__enterprise_id__ingestion_sources__source_id__sync_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/enterprises/{enterprise_id}/ingestion-sources/{source_id}/upload": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Upload Ingestion File
+         * @description Stage and asynchronously process a CSV or XLSX accounting file.
+         */
+        post: operations["upload_ingestion_file_enterprises__enterprise_id__ingestion_sources__source_id__upload_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/enterprises/{enterprise_id}/ingestion-sources/{source_id}/runs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Ingestion Runs
+         * @description List synchronization runs for an ingestion source.
+         */
+        get: operations["list_ingestion_runs_enterprises__enterprise_id__ingestion_sources__source_id__runs_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/enterprises/{enterprise_id}/ingestion-sources/{source_id}/runs/{run_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Ingestion Run
+         * @description Return a synchronization run for an ingestion source.
+         */
+        get: operations["get_ingestion_run_enterprises__enterprise_id__ingestion_sources__source_id__runs__run_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/enterprises/{enterprise_id}/ingestion-sources/{source_id}/credentials": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Ingestion Source Credentials
+         * @description List credentials configured for an ingestion source.
+         */
+        get: operations["list_ingestion_source_credentials_enterprises__enterprise_id__ingestion_sources__source_id__credentials_get"];
+        put?: never;
+        /**
+         * Create Ingestion Source Credential
+         * @description Create a credential for an ingestion source.
+         */
+        post: operations["create_ingestion_source_credential_enterprises__enterprise_id__ingestion_sources__source_id__credentials_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/enterprises/{enterprise_id}/ingestion-sources/{source_id}/credentials/{credential_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Ingestion Source Credential
+         * @description Return credential metadata for an ingestion source.
+         */
+        get: operations["get_ingestion_source_credential_enterprises__enterprise_id__ingestion_sources__source_id__credentials__credential_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Update Ingestion Source Credential
+         * @description Update ingestion-source credential metadata.
+         */
+        patch: operations["update_ingestion_source_credential_enterprises__enterprise_id__ingestion_sources__source_id__credentials__credential_id__patch"];
+        trace?: never;
+    };
+    "/enterprises/{enterprise_id}/ingestion-sources/{source_id}/credentials/{credential_id}/rotate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Rotate Ingestion Source Credential
+         * @description Replace an active ingestion-source credential value.
+         */
+        post: operations["rotate_ingestion_source_credential_enterprises__enterprise_id__ingestion_sources__source_id__credentials__credential_id__rotate_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/enterprises/{enterprise_id}/ingestion-sources/{source_id}/credentials/{credential_id}/revoke": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Revoke Ingestion Source Credential
+         * @description Revoke an ingestion-source credential.
+         */
+        post: operations["revoke_ingestion_source_credential_enterprises__enterprise_id__ingestion_sources__source_id__credentials__credential_id__revoke_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/enterprises/{enterprise_id}/ingestion-sources": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Ingestion Sources
+         * @description List ingestion sources for an enterprise.
+         */
+        get: operations["list_ingestion_sources_enterprises__enterprise_id__ingestion_sources_get"];
+        put?: never;
+        /**
+         * Create Ingestion Source
+         * @description Create an ingestion source for an enterprise.
+         */
+        post: operations["create_ingestion_source_enterprises__enterprise_id__ingestion_sources_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/enterprises/{enterprise_id}/ingestion-sources/{source_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Ingestion Source
+         * @description Return an ingestion source belonging to an enterprise.
+         */
+        get: operations["get_ingestion_source_enterprises__enterprise_id__ingestion_sources__source_id__get"];
+        put?: never;
+        post?: never;
+        /**
+         * Delete Ingestion Source
+         * @description Soft-delete an ingestion source belonging to an enterprise.
+         */
+        delete: operations["delete_ingestion_source_enterprises__enterprise_id__ingestion_sources__source_id__delete"];
+        options?: never;
+        head?: never;
+        /**
+         * Update Ingestion Source
+         * @description Update an ingestion source belonging to an enterprise.
+         */
+        patch: operations["update_ingestion_source_enterprises__enterprise_id__ingestion_sources__source_id__patch"];
+        trace?: never;
+    };
+    "/enterprises/{enterprise_id}/simulations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Simulation Results
+         * @description List persisted simulation results for an enterprise.
+         */
+        get: operations["list_simulation_results_enterprises__enterprise_id__simulations_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/enterprises/{enterprise_id}/simulations/{simulation_run_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Simulation Result
+         * @description Return one persisted simulation result for an enterprise.
+         */
+        get: operations["get_simulation_result_enterprises__enterprise_id__simulations__simulation_run_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
-	schemas: {
-		/** Body_upload_ingestion_file_enterprises__enterprise_id__ingestion_sources__source_id__upload_post */
-		Body_upload_ingestion_file_enterprises__enterprise_id__ingestion_sources__source_id__upload_post: {
-			/** File */
-			file: string;
-			/** Sheet Name */
-			sheet_name?: string | null;
-		};
-		/**
-		 * CredentialStatus
-		 * @enum {string}
-		 */
-		CredentialStatus: 'active' | 'expired' | 'revoked' | 'error';
-		/**
-		 * CredentialType
-		 * @enum {string}
-		 */
-		CredentialType: 'api_key' | 'username_password' | 'oauth2' | 'other';
-		/** EnterpriseCreateSchema */
-		EnterpriseCreateSchema: {
-			/** External Key */
-			external_key: string;
-			/** Legal Name */
-			legal_name: string;
-			/** Registration Number */
-			registration_number?: string | null;
-			/** Industry */
-			industry?: string | null;
-			/** Country Code */
-			country_code: string;
-			/** Base Currency */
-			base_currency: string;
-			/** Timezone */
-			timezone: string;
-			/**
-			 * Is Active
-			 * @default true
-			 */
-			is_active: boolean;
-		};
-		/**
-		 * EnterpriseListResponse
-		 * @description Paginated enterprise response.
-		 */
-		EnterpriseListResponse: {
-			/** Items */
-			items: components['schemas']['EnterpriseSchema'][];
-			pagination: components['schemas']['OffsetPaginationSchema'];
-		};
-		/** EnterpriseSchema */
-		EnterpriseSchema: {
-			/**
-			 * Id
-			 * Format: uuid
-			 */
-			id: string;
-			/** External Key */
-			external_key: string;
-			/** Legal Name */
-			legal_name: string;
-			/** Registration Number */
-			registration_number?: string | null;
-			/** Industry */
-			industry?: string | null;
-			/** Country Code */
-			country_code: string;
-			/** Base Currency */
-			base_currency: string;
-			/** Timezone */
-			timezone: string;
-			/** Is Active */
-			is_active: boolean;
-			/**
-			 * Created At
-			 * Format: date-time
-			 */
-			created_at: string;
-			/**
-			 * Updated At
-			 * Format: date-time
-			 */
-			updated_at: string;
-		};
-		/** EnterpriseUpdateSchema */
-		EnterpriseUpdateSchema: {
-			/** Legal Name */
-			legal_name?: string | null;
-			/** Registration Number */
-			registration_number?: string | null;
-			/** Industry */
-			industry?: string | null;
-			/** Country Code */
-			country_code?: string | null;
-			/** Base Currency */
-			base_currency?: string | null;
-			/** Timezone */
-			timezone?: string | null;
-			/** Is Active */
-			is_active?: boolean | null;
-		};
-		/**
-		 * EntryMode
-		 * @enum {string}
-		 */
-		EntryMode: 'source' | 'manual' | 'adjusted';
-		/**
-		 * ForecastListResponse
-		 * @description Paginated forecast-run response.
-		 */
-		ForecastListResponse: {
-			/** Items */
-			items: components['schemas']['ForecastRunSchema'][];
-			pagination: components['schemas']['OffsetPaginationSchema'];
-		};
-		/**
-		 * ForecastObservationDriverSchema
-		 * @description One observed input driver used by the forecast model.
-		 */
-		ForecastObservationDriverSchema: {
-			/** Label */
-			label: string;
-			/** Value */
-			value: string;
-			/** Detail */
-			detail: string;
-		};
-		/**
-		 * ForecastRequestSchema
-		 * @description Request a baseline forecast for one target month.
-		 */
-		ForecastRequestSchema: {
-			/**
-			 * Target Period Start
-			 * Format: date
-			 */
-			target_period_start: string;
-			/**
-			 * Target Period End
-			 * Format: date
-			 */
-			target_period_end: string;
-			/** @default ad_hoc_baseline */
-			run_type: components['schemas']['ForecastRunType'];
-			/** Solvency Buffer */
-			solvency_buffer: number | string;
-		};
-		/**
-		 * ForecastRunPeriodSchema
-		 * @description Forecast sequence period response.
-		 */
-		ForecastRunPeriodSchema: {
-			/**
-			 * Monthly Cashflow Aggregate Id
-			 * Format: uuid
-			 */
-			monthly_cashflow_aggregate_id: string;
-			/** Sequence Index */
-			sequence_index: number;
-			/**
-			 * Id
-			 * Format: uuid
-			 */
-			id: string;
-			/**
-			 * Forecast Run Id
-			 * Format: uuid
-			 */
-			forecast_run_id: string;
-			/**
-			 * Period Start
-			 * Format: date
-			 */
-			period_start: string;
-			/**
-			 * Period End
-			 * Format: date
-			 */
-			period_end: string;
-			/** Total Invoice Amount */
-			total_invoice_amount: string;
-			/** Total Inflows */
-			total_inflows: string;
-			/** Total Outflows */
-			total_outflows: string;
-			/** Monthly Repayment */
-			monthly_repayment: string;
-			/** Total Payment Delay Days */
-			total_payment_delay_days: string;
-			/** Invoice Count */
-			invoice_count: number;
-			/** Payment Count */
-			payment_count: number;
-			/** Net Cashflow */
-			net_cashflow: string;
-		};
-		/**
-		 * ForecastRunSchema
-		 * @description Baseline forecast response and audit metadata.
-		 */
-		ForecastRunSchema: {
-			/**
-			 * Id
-			 * Format: uuid
-			 */
-			id: string;
-			/**
-			 * Enterprise Id
-			 * Format: uuid
-			 */
-			enterprise_id: string;
-			run_type: components['schemas']['ForecastRunType'];
-			/**
-			 * Target Period Start
-			 * Format: date
-			 */
-			target_period_start: string;
-			/**
-			 * Target Period End
-			 * Format: date
-			 */
-			target_period_end: string;
-			/** Sequence Window Months */
-			sequence_window_months: number;
-			/**
-			 * Static Snapshot Id
-			 * Format: uuid
-			 */
-			static_snapshot_id: string;
-			/** Model Version */
-			model_version: string;
-			/** Artifact Version */
-			artifact_version: string;
-			/** Predicted Net Cashflow */
-			predicted_net_cashflow: string;
-			/** Solvency Buffer */
-			solvency_buffer: string;
-			/** Buffer Gap */
-			buffer_gap: string;
-			status: components['schemas']['ForecastStatus'];
-			/**
-			 * Requested At
-			 * Format: date-time
-			 */
-			requested_at: string;
-			/** Completed At */
-			completed_at: string | null;
-			/**
-			 * Created At
-			 * Format: date-time
-			 */
-			created_at: string;
-			/** Periods */
-			periods?: components['schemas']['ForecastRunPeriodSchema'][];
-			static_snapshot?:
-				components['schemas']['StaticFinancialSnapshotSchema'] | null;
-			/**
-			 * Expected Inflows
-			 * @default 0
-			 */
-			expected_inflows: string;
-			/**
-			 * Expected Outflows
-			 * @default 0
-			 */
-			expected_outflows: string;
-			/** Observation Drivers */
-			observation_drivers?: components['schemas']['ForecastObservationDriverSchema'][];
-			/** Observations */
-			observations?: string[];
-		};
-		/**
-		 * ForecastRunType
-		 * @enum {string}
-		 */
-		ForecastRunType: 'baseline' | 'scheduled_baseline' | 'ad_hoc_baseline';
-		/**
-		 * ForecastStatus
-		 * @enum {string}
-		 */
-		ForecastStatus: 'pending' | 'running' | 'completed' | 'failed';
-		/** HTTPValidationError */
-		HTTPValidationError: {
-			/** Detail */
-			detail?: components['schemas']['ValidationError'][];
-		};
-		/**
-		 * HealthDeltaProfile
-		 * @description Server-defined sensitivity profile for health delta simulation.
-		 * @enum {string}
-		 */
-		HealthDeltaProfile: 'conservative' | 'standard' | 'stress' | 'custom';
-		/**
-		 * HealthDeltaRequestSchema
-		 * @description Request a server-generated health delta sensitivity profile.
-		 */
-		HealthDeltaRequestSchema: {
-			/** @default standard */
-			profile: components['schemas']['HealthDeltaProfile'];
-			/** Features */
-			features?: {
-				[key: string]: number | string;
-			};
-		};
-		/**
-		 * IngestionRunCreateSchema
-		 * @description Ingestion synchronization request schema.
-		 */
-		IngestionRunCreateSchema: {
-			/** @default incremental */
-			run_type: components['schemas']['IngestionRunType'];
-			/** @default pending */
-			status: components['schemas']['IngestionStatus'];
-			/** Since */
-			since?: string | null;
-		};
-		/**
-		 * IngestionRunListResponse
-		 * @description Paginated ingestion-run response.
-		 */
-		IngestionRunListResponse: {
-			/** Items */
-			items: components['schemas']['IngestionRunSchema'][];
-			pagination: components['schemas']['OffsetPaginationSchema'];
-		};
-		/**
-		 * IngestionRunSchema
-		 * @description Ingestion-run response schema.
-		 */
-		IngestionRunSchema: {
-			/**
-			 * Id
-			 * Format: uuid
-			 */
-			id: string;
-			/**
-			 * Enterprise Id
-			 * Format: uuid
-			 */
-			enterprise_id: string;
-			/**
-			 * Ingestion Source Id
-			 * Format: uuid
-			 */
-			ingestion_source_id: string;
-			run_type: components['schemas']['IngestionRunType'];
-			status: components['schemas']['IngestionStatus'];
-			/** Started At */
-			started_at?: string | null;
-			/** Finished At */
-			finished_at?: string | null;
-			/** Records Received */
-			records_received: number;
-			/** Records Processed */
-			records_processed: number;
-			/** Records Failed */
-			records_failed: number;
-			/** Error Summary */
-			error_summary?: string | null;
-			/**
-			 * Created At
-			 * Format: date-time
-			 */
-			created_at: string;
-		};
-		/**
-		 * IngestionRunType
-		 * @enum {string}
-		 */
-		IngestionRunType: 'full' | 'incremental' | 'upload';
-		/** IngestionSourceCreateSchema */
-		IngestionSourceCreateSchema: {
-			/** Source Key */
-			source_key: string;
-			/** Display Name */
-			display_name: string;
-			/** @default active */
-			status: components['schemas']['IngestionSourceStatus'];
-			/**
-			 * Is Active
-			 * @default true
-			 */
-			is_active: boolean;
-		};
-		/**
-		 * IngestionSourceCredentialCreateSchema
-		 * @description Ingestion-source credential creation payload.
-		 */
-		IngestionSourceCredentialCreateSchema: {
-			credential_type: components['schemas']['CredentialType'];
-			/** Config Json */
-			config_json?: {
-				[key: string]: unknown;
-			};
-			/** Secret Ref */
-			secret_ref: string;
-			/** Expires At */
-			expires_at?: string | null;
-		};
-		/**
-		 * IngestionSourceCredentialListResponse
-		 * @description Paginated ingestion-source credential response.
-		 */
-		IngestionSourceCredentialListResponse: {
-			/** Items */
-			items: components['schemas']['IngestionSourceCredentialSchema'][];
-			pagination: components['schemas']['OffsetPaginationSchema'];
-		};
-		/**
-		 * IngestionSourceCredentialMetadataUpdateSchema
-		 * @description Public ingestion-source credential metadata update payload.
-		 */
-		IngestionSourceCredentialMetadataUpdateSchema: {
-			credential_type?: components['schemas']['CredentialType'] | null;
-			/** Config Json */
-			config_json?: {
-				[key: string]: unknown;
-			} | null;
-			/** Expires At */
-			expires_at?: string | null;
-		};
-		/**
-		 * IngestionSourceCredentialSchema
-		 * @description Public ingestion-source credential metadata.
-		 */
-		IngestionSourceCredentialSchema: {
-			/**
-			 * Id
-			 * Format: uuid
-			 */
-			id: string;
-			/**
-			 * Enterprise Id
-			 * Format: uuid
-			 */
-			enterprise_id: string;
-			/**
-			 * Ingestion Source Id
-			 * Format: uuid
-			 */
-			ingestion_source_id: string;
-			credential_type: components['schemas']['CredentialType'];
-			status: components['schemas']['CredentialStatus'];
-			/** Config Json */
-			config_json: {
-				[key: string]: unknown;
-			};
-			/** Last Rotated At */
-			last_rotated_at?: string | null;
-			/** Expires At */
-			expires_at?: string | null;
-			/**
-			 * Created At
-			 * Format: date-time
-			 */
-			created_at: string;
-			/**
-			 * Updated At
-			 * Format: date-time
-			 */
-			updated_at: string;
-		};
-		/**
-		 * IngestionSourceCredentialSecretUpdateSchema
-		 * @description Ingestion-source credential rotation payload.
-		 */
-		IngestionSourceCredentialSecretUpdateSchema: {
-			/** Secret Ref */
-			secret_ref: string;
-		};
-		/**
-		 * IngestionSourceListResponse
-		 * @description Paginated ingestion-source response.
-		 */
-		IngestionSourceListResponse: {
-			/** Items */
-			items: components['schemas']['IngestionSourceSchema'][];
-			pagination: components['schemas']['OffsetPaginationSchema'];
-		};
-		/** IngestionSourceSchema */
-		IngestionSourceSchema: {
-			/**
-			 * Id
-			 * Format: uuid
-			 */
-			id: string;
-			/**
-			 * Enterprise Id
-			 * Format: uuid
-			 */
-			enterprise_id: string;
-			/** Source Key */
-			source_key: string;
-			/** Display Name */
-			display_name: string;
-			status: components['schemas']['IngestionSourceStatus'];
-			/** Is Active */
-			is_active: boolean;
-			/** Deleted At */
-			deleted_at?: string | null;
-			/** Last Synced At */
-			last_synced_at?: string | null;
-			/**
-			 * Created At
-			 * Format: date-time
-			 */
-			created_at: string;
-			/**
-			 * Updated At
-			 * Format: date-time
-			 */
-			updated_at: string;
-		};
-		/**
-		 * IngestionSourceStatus
-		 * @enum {string}
-		 */
-		IngestionSourceStatus: 'active' | 'paused' | 'error';
-		/** IngestionSourceUpdateSchema */
-		IngestionSourceUpdateSchema: {
-			/** Display Name */
-			display_name?: string | null;
-			status?: components['schemas']['IngestionSourceStatus'] | null;
-			/** Is Active */
-			is_active?: boolean | null;
-			/** Deleted At */
-			deleted_at?: string | null;
-			/** Last Synced At */
-			last_synced_at?: string | null;
-		};
-		/**
-		 * IngestionStatus
-		 * @enum {string}
-		 */
-		IngestionStatus: 'pending' | 'running' | 'completed' | 'failed';
-		/**
-		 * LiquidityMitigationProfile
-		 * @description Server-defined intervention range for mitigation recommendations.
-		 * @enum {string}
-		 */
-		LiquidityMitigationProfile: 'conservative' | 'standard' | 'stress';
-		/**
-		 * LiquidityMitigationRequestSchema
-		 * @description Request bounded liquidity mitigation recommendations.
-		 */
-		LiquidityMitigationRequestSchema: {
-			/** @default standard */
-			profile: components['schemas']['LiquidityMitigationProfile'];
-			/**
-			 * Max Recommendations
-			 * @default 3
-			 */
-			max_recommendations: number;
-		};
-		/**
-		 * MitigationRecommendationSchema
-		 * @description Persisted liquidity mitigation recommendation response.
-		 */
-		MitigationRecommendationSchema: {
-			/**
-			 * Id
-			 * Format: uuid
-			 */
-			id: string;
-			/**
-			 * Simulation Run Id
-			 * Format: uuid
-			 */
-			simulation_run_id: string;
-			/** Priority Rank */
-			priority_rank: number;
-			action_type: components['schemas']['RecommendationActionType'];
-			/** Parameter Name */
-			parameter_name: string;
-			/** Original Value */
-			original_value: string;
-			/** Recommended Value */
-			recommended_value: string;
-			/** Expected Cashflow Delta */
-			expected_cashflow_delta: string;
-			/** Expected Post Action Cashflow */
-			expected_post_action_cashflow: string;
-			/** Meets Buffer */
-			meets_buffer: boolean;
-			/**
-			 * Created At
-			 * Format: date-time
-			 */
-			created_at: string;
-		};
-		/**
-		 * OffsetPaginationSchema
-		 * @description Metadata for offset-based collection responses.
-		 */
-		OffsetPaginationSchema: {
-			/** Limit */
-			limit: number;
-			/** Offset */
-			offset: number;
-			/** Total Count */
-			total_count: number;
-			/** Has Next */
-			has_next: boolean;
-			/** Has Prev */
-			has_prev: boolean;
-		};
-		/**
-		 * ReceivablesRankingSchema
-		 * @description Persisted trapped-liquidity ranking response.
-		 */
-		ReceivablesRankingSchema: {
-			/**
-			 * Id
-			 * Format: uuid
-			 */
-			id: string;
-			/**
-			 * Simulation Run Id
-			 * Format: uuid
-			 */
-			simulation_run_id: string;
-			/**
-			 * Counterparty Id
-			 * Format: uuid
-			 */
-			counterparty_id: string;
-			/** Rank Position */
-			rank_position: number;
-			/** Baseline Outstanding Amount */
-			baseline_outstanding_amount: string;
-			/** Simulated Cashflow Delta */
-			simulated_cashflow_delta: string;
-			/**
-			 * Created At
-			 * Format: date-time
-			 */
-			created_at: string;
-		};
-		/**
-		 * RecommendationActionType
-		 * @enum {string}
-		 */
-		RecommendationActionType:
-			'delay_capex' | 'reduce_outflows' | 'adjust_repayment' | 'other';
-		/**
-		 * SimulationRunSchema
-		 * @description Simulation run response with persisted scenarios.
-		 */
-		SimulationRunSchema: {
-			/**
-			 * Id
-			 * Format: uuid
-			 */
-			id: string;
-			/**
-			 * Enterprise Id
-			 * Format: uuid
-			 */
-			enterprise_id: string;
-			/**
-			 * Forecast Run Id
-			 * Format: uuid
-			 */
-			forecast_run_id: string;
-			simulation_type: components['schemas']['SimulationType'];
-			status: components['schemas']['SimulationStatus'];
-			/** Summary Result */
-			summary_result: {
-				[key: string]: unknown;
-			};
-			/**
-			 * Requested At
-			 * Format: date-time
-			 */
-			requested_at: string;
-			/** Completed At */
-			completed_at: string | null;
-			/**
-			 * Created At
-			 * Format: date-time
-			 */
-			created_at: string;
-			/** Scenarios */
-			scenarios?: components['schemas']['SimulationScenarioSchema'][];
-			/** Receivables Rankings */
-			receivables_rankings?: components['schemas']['ReceivablesRankingSchema'][];
-			/** Mitigation Recommendations */
-			mitigation_recommendations?: components['schemas']['MitigationRecommendationSchema'][];
-		};
-		/**
-		 * SimulationScenarioSchema
-		 * @description Persisted simulation scenario response.
-		 */
-		SimulationScenarioSchema: {
-			/** Scenario Index */
-			scenario_index: number;
-			/** Scenario Label */
-			scenario_label: string;
-			/** Input Patch Json */
-			input_patch_json: {
-				[key: string]: unknown;
-			};
-			/** Predicted Net Cashflow */
-			predicted_net_cashflow: string;
-			/** Delta From Baseline */
-			delta_from_baseline: string;
-			/** Meets Buffer */
-			meets_buffer: boolean;
-			/**
-			 * Id
-			 * Format: uuid
-			 */
-			id: string;
-			/**
-			 * Simulation Run Id
-			 * Format: uuid
-			 */
-			simulation_run_id: string;
-			/**
-			 * Created At
-			 * Format: date-time
-			 */
-			created_at: string;
-		};
-		/**
-		 * SimulationStatus
-		 * @enum {string}
-		 */
-		SimulationStatus: 'pending' | 'running' | 'completed' | 'failed';
-		/**
-		 * SimulationType
-		 * @enum {string}
-		 */
-		SimulationType:
-			'health_delta' | 'trapped_liquidity' | 'liquidity_mitigation';
-		/**
-		 * StaticFinancialSnapshotCreateSchema
-		 * @description Create a point-in-time static model feature snapshot.
-		 */
-		StaticFinancialSnapshotCreateSchema: {
-			/**
-			 * Snapshot Date
-			 * Format: date
-			 */
-			snapshot_date: string;
-			/** @default manual */
-			entry_mode: components['schemas']['EntryMode'];
-			/** Ingestion Source Id */
-			ingestion_source_id?: string | null;
-			/** Credit Score */
-			credit_score?: number | string | null;
-			/** Failure Score */
-			failure_score?: number | string | null;
-			/** Debt To Revenue Ratio */
-			debt_to_revenue_ratio?: number | string | null;
-			/** Current Assets */
-			current_assets?: number | string | null;
-			/** Current Liabilities */
-			current_liabilities?: number | string | null;
-			/** Fixed Assets */
-			fixed_assets?: number | string | null;
-			/** Long Term Liabilities */
-			long_term_liabilities?: number | string | null;
-			/** Capex */
-			capex?: number | string | null;
-			/** Cogs */
-			cogs?: number | string | null;
-			/** Missed Payments Number */
-			missed_payments_number?: number | null;
-		};
-		/**
-		 * StaticFinancialSnapshotSchema
-		 * @description Static financial snapshot response.
-		 */
-		StaticFinancialSnapshotSchema: {
-			/**
-			 * Snapshot Date
-			 * Format: date
-			 */
-			snapshot_date: string;
-			/** @default manual */
-			entry_mode: components['schemas']['EntryMode'];
-			/** Ingestion Source Id */
-			ingestion_source_id?: string | null;
-			/** Credit Score */
-			credit_score?: string | null;
-			/** Failure Score */
-			failure_score?: string | null;
-			/** Debt To Revenue Ratio */
-			debt_to_revenue_ratio?: string | null;
-			/** Current Assets */
-			current_assets?: string | null;
-			/** Current Liabilities */
-			current_liabilities?: string | null;
-			/** Fixed Assets */
-			fixed_assets?: string | null;
-			/** Long Term Liabilities */
-			long_term_liabilities?: string | null;
-			/** Capex */
-			capex?: string | null;
-			/** Cogs */
-			cogs?: string | null;
-			/** Missed Payments Number */
-			missed_payments_number?: number | null;
-			/**
-			 * Id
-			 * Format: uuid
-			 */
-			id: string;
-			/**
-			 * Enterprise Id
-			 * Format: uuid
-			 */
-			enterprise_id: string;
-			/**
-			 * Created At
-			 * Format: date-time
-			 */
-			created_at: string;
-			/**
-			 * Updated At
-			 * Format: date-time
-			 */
-			updated_at: string;
-		};
-		/**
-		 * StaticFinancialSnapshotUpdateSchema
-		 * @description Update static snapshot values.
-		 */
-		StaticFinancialSnapshotUpdateSchema: {
-			entry_mode?: components['schemas']['EntryMode'] | null;
-			/** Ingestion Source Id */
-			ingestion_source_id?: string | null;
-			/** Credit Score */
-			credit_score?: number | string | null;
-			/** Failure Score */
-			failure_score?: number | string | null;
-			/** Debt To Revenue Ratio */
-			debt_to_revenue_ratio?: number | string | null;
-			/** Current Assets */
-			current_assets?: number | string | null;
-			/** Current Liabilities */
-			current_liabilities?: number | string | null;
-			/** Fixed Assets */
-			fixed_assets?: number | string | null;
-			/** Long Term Liabilities */
-			long_term_liabilities?: number | string | null;
-			/** Capex */
-			capex?: number | string | null;
-			/** Cogs */
-			cogs?: number | string | null;
-			/** Missed Payments Number */
-			missed_payments_number?: number | null;
-		};
-		/**
-		 * TrappedLiquidityRequestSchema
-		 * @description Request trapped-liquidity analysis for selected counterparties.
-		 */
-		TrappedLiquidityRequestSchema: {
-			/** Counterparty Ids */
-			counterparty_ids?: string[] | null;
-			/**
-			 * Max Counterparties
-			 * @default 10
-			 */
-			max_counterparties: number;
-		};
-		/** ValidationError */
-		ValidationError: {
-			/** Location */
-			loc: (string | number)[];
-			/** Message */
-			msg: string;
-			/** Error Type */
-			type: string;
-			/** Input */
-			input?: unknown;
-			/** Context */
-			ctx?: Record<string, never>;
-		};
-	};
-	responses: never;
-	parameters: never;
-	requestBodies: never;
-	headers: never;
-	pathItems: never;
+    schemas: {
+        /** Body_upload_ingestion_file_enterprises__enterprise_id__ingestion_sources__source_id__upload_post */
+        Body_upload_ingestion_file_enterprises__enterprise_id__ingestion_sources__source_id__upload_post: {
+            /** File */
+            file: string;
+            /** Sheet Name */
+            sheet_name?: string | null;
+        };
+        /**
+         * CredentialStatus
+         * @enum {string}
+         */
+        CredentialStatus: "active" | "expired" | "revoked" | "error";
+        /**
+         * CredentialType
+         * @enum {string}
+         */
+        CredentialType: "api_key" | "username_password" | "oauth2" | "other";
+        /** EnterpriseCreateSchema */
+        EnterpriseCreateSchema: {
+            /** External Key */
+            external_key: string;
+            /** Legal Name */
+            legal_name: string;
+            /** Registration Number */
+            registration_number?: string | null;
+            /** Industry */
+            industry?: string | null;
+            /** Country Code */
+            country_code: string;
+            /** Base Currency */
+            base_currency: string;
+            /** Timezone */
+            timezone: string;
+            /**
+             * Is Active
+             * @default true
+             */
+            is_active: boolean;
+        };
+        /**
+         * EnterpriseListResponse
+         * @description Paginated enterprise response.
+         */
+        EnterpriseListResponse: {
+            /** Items */
+            items: components["schemas"]["EnterpriseSchema"][];
+            pagination: components["schemas"]["OffsetPaginationSchema"];
+        };
+        /** EnterpriseSchema */
+        EnterpriseSchema: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** External Key */
+            external_key: string;
+            /** Legal Name */
+            legal_name: string;
+            /** Registration Number */
+            registration_number?: string | null;
+            /** Industry */
+            industry?: string | null;
+            /** Country Code */
+            country_code: string;
+            /** Base Currency */
+            base_currency: string;
+            /** Timezone */
+            timezone: string;
+            /** Is Active */
+            is_active: boolean;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+        };
+        /** EnterpriseUpdateSchema */
+        EnterpriseUpdateSchema: {
+            /** Legal Name */
+            legal_name?: string | null;
+            /** Registration Number */
+            registration_number?: string | null;
+            /** Industry */
+            industry?: string | null;
+            /** Country Code */
+            country_code?: string | null;
+            /** Base Currency */
+            base_currency?: string | null;
+            /** Timezone */
+            timezone?: string | null;
+            /** Is Active */
+            is_active?: boolean | null;
+        };
+        /**
+         * EntryMode
+         * @enum {string}
+         */
+        EntryMode: "source" | "manual" | "adjusted";
+        /**
+         * ForecastListResponse
+         * @description Paginated forecast-run response.
+         */
+        ForecastListResponse: {
+            /** Items */
+            items: components["schemas"]["ForecastRunSchema"][];
+            pagination: components["schemas"]["OffsetPaginationSchema"];
+        };
+        /**
+         * ForecastObservationDriverSchema
+         * @description One observed input driver used by the forecast model.
+         */
+        ForecastObservationDriverSchema: {
+            /** Label */
+            label: string;
+            /** Value */
+            value: string;
+            /** Detail */
+            detail: string;
+        };
+        /**
+         * ForecastRequestSchema
+         * @description Request a baseline forecast for one target month.
+         */
+        ForecastRequestSchema: {
+            /**
+             * Target Period Start
+             * Format: date
+             */
+            target_period_start: string;
+            /**
+             * Target Period End
+             * Format: date
+             */
+            target_period_end: string;
+            /** @default ad_hoc_baseline */
+            run_type: components["schemas"]["ForecastRunType"];
+            /** Solvency Buffer */
+            solvency_buffer: number | string;
+        };
+        /**
+         * ForecastRunPeriodSchema
+         * @description Forecast sequence period response.
+         */
+        ForecastRunPeriodSchema: {
+            /**
+             * Monthly Cashflow Aggregate Id
+             * Format: uuid
+             */
+            monthly_cashflow_aggregate_id: string;
+            /** Sequence Index */
+            sequence_index: number;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Forecast Run Id
+             * Format: uuid
+             */
+            forecast_run_id: string;
+            /**
+             * Period Start
+             * Format: date
+             */
+            period_start: string;
+            /**
+             * Period End
+             * Format: date
+             */
+            period_end: string;
+            /** Total Invoice Amount */
+            total_invoice_amount: string;
+            /** Total Inflows */
+            total_inflows: string;
+            /** Total Outflows */
+            total_outflows: string;
+            /** Monthly Repayment */
+            monthly_repayment: string;
+            /** Total Payment Delay Days */
+            total_payment_delay_days: string;
+            /** Invoice Count */
+            invoice_count: number;
+            /** Payment Count */
+            payment_count: number;
+            /** Net Cashflow */
+            net_cashflow: string;
+        };
+        /**
+         * ForecastRunSchema
+         * @description Baseline forecast response and audit metadata.
+         */
+        ForecastRunSchema: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Enterprise Id
+             * Format: uuid
+             */
+            enterprise_id: string;
+            run_type: components["schemas"]["ForecastRunType"];
+            /**
+             * Target Period Start
+             * Format: date
+             */
+            target_period_start: string;
+            /**
+             * Target Period End
+             * Format: date
+             */
+            target_period_end: string;
+            /** Sequence Window Months */
+            sequence_window_months: number;
+            /**
+             * Static Snapshot Id
+             * Format: uuid
+             */
+            static_snapshot_id: string;
+            /** Model Version */
+            model_version: string;
+            /** Artifact Version */
+            artifact_version: string;
+            /** Predicted Net Cashflow */
+            predicted_net_cashflow: string;
+            /** Solvency Buffer */
+            solvency_buffer: string;
+            /** Buffer Gap */
+            buffer_gap: string;
+            status: components["schemas"]["ForecastStatus"];
+            /**
+             * Requested At
+             * Format: date-time
+             */
+            requested_at: string;
+            /** Completed At */
+            completed_at: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Periods */
+            periods?: components["schemas"]["ForecastRunPeriodSchema"][];
+            static_snapshot?: components["schemas"]["StaticFinancialSnapshotSchema"] | null;
+            /**
+             * Expected Inflows
+             * @default 0
+             */
+            expected_inflows: string;
+            /**
+             * Expected Outflows
+             * @default 0
+             */
+            expected_outflows: string;
+            /** Observation Drivers */
+            observation_drivers?: components["schemas"]["ForecastObservationDriverSchema"][];
+            /** Observations */
+            observations?: string[];
+        };
+        /**
+         * ForecastRunType
+         * @enum {string}
+         */
+        ForecastRunType: "baseline" | "scheduled_baseline" | "ad_hoc_baseline";
+        /**
+         * ForecastStatus
+         * @enum {string}
+         */
+        ForecastStatus: "pending" | "running" | "completed" | "failed";
+        /** HTTPValidationError */
+        HTTPValidationError: {
+            /** Detail */
+            detail?: components["schemas"]["ValidationError"][];
+        };
+        /**
+         * HealthDeltaProfile
+         * @description Server-defined sensitivity profile for health delta simulation.
+         * @enum {string}
+         */
+        HealthDeltaProfile: "conservative" | "standard" | "stress" | "custom";
+        /**
+         * HealthDeltaRequestSchema
+         * @description Request a server-generated health delta sensitivity profile.
+         */
+        HealthDeltaRequestSchema: {
+            /** @default standard */
+            profile: components["schemas"]["HealthDeltaProfile"];
+            /** Features */
+            features?: {
+                [key: string]: number | string;
+            };
+        };
+        /**
+         * HealthStatus
+         * @description Directional status bands for the health score.
+         * @enum {string}
+         */
+        HealthStatus: "comfortable" | "at_risk" | "critical";
+        /**
+         * IngestionRunCreateSchema
+         * @description Ingestion synchronization request schema.
+         */
+        IngestionRunCreateSchema: {
+            /** @default incremental */
+            run_type: components["schemas"]["IngestionRunType"];
+            /** @default pending */
+            status: components["schemas"]["IngestionStatus"];
+            /** Since */
+            since?: string | null;
+        };
+        /**
+         * IngestionRunListResponse
+         * @description Paginated ingestion-run response.
+         */
+        IngestionRunListResponse: {
+            /** Items */
+            items: components["schemas"]["IngestionRunSchema"][];
+            pagination: components["schemas"]["OffsetPaginationSchema"];
+        };
+        /**
+         * IngestionRunSchema
+         * @description Ingestion-run response schema.
+         */
+        IngestionRunSchema: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Enterprise Id
+             * Format: uuid
+             */
+            enterprise_id: string;
+            /**
+             * Ingestion Source Id
+             * Format: uuid
+             */
+            ingestion_source_id: string;
+            run_type: components["schemas"]["IngestionRunType"];
+            status: components["schemas"]["IngestionStatus"];
+            /** Started At */
+            started_at?: string | null;
+            /** Finished At */
+            finished_at?: string | null;
+            /** Records Received */
+            records_received: number;
+            /** Records Processed */
+            records_processed: number;
+            /** Records Failed */
+            records_failed: number;
+            /** Error Summary */
+            error_summary?: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+        };
+        /**
+         * IngestionRunType
+         * @enum {string}
+         */
+        IngestionRunType: "full" | "incremental" | "upload";
+        /** IngestionSourceCreateSchema */
+        IngestionSourceCreateSchema: {
+            /** Source Key */
+            source_key: string;
+            /** Display Name */
+            display_name: string;
+            /** @default active */
+            status: components["schemas"]["IngestionSourceStatus"];
+            /**
+             * Is Active
+             * @default true
+             */
+            is_active: boolean;
+        };
+        /**
+         * IngestionSourceCredentialCreateSchema
+         * @description Ingestion-source credential creation payload.
+         */
+        IngestionSourceCredentialCreateSchema: {
+            credential_type: components["schemas"]["CredentialType"];
+            /** Config Json */
+            config_json?: {
+                [key: string]: unknown;
+            };
+            /** Secret Ref */
+            secret_ref: string;
+            /** Expires At */
+            expires_at?: string | null;
+        };
+        /**
+         * IngestionSourceCredentialListResponse
+         * @description Paginated ingestion-source credential response.
+         */
+        IngestionSourceCredentialListResponse: {
+            /** Items */
+            items: components["schemas"]["IngestionSourceCredentialSchema"][];
+            pagination: components["schemas"]["OffsetPaginationSchema"];
+        };
+        /**
+         * IngestionSourceCredentialMetadataUpdateSchema
+         * @description Public ingestion-source credential metadata update payload.
+         */
+        IngestionSourceCredentialMetadataUpdateSchema: {
+            credential_type?: components["schemas"]["CredentialType"] | null;
+            /** Config Json */
+            config_json?: {
+                [key: string]: unknown;
+            } | null;
+            /** Expires At */
+            expires_at?: string | null;
+        };
+        /**
+         * IngestionSourceCredentialSchema
+         * @description Public ingestion-source credential metadata.
+         */
+        IngestionSourceCredentialSchema: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Enterprise Id
+             * Format: uuid
+             */
+            enterprise_id: string;
+            /**
+             * Ingestion Source Id
+             * Format: uuid
+             */
+            ingestion_source_id: string;
+            credential_type: components["schemas"]["CredentialType"];
+            status: components["schemas"]["CredentialStatus"];
+            /** Config Json */
+            config_json: {
+                [key: string]: unknown;
+            };
+            /** Last Rotated At */
+            last_rotated_at?: string | null;
+            /** Expires At */
+            expires_at?: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+        };
+        /**
+         * IngestionSourceCredentialSecretUpdateSchema
+         * @description Ingestion-source credential rotation payload.
+         */
+        IngestionSourceCredentialSecretUpdateSchema: {
+            /** Secret Ref */
+            secret_ref: string;
+        };
+        /**
+         * IngestionSourceListResponse
+         * @description Paginated ingestion-source response.
+         */
+        IngestionSourceListResponse: {
+            /** Items */
+            items: components["schemas"]["IngestionSourceSchema"][];
+            pagination: components["schemas"]["OffsetPaginationSchema"];
+        };
+        /** IngestionSourceSchema */
+        IngestionSourceSchema: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Enterprise Id
+             * Format: uuid
+             */
+            enterprise_id: string;
+            /** Source Key */
+            source_key: string;
+            /** Display Name */
+            display_name: string;
+            status: components["schemas"]["IngestionSourceStatus"];
+            /** Is Active */
+            is_active: boolean;
+            /** Deleted At */
+            deleted_at?: string | null;
+            /** Last Synced At */
+            last_synced_at?: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+        };
+        /**
+         * IngestionSourceStatus
+         * @enum {string}
+         */
+        IngestionSourceStatus: "active" | "paused" | "error";
+        /** IngestionSourceUpdateSchema */
+        IngestionSourceUpdateSchema: {
+            /** Display Name */
+            display_name?: string | null;
+            status?: components["schemas"]["IngestionSourceStatus"] | null;
+            /** Is Active */
+            is_active?: boolean | null;
+            /** Deleted At */
+            deleted_at?: string | null;
+            /** Last Synced At */
+            last_synced_at?: string | null;
+        };
+        /**
+         * IngestionStatus
+         * @enum {string}
+         */
+        IngestionStatus: "pending" | "running" | "completed" | "failed";
+        /**
+         * LiquidityMitigationProfile
+         * @description Server-defined intervention range for mitigation recommendations.
+         * @enum {string}
+         */
+        LiquidityMitigationProfile: "conservative" | "standard" | "stress";
+        /**
+         * LiquidityMitigationRequestSchema
+         * @description Request bounded liquidity mitigation recommendations.
+         */
+        LiquidityMitigationRequestSchema: {
+            /** @default standard */
+            profile: components["schemas"]["LiquidityMitigationProfile"];
+            /**
+             * Max Recommendations
+             * @default 3
+             */
+            max_recommendations: number;
+        };
+        /**
+         * MitigationRecommendationSchema
+         * @description Persisted liquidity mitigation recommendation response.
+         */
+        MitigationRecommendationSchema: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Simulation Run Id
+             * Format: uuid
+             */
+            simulation_run_id: string;
+            /** Priority Rank */
+            priority_rank: number;
+            action_type: components["schemas"]["RecommendationActionType"];
+            /** Parameter Name */
+            parameter_name: string;
+            /** Original Value */
+            original_value: string;
+            /** Recommended Value */
+            recommended_value: string;
+            /** Expected Cashflow Delta */
+            expected_cashflow_delta: string;
+            /** Expected Post Action Cashflow */
+            expected_post_action_cashflow: string;
+            /** Meets Buffer */
+            meets_buffer: boolean;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+        };
+        /**
+         * OffsetPaginationSchema
+         * @description Metadata for offset-based collection responses.
+         */
+        OffsetPaginationSchema: {
+            /** Limit */
+            limit: number;
+            /** Offset */
+            offset: number;
+            /** Total Count */
+            total_count: number;
+            /** Has Next */
+            has_next: boolean;
+            /** Has Prev */
+            has_prev: boolean;
+        };
+        /**
+         * ReceivablesRankingSchema
+         * @description Persisted trapped-liquidity ranking response.
+         */
+        ReceivablesRankingSchema: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Simulation Run Id
+             * Format: uuid
+             */
+            simulation_run_id: string;
+            /**
+             * Counterparty Id
+             * Format: uuid
+             */
+            counterparty_id: string;
+            /** Rank Position */
+            rank_position: number;
+            /** Baseline Outstanding Amount */
+            baseline_outstanding_amount: string;
+            /** Simulated Cashflow Delta */
+            simulated_cashflow_delta: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+        };
+        /**
+         * RecommendationActionType
+         * @enum {string}
+         */
+        RecommendationActionType: "delay_capex" | "reduce_outflows" | "adjust_repayment" | "other";
+        /**
+         * SimulationRunSchema
+         * @description Simulation run response with persisted scenarios.
+         */
+        SimulationRunSchema: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Enterprise Id
+             * Format: uuid
+             */
+            enterprise_id: string;
+            /**
+             * Forecast Run Id
+             * Format: uuid
+             */
+            forecast_run_id: string;
+            simulation_type: components["schemas"]["SimulationType"];
+            status: components["schemas"]["SimulationStatus"];
+            /** Summary Result */
+            summary_result: {
+                [key: string]: unknown;
+            };
+            /**
+             * Requested At
+             * Format: date-time
+             */
+            requested_at: string;
+            /** Completed At */
+            completed_at: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Scenarios */
+            scenarios?: components["schemas"]["SimulationScenarioSchema"][];
+            /** Receivables Rankings */
+            receivables_rankings?: components["schemas"]["ReceivablesRankingSchema"][];
+            /** Mitigation Recommendations */
+            mitigation_recommendations?: components["schemas"]["MitigationRecommendationSchema"][];
+        };
+        /**
+         * SimulationScenarioSchema
+         * @description Persisted simulation scenario response.
+         */
+        SimulationScenarioSchema: {
+            /** Scenario Index */
+            scenario_index: number;
+            /** Scenario Label */
+            scenario_label: string;
+            /** Input Patch Json */
+            input_patch_json: {
+                [key: string]: unknown;
+            };
+            /** Predicted Net Cashflow */
+            predicted_net_cashflow: string;
+            /** Delta From Baseline */
+            delta_from_baseline: string;
+            /** Meets Buffer */
+            meets_buffer: boolean;
+            /** Health Score */
+            health_score?: string | null;
+            /** Health Score Delta */
+            health_score_delta?: string | null;
+            health_status?: components["schemas"]["HealthStatus"] | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Simulation Run Id
+             * Format: uuid
+             */
+            simulation_run_id: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+        };
+        /**
+         * SimulationStatus
+         * @enum {string}
+         */
+        SimulationStatus: "pending" | "running" | "completed" | "failed";
+        /**
+         * SimulationType
+         * @enum {string}
+         */
+        SimulationType: "health_delta" | "trapped_liquidity" | "liquidity_mitigation";
+        /**
+         * StaticFinancialSnapshotCreateSchema
+         * @description Create a point-in-time static model feature snapshot.
+         */
+        StaticFinancialSnapshotCreateSchema: {
+            /**
+             * Snapshot Date
+             * Format: date
+             */
+            snapshot_date: string;
+            /** @default manual */
+            entry_mode: components["schemas"]["EntryMode"];
+            /** Ingestion Source Id */
+            ingestion_source_id?: string | null;
+            /** Credit Score */
+            credit_score?: number | string | null;
+            /** Failure Score */
+            failure_score?: number | string | null;
+            /** Debt To Revenue Ratio */
+            debt_to_revenue_ratio?: number | string | null;
+            /** Current Assets */
+            current_assets?: number | string | null;
+            /** Current Liabilities */
+            current_liabilities?: number | string | null;
+            /** Fixed Assets */
+            fixed_assets?: number | string | null;
+            /** Long Term Liabilities */
+            long_term_liabilities?: number | string | null;
+            /** Capex */
+            capex?: number | string | null;
+            /** Cogs */
+            cogs?: number | string | null;
+            /** Missed Payments Number */
+            missed_payments_number?: number | null;
+        };
+        /**
+         * StaticFinancialSnapshotSchema
+         * @description Static financial snapshot response.
+         */
+        StaticFinancialSnapshotSchema: {
+            /**
+             * Snapshot Date
+             * Format: date
+             */
+            snapshot_date: string;
+            /** @default manual */
+            entry_mode: components["schemas"]["EntryMode"];
+            /** Ingestion Source Id */
+            ingestion_source_id?: string | null;
+            /** Credit Score */
+            credit_score?: string | null;
+            /** Failure Score */
+            failure_score?: string | null;
+            /** Debt To Revenue Ratio */
+            debt_to_revenue_ratio?: string | null;
+            /** Current Assets */
+            current_assets?: string | null;
+            /** Current Liabilities */
+            current_liabilities?: string | null;
+            /** Fixed Assets */
+            fixed_assets?: string | null;
+            /** Long Term Liabilities */
+            long_term_liabilities?: string | null;
+            /** Capex */
+            capex?: string | null;
+            /** Cogs */
+            cogs?: string | null;
+            /** Missed Payments Number */
+            missed_payments_number?: number | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Enterprise Id
+             * Format: uuid
+             */
+            enterprise_id: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+        };
+        /**
+         * StaticFinancialSnapshotUpdateSchema
+         * @description Update static snapshot values.
+         */
+        StaticFinancialSnapshotUpdateSchema: {
+            entry_mode?: components["schemas"]["EntryMode"] | null;
+            /** Ingestion Source Id */
+            ingestion_source_id?: string | null;
+            /** Credit Score */
+            credit_score?: number | string | null;
+            /** Failure Score */
+            failure_score?: number | string | null;
+            /** Debt To Revenue Ratio */
+            debt_to_revenue_ratio?: number | string | null;
+            /** Current Assets */
+            current_assets?: number | string | null;
+            /** Current Liabilities */
+            current_liabilities?: number | string | null;
+            /** Fixed Assets */
+            fixed_assets?: number | string | null;
+            /** Long Term Liabilities */
+            long_term_liabilities?: number | string | null;
+            /** Capex */
+            capex?: number | string | null;
+            /** Cogs */
+            cogs?: number | string | null;
+            /** Missed Payments Number */
+            missed_payments_number?: number | null;
+        };
+        /**
+         * TrappedLiquidityRequestSchema
+         * @description Request trapped-liquidity analysis for selected counterparties.
+         */
+        TrappedLiquidityRequestSchema: {
+            /** Counterparty Ids */
+            counterparty_ids?: string[] | null;
+            /**
+             * Max Counterparties
+             * @default 10
+             */
+            max_counterparties: number;
+        };
+        /** ValidationError */
+        ValidationError: {
+            /** Location */
+            loc: (string | number)[];
+            /** Message */
+            msg: string;
+            /** Error Type */
+            type: string;
+            /** Input */
+            input?: unknown;
+            /** Context */
+            ctx?: Record<string, never>;
+        };
+    };
+    responses: never;
+    parameters: never;
+    requestBodies: never;
+    headers: never;
+    pathItems: never;
 }
 export type $defs = Record<string, never>;
 export interface operations {
-	list_enterprises_enterprises_get: {
-		parameters: {
-			query?: {
-				external_key?: string | null;
-				legal_name?: string | null;
-				is_active?: boolean;
-				limit?: number;
-				offset?: number;
-			};
-			header?: never;
-			path?: never;
-			cookie?: never;
-		};
-		requestBody?: never;
-		responses: {
-			/** @description Successful Response */
-			200: {
-				headers: {
-					[name: string]: unknown;
-				};
-				content: {
-					'application/json': components['schemas']['EnterpriseListResponse'];
-				};
-			};
-			/** @description Validation Error */
-			422: {
-				headers: {
-					[name: string]: unknown;
-				};
-				content: {
-					'application/json': components['schemas']['HTTPValidationError'];
-				};
-			};
-		};
-	};
-	create_enterprise_enterprises_post: {
-		parameters: {
-			query?: never;
-			header?: never;
-			path?: never;
-			cookie?: never;
-		};
-		requestBody: {
-			content: {
-				'application/json': components['schemas']['EnterpriseCreateSchema'];
-			};
-		};
-		responses: {
-			/** @description Successful Response */
-			201: {
-				headers: {
-					[name: string]: unknown;
-				};
-				content: {
-					'application/json': components['schemas']['EnterpriseSchema'];
-				};
-			};
-			/** @description Validation Error */
-			422: {
-				headers: {
-					[name: string]: unknown;
-				};
-				content: {
-					'application/json': components['schemas']['HTTPValidationError'];
-				};
-			};
-		};
-	};
-	get_enterprise_enterprises__enterprise_id__get: {
-		parameters: {
-			query?: never;
-			header?: never;
-			path: {
-				enterprise_id: string;
-			};
-			cookie?: never;
-		};
-		requestBody?: never;
-		responses: {
-			/** @description Successful Response */
-			200: {
-				headers: {
-					[name: string]: unknown;
-				};
-				content: {
-					'application/json': components['schemas']['EnterpriseSchema'];
-				};
-			};
-			/** @description Validation Error */
-			422: {
-				headers: {
-					[name: string]: unknown;
-				};
-				content: {
-					'application/json': components['schemas']['HTTPValidationError'];
-				};
-			};
-		};
-	};
-	delete_enterprise_enterprises__enterprise_id__delete: {
-		parameters: {
-			query?: never;
-			header?: never;
-			path: {
-				enterprise_id: string;
-			};
-			cookie?: never;
-		};
-		requestBody?: never;
-		responses: {
-			/** @description Successful Response */
-			204: {
-				headers: {
-					[name: string]: unknown;
-				};
-				content?: never;
-			};
-			/** @description Validation Error */
-			422: {
-				headers: {
-					[name: string]: unknown;
-				};
-				content: {
-					'application/json': components['schemas']['HTTPValidationError'];
-				};
-			};
-		};
-	};
-	update_enterprise_enterprises__enterprise_id__patch: {
-		parameters: {
-			query?: never;
-			header?: never;
-			path: {
-				enterprise_id: string;
-			};
-			cookie?: never;
-		};
-		requestBody: {
-			content: {
-				'application/json': components['schemas']['EnterpriseUpdateSchema'];
-			};
-		};
-		responses: {
-			/** @description Successful Response */
-			200: {
-				headers: {
-					[name: string]: unknown;
-				};
-				content: {
-					'application/json': components['schemas']['EnterpriseSchema'];
-				};
-			};
-			/** @description Validation Error */
-			422: {
-				headers: {
-					[name: string]: unknown;
-				};
-				content: {
-					'application/json': components['schemas']['HTTPValidationError'];
-				};
-			};
-		};
-	};
-	list_static_snapshots_enterprises__enterprise_id__financial_static_snapshots_get: {
-		parameters: {
-			query?: never;
-			header?: never;
-			path: {
-				enterprise_id: string;
-			};
-			cookie?: never;
-		};
-		requestBody?: never;
-		responses: {
-			/** @description Successful Response */
-			200: {
-				headers: {
-					[name: string]: unknown;
-				};
-				content: {
-					'application/json': components['schemas']['StaticFinancialSnapshotSchema'][];
-				};
-			};
-			/** @description Validation Error */
-			422: {
-				headers: {
-					[name: string]: unknown;
-				};
-				content: {
-					'application/json': components['schemas']['HTTPValidationError'];
-				};
-			};
-		};
-	};
-	create_static_snapshot_enterprises__enterprise_id__financial_static_snapshots_post: {
-		parameters: {
-			query?: never;
-			header?: never;
-			path: {
-				enterprise_id: string;
-			};
-			cookie?: never;
-		};
-		requestBody: {
-			content: {
-				'application/json': components['schemas']['StaticFinancialSnapshotCreateSchema'];
-			};
-		};
-		responses: {
-			/** @description Successful Response */
-			201: {
-				headers: {
-					[name: string]: unknown;
-				};
-				content: {
-					'application/json': components['schemas']['StaticFinancialSnapshotSchema'];
-				};
-			};
-			/** @description Validation Error */
-			422: {
-				headers: {
-					[name: string]: unknown;
-				};
-				content: {
-					'application/json': components['schemas']['HTTPValidationError'];
-				};
-			};
-		};
-	};
-	get_latest_static_snapshot_enterprises__enterprise_id__financial_static_snapshots_latest_get: {
-		parameters: {
-			query: {
-				target_date: string;
-			};
-			header?: never;
-			path: {
-				enterprise_id: string;
-			};
-			cookie?: never;
-		};
-		requestBody?: never;
-		responses: {
-			/** @description Successful Response */
-			200: {
-				headers: {
-					[name: string]: unknown;
-				};
-				content: {
-					'application/json': components['schemas']['StaticFinancialSnapshotSchema'];
-				};
-			};
-			/** @description Validation Error */
-			422: {
-				headers: {
-					[name: string]: unknown;
-				};
-				content: {
-					'application/json': components['schemas']['HTTPValidationError'];
-				};
-			};
-		};
-	};
-	get_static_snapshot_enterprises__enterprise_id__financial_static_snapshots__snapshot_id__get: {
-		parameters: {
-			query?: never;
-			header?: never;
-			path: {
-				enterprise_id: string;
-				snapshot_id: string;
-			};
-			cookie?: never;
-		};
-		requestBody?: never;
-		responses: {
-			/** @description Successful Response */
-			200: {
-				headers: {
-					[name: string]: unknown;
-				};
-				content: {
-					'application/json': components['schemas']['StaticFinancialSnapshotSchema'];
-				};
-			};
-			/** @description Validation Error */
-			422: {
-				headers: {
-					[name: string]: unknown;
-				};
-				content: {
-					'application/json': components['schemas']['HTTPValidationError'];
-				};
-			};
-		};
-	};
-	update_static_snapshot_enterprises__enterprise_id__financial_static_snapshots__snapshot_id__patch: {
-		parameters: {
-			query?: never;
-			header?: never;
-			path: {
-				enterprise_id: string;
-				snapshot_id: string;
-			};
-			cookie?: never;
-		};
-		requestBody: {
-			content: {
-				'application/json': components['schemas']['StaticFinancialSnapshotUpdateSchema'];
-			};
-		};
-		responses: {
-			/** @description Successful Response */
-			200: {
-				headers: {
-					[name: string]: unknown;
-				};
-				content: {
-					'application/json': components['schemas']['StaticFinancialSnapshotSchema'];
-				};
-			};
-			/** @description Validation Error */
-			422: {
-				headers: {
-					[name: string]: unknown;
-				};
-				content: {
-					'application/json': components['schemas']['HTTPValidationError'];
-				};
-			};
-		};
-	};
-	list_forecasts_enterprises__enterprise_id__forecasts_get: {
-		parameters: {
-			query?: {
-				run_type?: components['schemas']['ForecastRunType'] | null;
-				status?: components['schemas']['ForecastStatus'] | null;
-				limit?: number;
-				offset?: number;
-			};
-			header?: never;
-			path: {
-				enterprise_id: string;
-			};
-			cookie?: never;
-		};
-		requestBody?: never;
-		responses: {
-			/** @description Successful Response */
-			200: {
-				headers: {
-					[name: string]: unknown;
-				};
-				content: {
-					'application/json': components['schemas']['ForecastListResponse'];
-				};
-			};
-			/** @description Validation Error */
-			422: {
-				headers: {
-					[name: string]: unknown;
-				};
-				content: {
-					'application/json': components['schemas']['HTTPValidationError'];
-				};
-			};
-		};
-	};
-	create_baseline_forecast_enterprises__enterprise_id__forecasts_post: {
-		parameters: {
-			query?: never;
-			header?: never;
-			path: {
-				enterprise_id: string;
-			};
-			cookie?: never;
-		};
-		requestBody: {
-			content: {
-				'application/json': components['schemas']['ForecastRequestSchema'];
-			};
-		};
-		responses: {
-			/** @description Successful Response */
-			201: {
-				headers: {
-					[name: string]: unknown;
-				};
-				content: {
-					'application/json': components['schemas']['ForecastRunSchema'];
-				};
-			};
-			/** @description Validation Error */
-			422: {
-				headers: {
-					[name: string]: unknown;
-				};
-				content: {
-					'application/json': components['schemas']['HTTPValidationError'];
-				};
-			};
-		};
-	};
-	get_forecast_enterprises__enterprise_id__forecasts__forecast_run_id__get: {
-		parameters: {
-			query?: never;
-			header?: never;
-			path: {
-				enterprise_id: string;
-				forecast_run_id: string;
-			};
-			cookie?: never;
-		};
-		requestBody?: never;
-		responses: {
-			/** @description Successful Response */
-			200: {
-				headers: {
-					[name: string]: unknown;
-				};
-				content: {
-					'application/json': components['schemas']['ForecastRunSchema'];
-				};
-			};
-			/** @description Validation Error */
-			422: {
-				headers: {
-					[name: string]: unknown;
-				};
-				content: {
-					'application/json': components['schemas']['HTTPValidationError'];
-				};
-			};
-		};
-	};
-	create_health_delta_simulation_enterprises__enterprise_id__forecasts__forecast_run_id__simulations_health_delta_post: {
-		parameters: {
-			query?: never;
-			header?: never;
-			path: {
-				enterprise_id: string;
-				forecast_run_id: string;
-			};
-			cookie?: never;
-		};
-		requestBody: {
-			content: {
-				'application/json': components['schemas']['HealthDeltaRequestSchema'];
-			};
-		};
-		responses: {
-			/** @description Successful Response */
-			201: {
-				headers: {
-					[name: string]: unknown;
-				};
-				content: {
-					'application/json': components['schemas']['SimulationRunSchema'];
-				};
-			};
-			/** @description Validation Error */
-			422: {
-				headers: {
-					[name: string]: unknown;
-				};
-				content: {
-					'application/json': components['schemas']['HTTPValidationError'];
-				};
-			};
-		};
-	};
-	create_trapped_liquidity_simulation_enterprises__enterprise_id__forecasts__forecast_run_id__simulations_trapped_liquidity_post: {
-		parameters: {
-			query?: never;
-			header?: never;
-			path: {
-				enterprise_id: string;
-				forecast_run_id: string;
-			};
-			cookie?: never;
-		};
-		requestBody: {
-			content: {
-				'application/json': components['schemas']['TrappedLiquidityRequestSchema'];
-			};
-		};
-		responses: {
-			/** @description Successful Response */
-			201: {
-				headers: {
-					[name: string]: unknown;
-				};
-				content: {
-					'application/json': components['schemas']['SimulationRunSchema'];
-				};
-			};
-			/** @description Validation Error */
-			422: {
-				headers: {
-					[name: string]: unknown;
-				};
-				content: {
-					'application/json': components['schemas']['HTTPValidationError'];
-				};
-			};
-		};
-	};
-	create_liquidity_mitigation_simulation_enterprises__enterprise_id__forecasts__forecast_run_id__simulations_liquidity_mitigation_post: {
-		parameters: {
-			query?: never;
-			header?: never;
-			path: {
-				enterprise_id: string;
-				forecast_run_id: string;
-			};
-			cookie?: never;
-		};
-		requestBody: {
-			content: {
-				'application/json': components['schemas']['LiquidityMitigationRequestSchema'];
-			};
-		};
-		responses: {
-			/** @description Successful Response */
-			201: {
-				headers: {
-					[name: string]: unknown;
-				};
-				content: {
-					'application/json': components['schemas']['SimulationRunSchema'];
-				};
-			};
-			/** @description Validation Error */
-			422: {
-				headers: {
-					[name: string]: unknown;
-				};
-				content: {
-					'application/json': components['schemas']['HTTPValidationError'];
-				};
-			};
-		};
-	};
-	request_ingestion_sync_enterprises__enterprise_id__ingestion_sources__source_id__sync_post: {
-		parameters: {
-			query?: never;
-			header?: never;
-			path: {
-				enterprise_id: string;
-				source_id: string;
-			};
-			cookie?: never;
-		};
-		requestBody: {
-			content: {
-				'application/json': components['schemas']['IngestionRunCreateSchema'];
-			};
-		};
-		responses: {
-			/** @description Successful Response */
-			202: {
-				headers: {
-					[name: string]: unknown;
-				};
-				content: {
-					'application/json': components['schemas']['IngestionRunSchema'];
-				};
-			};
-			/** @description Validation Error */
-			422: {
-				headers: {
-					[name: string]: unknown;
-				};
-				content: {
-					'application/json': components['schemas']['HTTPValidationError'];
-				};
-			};
-		};
-	};
-	upload_ingestion_file_enterprises__enterprise_id__ingestion_sources__source_id__upload_post: {
-		parameters: {
-			query?: never;
-			header?: never;
-			path: {
-				enterprise_id: string;
-				source_id: string;
-			};
-			cookie?: never;
-		};
-		requestBody: {
-			content: {
-				'multipart/form-data': components['schemas']['Body_upload_ingestion_file_enterprises__enterprise_id__ingestion_sources__source_id__upload_post'];
-			};
-		};
-		responses: {
-			/** @description Successful Response */
-			202: {
-				headers: {
-					[name: string]: unknown;
-				};
-				content: {
-					'application/json': components['schemas']['IngestionRunSchema'];
-				};
-			};
-			/** @description Validation Error */
-			422: {
-				headers: {
-					[name: string]: unknown;
-				};
-				content: {
-					'application/json': components['schemas']['HTTPValidationError'];
-				};
-			};
-		};
-	};
-	list_ingestion_runs_enterprises__enterprise_id__ingestion_sources__source_id__runs_get: {
-		parameters: {
-			query?: {
-				status?: components['schemas']['IngestionStatus'] | null;
-				run_type?: components['schemas']['IngestionRunType'] | null;
-				limit?: number;
-				offset?: number;
-			};
-			header?: never;
-			path: {
-				enterprise_id: string;
-				source_id: string;
-			};
-			cookie?: never;
-		};
-		requestBody?: never;
-		responses: {
-			/** @description Successful Response */
-			200: {
-				headers: {
-					[name: string]: unknown;
-				};
-				content: {
-					'application/json': components['schemas']['IngestionRunListResponse'];
-				};
-			};
-			/** @description Validation Error */
-			422: {
-				headers: {
-					[name: string]: unknown;
-				};
-				content: {
-					'application/json': components['schemas']['HTTPValidationError'];
-				};
-			};
-		};
-	};
-	get_ingestion_run_enterprises__enterprise_id__ingestion_sources__source_id__runs__run_id__get: {
-		parameters: {
-			query?: never;
-			header?: never;
-			path: {
-				enterprise_id: string;
-				source_id: string;
-				run_id: string;
-			};
-			cookie?: never;
-		};
-		requestBody?: never;
-		responses: {
-			/** @description Successful Response */
-			200: {
-				headers: {
-					[name: string]: unknown;
-				};
-				content: {
-					'application/json': components['schemas']['IngestionRunSchema'];
-				};
-			};
-			/** @description Validation Error */
-			422: {
-				headers: {
-					[name: string]: unknown;
-				};
-				content: {
-					'application/json': components['schemas']['HTTPValidationError'];
-				};
-			};
-		};
-	};
-	list_ingestion_source_credentials_enterprises__enterprise_id__ingestion_sources__source_id__credentials_get: {
-		parameters: {
-			query?: {
-				credential_type?: components['schemas']['CredentialType'] | null;
-				status?: components['schemas']['CredentialStatus'] | null;
-				limit?: number;
-				offset?: number;
-			};
-			header?: never;
-			path: {
-				enterprise_id: string;
-				source_id: string;
-			};
-			cookie?: never;
-		};
-		requestBody?: never;
-		responses: {
-			/** @description Successful Response */
-			200: {
-				headers: {
-					[name: string]: unknown;
-				};
-				content: {
-					'application/json': components['schemas']['IngestionSourceCredentialListResponse'];
-				};
-			};
-			/** @description Validation Error */
-			422: {
-				headers: {
-					[name: string]: unknown;
-				};
-				content: {
-					'application/json': components['schemas']['HTTPValidationError'];
-				};
-			};
-		};
-	};
-	create_ingestion_source_credential_enterprises__enterprise_id__ingestion_sources__source_id__credentials_post: {
-		parameters: {
-			query?: never;
-			header?: never;
-			path: {
-				enterprise_id: string;
-				source_id: string;
-			};
-			cookie?: never;
-		};
-		requestBody: {
-			content: {
-				'application/json': components['schemas']['IngestionSourceCredentialCreateSchema'];
-			};
-		};
-		responses: {
-			/** @description Successful Response */
-			201: {
-				headers: {
-					[name: string]: unknown;
-				};
-				content: {
-					'application/json': components['schemas']['IngestionSourceCredentialSchema'];
-				};
-			};
-			/** @description Validation Error */
-			422: {
-				headers: {
-					[name: string]: unknown;
-				};
-				content: {
-					'application/json': components['schemas']['HTTPValidationError'];
-				};
-			};
-		};
-	};
-	get_ingestion_source_credential_enterprises__enterprise_id__ingestion_sources__source_id__credentials__credential_id__get: {
-		parameters: {
-			query?: never;
-			header?: never;
-			path: {
-				enterprise_id: string;
-				source_id: string;
-				credential_id: string;
-			};
-			cookie?: never;
-		};
-		requestBody?: never;
-		responses: {
-			/** @description Successful Response */
-			200: {
-				headers: {
-					[name: string]: unknown;
-				};
-				content: {
-					'application/json': components['schemas']['IngestionSourceCredentialSchema'];
-				};
-			};
-			/** @description Validation Error */
-			422: {
-				headers: {
-					[name: string]: unknown;
-				};
-				content: {
-					'application/json': components['schemas']['HTTPValidationError'];
-				};
-			};
-		};
-	};
-	update_ingestion_source_credential_enterprises__enterprise_id__ingestion_sources__source_id__credentials__credential_id__patch: {
-		parameters: {
-			query?: never;
-			header?: never;
-			path: {
-				enterprise_id: string;
-				source_id: string;
-				credential_id: string;
-			};
-			cookie?: never;
-		};
-		requestBody: {
-			content: {
-				'application/json': components['schemas']['IngestionSourceCredentialMetadataUpdateSchema'];
-			};
-		};
-		responses: {
-			/** @description Successful Response */
-			200: {
-				headers: {
-					[name: string]: unknown;
-				};
-				content: {
-					'application/json': components['schemas']['IngestionSourceCredentialSchema'];
-				};
-			};
-			/** @description Validation Error */
-			422: {
-				headers: {
-					[name: string]: unknown;
-				};
-				content: {
-					'application/json': components['schemas']['HTTPValidationError'];
-				};
-			};
-		};
-	};
-	rotate_ingestion_source_credential_enterprises__enterprise_id__ingestion_sources__source_id__credentials__credential_id__rotate_post: {
-		parameters: {
-			query?: never;
-			header?: never;
-			path: {
-				enterprise_id: string;
-				source_id: string;
-				credential_id: string;
-			};
-			cookie?: never;
-		};
-		requestBody: {
-			content: {
-				'application/json': components['schemas']['IngestionSourceCredentialSecretUpdateSchema'];
-			};
-		};
-		responses: {
-			/** @description Successful Response */
-			200: {
-				headers: {
-					[name: string]: unknown;
-				};
-				content: {
-					'application/json': components['schemas']['IngestionSourceCredentialSchema'];
-				};
-			};
-			/** @description Validation Error */
-			422: {
-				headers: {
-					[name: string]: unknown;
-				};
-				content: {
-					'application/json': components['schemas']['HTTPValidationError'];
-				};
-			};
-		};
-	};
-	revoke_ingestion_source_credential_enterprises__enterprise_id__ingestion_sources__source_id__credentials__credential_id__revoke_post: {
-		parameters: {
-			query?: never;
-			header?: never;
-			path: {
-				enterprise_id: string;
-				source_id: string;
-				credential_id: string;
-			};
-			cookie?: never;
-		};
-		requestBody?: never;
-		responses: {
-			/** @description Successful Response */
-			200: {
-				headers: {
-					[name: string]: unknown;
-				};
-				content: {
-					'application/json': components['schemas']['IngestionSourceCredentialSchema'];
-				};
-			};
-			/** @description Validation Error */
-			422: {
-				headers: {
-					[name: string]: unknown;
-				};
-				content: {
-					'application/json': components['schemas']['HTTPValidationError'];
-				};
-			};
-		};
-	};
-	list_ingestion_sources_enterprises__enterprise_id__ingestion_sources_get: {
-		parameters: {
-			query?: {
-				source_key?: string | null;
-				status?: components['schemas']['IngestionSourceStatus'] | null;
-				is_active?: boolean;
-				limit?: number;
-				offset?: number;
-			};
-			header?: never;
-			path: {
-				enterprise_id: string;
-			};
-			cookie?: never;
-		};
-		requestBody?: never;
-		responses: {
-			/** @description Successful Response */
-			200: {
-				headers: {
-					[name: string]: unknown;
-				};
-				content: {
-					'application/json': components['schemas']['IngestionSourceListResponse'];
-				};
-			};
-			/** @description Validation Error */
-			422: {
-				headers: {
-					[name: string]: unknown;
-				};
-				content: {
-					'application/json': components['schemas']['HTTPValidationError'];
-				};
-			};
-		};
-	};
-	create_ingestion_source_enterprises__enterprise_id__ingestion_sources_post: {
-		parameters: {
-			query?: never;
-			header?: never;
-			path: {
-				enterprise_id: string;
-			};
-			cookie?: never;
-		};
-		requestBody: {
-			content: {
-				'application/json': components['schemas']['IngestionSourceCreateSchema'];
-			};
-		};
-		responses: {
-			/** @description Successful Response */
-			201: {
-				headers: {
-					[name: string]: unknown;
-				};
-				content: {
-					'application/json': components['schemas']['IngestionSourceSchema'];
-				};
-			};
-			/** @description Validation Error */
-			422: {
-				headers: {
-					[name: string]: unknown;
-				};
-				content: {
-					'application/json': components['schemas']['HTTPValidationError'];
-				};
-			};
-		};
-	};
-	get_ingestion_source_enterprises__enterprise_id__ingestion_sources__source_id__get: {
-		parameters: {
-			query?: never;
-			header?: never;
-			path: {
-				enterprise_id: string;
-				source_id: string;
-			};
-			cookie?: never;
-		};
-		requestBody?: never;
-		responses: {
-			/** @description Successful Response */
-			200: {
-				headers: {
-					[name: string]: unknown;
-				};
-				content: {
-					'application/json': components['schemas']['IngestionSourceSchema'];
-				};
-			};
-			/** @description Validation Error */
-			422: {
-				headers: {
-					[name: string]: unknown;
-				};
-				content: {
-					'application/json': components['schemas']['HTTPValidationError'];
-				};
-			};
-		};
-	};
-	delete_ingestion_source_enterprises__enterprise_id__ingestion_sources__source_id__delete: {
-		parameters: {
-			query?: never;
-			header?: never;
-			path: {
-				enterprise_id: string;
-				source_id: string;
-			};
-			cookie?: never;
-		};
-		requestBody?: never;
-		responses: {
-			/** @description Successful Response */
-			204: {
-				headers: {
-					[name: string]: unknown;
-				};
-				content?: never;
-			};
-			/** @description Validation Error */
-			422: {
-				headers: {
-					[name: string]: unknown;
-				};
-				content: {
-					'application/json': components['schemas']['HTTPValidationError'];
-				};
-			};
-		};
-	};
-	update_ingestion_source_enterprises__enterprise_id__ingestion_sources__source_id__patch: {
-		parameters: {
-			query?: never;
-			header?: never;
-			path: {
-				enterprise_id: string;
-				source_id: string;
-			};
-			cookie?: never;
-		};
-		requestBody: {
-			content: {
-				'application/json': components['schemas']['IngestionSourceUpdateSchema'];
-			};
-		};
-		responses: {
-			/** @description Successful Response */
-			200: {
-				headers: {
-					[name: string]: unknown;
-				};
-				content: {
-					'application/json': components['schemas']['IngestionSourceSchema'];
-				};
-			};
-			/** @description Validation Error */
-			422: {
-				headers: {
-					[name: string]: unknown;
-				};
-				content: {
-					'application/json': components['schemas']['HTTPValidationError'];
-				};
-			};
-		};
-	};
-	list_simulation_results_enterprises__enterprise_id__simulations_get: {
-		parameters: {
-			query?: {
-				simulation_type?: components['schemas']['SimulationType'] | null;
-				status?: components['schemas']['SimulationStatus'] | null;
-				created_from?: string | null;
-				created_to?: string | null;
-				limit?: number;
-				offset?: number;
-			};
-			header?: never;
-			path: {
-				enterprise_id: string;
-			};
-			cookie?: never;
-		};
-		requestBody?: never;
-		responses: {
-			/** @description Successful Response */
-			200: {
-				headers: {
-					[name: string]: unknown;
-				};
-				content: {
-					'application/json': components['schemas']['SimulationRunSchema'][];
-				};
-			};
-			/** @description Validation Error */
-			422: {
-				headers: {
-					[name: string]: unknown;
-				};
-				content: {
-					'application/json': components['schemas']['HTTPValidationError'];
-				};
-			};
-		};
-	};
-	get_simulation_result_enterprises__enterprise_id__simulations__simulation_run_id__get: {
-		parameters: {
-			query?: never;
-			header?: never;
-			path: {
-				enterprise_id: string;
-				simulation_run_id: string;
-			};
-			cookie?: never;
-		};
-		requestBody?: never;
-		responses: {
-			/** @description Successful Response */
-			200: {
-				headers: {
-					[name: string]: unknown;
-				};
-				content: {
-					'application/json': components['schemas']['SimulationRunSchema'];
-				};
-			};
-			/** @description Validation Error */
-			422: {
-				headers: {
-					[name: string]: unknown;
-				};
-				content: {
-					'application/json': components['schemas']['HTTPValidationError'];
-				};
-			};
-		};
-	};
+    list_enterprises_enterprises_get: {
+        parameters: {
+            query?: {
+                external_key?: string | null;
+                legal_name?: string | null;
+                is_active?: boolean;
+                limit?: number;
+                offset?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EnterpriseListResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_enterprise_enterprises_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["EnterpriseCreateSchema"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EnterpriseSchema"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_enterprise_enterprises__enterprise_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                enterprise_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EnterpriseSchema"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_enterprise_enterprises__enterprise_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                enterprise_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_enterprise_enterprises__enterprise_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                enterprise_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["EnterpriseUpdateSchema"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EnterpriseSchema"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_static_snapshots_enterprises__enterprise_id__financial_static_snapshots_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                enterprise_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StaticFinancialSnapshotSchema"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_static_snapshot_enterprises__enterprise_id__financial_static_snapshots_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                enterprise_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["StaticFinancialSnapshotCreateSchema"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StaticFinancialSnapshotSchema"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_latest_static_snapshot_enterprises__enterprise_id__financial_static_snapshots_latest_get: {
+        parameters: {
+            query: {
+                target_date: string;
+            };
+            header?: never;
+            path: {
+                enterprise_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StaticFinancialSnapshotSchema"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_static_snapshot_enterprises__enterprise_id__financial_static_snapshots__snapshot_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                enterprise_id: string;
+                snapshot_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StaticFinancialSnapshotSchema"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_static_snapshot_enterprises__enterprise_id__financial_static_snapshots__snapshot_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                enterprise_id: string;
+                snapshot_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["StaticFinancialSnapshotUpdateSchema"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StaticFinancialSnapshotSchema"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_forecasts_enterprises__enterprise_id__forecasts_get: {
+        parameters: {
+            query?: {
+                run_type?: components["schemas"]["ForecastRunType"] | null;
+                status?: components["schemas"]["ForecastStatus"] | null;
+                limit?: number;
+                offset?: number;
+            };
+            header?: never;
+            path: {
+                enterprise_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ForecastListResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_baseline_forecast_enterprises__enterprise_id__forecasts_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                enterprise_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ForecastRequestSchema"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ForecastRunSchema"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_forecast_enterprises__enterprise_id__forecasts__forecast_run_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                enterprise_id: string;
+                forecast_run_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ForecastRunSchema"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_health_delta_simulation_enterprises__enterprise_id__forecasts__forecast_run_id__simulations_health_delta_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                enterprise_id: string;
+                forecast_run_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["HealthDeltaRequestSchema"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SimulationRunSchema"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_trapped_liquidity_simulation_enterprises__enterprise_id__forecasts__forecast_run_id__simulations_trapped_liquidity_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                enterprise_id: string;
+                forecast_run_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TrappedLiquidityRequestSchema"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SimulationRunSchema"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_liquidity_mitigation_simulation_enterprises__enterprise_id__forecasts__forecast_run_id__simulations_liquidity_mitigation_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                enterprise_id: string;
+                forecast_run_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LiquidityMitigationRequestSchema"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SimulationRunSchema"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    request_ingestion_sync_enterprises__enterprise_id__ingestion_sources__source_id__sync_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                enterprise_id: string;
+                source_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["IngestionRunCreateSchema"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IngestionRunSchema"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    upload_ingestion_file_enterprises__enterprise_id__ingestion_sources__source_id__upload_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                enterprise_id: string;
+                source_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["Body_upload_ingestion_file_enterprises__enterprise_id__ingestion_sources__source_id__upload_post"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IngestionRunSchema"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_ingestion_runs_enterprises__enterprise_id__ingestion_sources__source_id__runs_get: {
+        parameters: {
+            query?: {
+                status?: components["schemas"]["IngestionStatus"] | null;
+                run_type?: components["schemas"]["IngestionRunType"] | null;
+                limit?: number;
+                offset?: number;
+            };
+            header?: never;
+            path: {
+                enterprise_id: string;
+                source_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IngestionRunListResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_ingestion_run_enterprises__enterprise_id__ingestion_sources__source_id__runs__run_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                enterprise_id: string;
+                source_id: string;
+                run_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IngestionRunSchema"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_ingestion_source_credentials_enterprises__enterprise_id__ingestion_sources__source_id__credentials_get: {
+        parameters: {
+            query?: {
+                credential_type?: components["schemas"]["CredentialType"] | null;
+                status?: components["schemas"]["CredentialStatus"] | null;
+                limit?: number;
+                offset?: number;
+            };
+            header?: never;
+            path: {
+                enterprise_id: string;
+                source_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IngestionSourceCredentialListResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_ingestion_source_credential_enterprises__enterprise_id__ingestion_sources__source_id__credentials_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                enterprise_id: string;
+                source_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["IngestionSourceCredentialCreateSchema"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IngestionSourceCredentialSchema"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_ingestion_source_credential_enterprises__enterprise_id__ingestion_sources__source_id__credentials__credential_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                enterprise_id: string;
+                source_id: string;
+                credential_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IngestionSourceCredentialSchema"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_ingestion_source_credential_enterprises__enterprise_id__ingestion_sources__source_id__credentials__credential_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                enterprise_id: string;
+                source_id: string;
+                credential_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["IngestionSourceCredentialMetadataUpdateSchema"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IngestionSourceCredentialSchema"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    rotate_ingestion_source_credential_enterprises__enterprise_id__ingestion_sources__source_id__credentials__credential_id__rotate_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                enterprise_id: string;
+                source_id: string;
+                credential_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["IngestionSourceCredentialSecretUpdateSchema"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IngestionSourceCredentialSchema"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    revoke_ingestion_source_credential_enterprises__enterprise_id__ingestion_sources__source_id__credentials__credential_id__revoke_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                enterprise_id: string;
+                source_id: string;
+                credential_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IngestionSourceCredentialSchema"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_ingestion_sources_enterprises__enterprise_id__ingestion_sources_get: {
+        parameters: {
+            query?: {
+                source_key?: string | null;
+                status?: components["schemas"]["IngestionSourceStatus"] | null;
+                is_active?: boolean;
+                limit?: number;
+                offset?: number;
+            };
+            header?: never;
+            path: {
+                enterprise_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IngestionSourceListResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_ingestion_source_enterprises__enterprise_id__ingestion_sources_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                enterprise_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["IngestionSourceCreateSchema"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IngestionSourceSchema"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_ingestion_source_enterprises__enterprise_id__ingestion_sources__source_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                enterprise_id: string;
+                source_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IngestionSourceSchema"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_ingestion_source_enterprises__enterprise_id__ingestion_sources__source_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                enterprise_id: string;
+                source_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_ingestion_source_enterprises__enterprise_id__ingestion_sources__source_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                enterprise_id: string;
+                source_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["IngestionSourceUpdateSchema"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IngestionSourceSchema"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_simulation_results_enterprises__enterprise_id__simulations_get: {
+        parameters: {
+            query?: {
+                simulation_type?: components["schemas"]["SimulationType"] | null;
+                status?: components["schemas"]["SimulationStatus"] | null;
+                created_from?: string | null;
+                created_to?: string | null;
+                limit?: number;
+                offset?: number;
+            };
+            header?: never;
+            path: {
+                enterprise_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SimulationRunSchema"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_simulation_result_enterprises__enterprise_id__simulations__simulation_run_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                enterprise_id: string;
+                simulation_run_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SimulationRunSchema"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
 }

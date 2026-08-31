@@ -12,12 +12,13 @@ type DropdownProps = {
 	options: DropdownOption[];
 	value: string;
 	onChange: (value: string) => void;
+	disabled?: boolean;
 	className?: string;
 	size?: 'sm' | 'md';
 };
 
 const dropdownButton = cva(
-	'inline-flex w-full items-center justify-between rounded-pill border border-border bg-surface text-left text-ink transition hover:border-border active:border-border focus:border-border focus-visible:border-border focus-visible:outline-none focus-visible:ring-0',
+	'inline-flex w-full items-center justify-between rounded-pill border border-border bg-surface text-left text-ink transition hover:border-border active:border-border focus:border-border focus-visible:border-border focus-visible:outline-none focus-visible:ring-0 disabled:pointer-events-none disabled:opacity-50',
 	{
 		variants: {
 			size: {
@@ -52,6 +53,7 @@ function Dropdown({
 	options,
 	value,
 	onChange,
+	disabled = false,
 	className,
 	size = 'md',
 }: DropdownProps) {
@@ -92,6 +94,7 @@ function Dropdown({
 				aria-haspopup="listbox"
 				aria-expanded={isOpen}
 				aria-controls={listboxId}
+				disabled={disabled}
 				onClick={() => setIsOpen((open) => !open)}
 			>
 				<span className="min-w-0 truncate whitespace-nowrap">
