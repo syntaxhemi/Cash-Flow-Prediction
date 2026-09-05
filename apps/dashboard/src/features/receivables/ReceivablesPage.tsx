@@ -59,7 +59,7 @@ function ReceivablesPage() {
 				? {
 						forecast_run_id: latestForecast.id,
 						account_filter: accountFilter as 'all' | 'overdue' | 'upcoming',
-						horizon_days: Number(horizon) as 30 | 60 | 90,
+						horizon_days: horizon,
 					}
 				: null,
 		[accountFilter, horizon, latestForecast],

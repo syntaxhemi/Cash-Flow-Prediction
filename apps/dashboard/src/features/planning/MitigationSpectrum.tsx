@@ -1,7 +1,8 @@
 import { cn } from '@/utils/cn';
-import type { MitigationOption } from './mock-data';
+import { formatCurrency } from '@/utils/formatCurrency';
+import type { PlanningOption } from './types';
 
-function MitigationDetails({ option }: { option: MitigationOption }) {
+function MitigationDetails({ option }: { option: PlanningOption }) {
 	return (
 		<div
 			className={cn(
@@ -28,11 +29,13 @@ function MitigationDetails({ option }: { option: MitigationOption }) {
 				</div>
 				<div className="shrink-0 text-left sm:min-w-36 sm:pt-1">
 					<p className="text-sm tabular-nums text-ink">
-						{option.postScenario}{' '}
-						<span className="text-text-muted">after scenario</span>
+						{formatCurrency(option.postScenario)}{' '}
+						<span className="text-text-muted">projected cash</span>
 					</p>
 					<span className="mt-3 inline-flex rounded-full bg-primary-soft px-2.5 py-1 text-xs font-medium text-primary">
-						Above buffer
+						{option.meetsBuffer
+							? 'Above operating buffer'
+							: 'Below operating buffer'}
 					</span>
 				</div>
 			</div>
@@ -40,7 +43,7 @@ function MitigationDetails({ option }: { option: MitigationOption }) {
 	);
 }
 
-function MitigationOptionBlock({ option }: { option: MitigationOption }) {
+function MitigationOptionBlock({ option }: { option: PlanningOption }) {
 	return (
 		<div className="min-w-0">
 			<MitigationDetails option={option} />
@@ -56,7 +59,7 @@ function MitigationOptionBlock({ option }: { option: MitigationOption }) {
 export function DesktopMitigationSpectrum({
 	options,
 }: {
-	options: MitigationOption[];
+	options: PlanningOption[];
 }) {
 	return (
 		<div
@@ -71,9 +74,14 @@ export function DesktopMitigationSpectrum({
 						<div
 							key={option.name}
 							className="absolute top-0 -translate-x-1/2 text-center"
-							style={{ left: `${index * 33.3333 + 16.6667}%` }}
+							style={{
+								left: `${((index + 0.5) / Math.max(options.length, 1)) * 100}%`,
+							}}
 						>
-							<p className="font-serif text-lg text-primary">{option.impact}</p>
+								<p className="font-serif text-lg text-primary">
+									{option.impact >= 0 ? '+' : '−'}
+									{formatCurrency(Math.abs(option.impact))}
+								</p>
 							<span
 								className={cn(
 									'mx-auto mt-1 block h-5 w-1 rounded-full',
@@ -88,7 +96,12 @@ export function DesktopMitigationSpectrum({
 				</span>
 			</div>
 			<div className="grid grid-cols-[6.5rem_minmax(0,1fr)_6.5rem]">
-				<div className="col-start-2 grid grid-cols-3">
+				<div
+					className="col-start-2 grid"
+					style={{
+						gridTemplateColumns: `repeat(${Math.max(options.length, 1)}, minmax(0, 1fr))`,
+					}}
+				>
 					{options.map((option) => (
 						<MitigationOptionBlock key={option.name} option={option} />
 					))}
@@ -101,7 +114,7 @@ export function DesktopMitigationSpectrum({
 export function MobileMitigationSpectrum({
 	options,
 }: {
-	options: MitigationOption[];
+	options: PlanningOption[];
 }) {
 	return (
 		<div className="lg:hidden" aria-label="Mitigation options by cash impact">
@@ -121,7 +134,8 @@ export function MobileMitigationSpectrum({
 						>
 							<div className="relative -left-3 z-10 flex flex-col items-center gap-1 text-center">
 								<span className="font-serif text-base text-primary">
-									{option.impact}
+									{option.impact >= 0 ? '+' : '−'}
+									{formatCurrency(Math.abs(option.impact))}
 								</span>
 								<span
 									className={cn(
