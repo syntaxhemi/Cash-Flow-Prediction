@@ -53,11 +53,21 @@ function DataPage() {
 	);
 
 	const refreshData = useCallback(() => {
+		setFileUploadError(null);
+		mutations.createSource.reset();
+		mutations.updateSource.reset();
+		mutations.deleteSource.reset();
+		mutations.requestSync.reset();
+		mutations.uploadFile.reset();
+		mutations.createCredential.reset();
+		mutations.updateCredential.reset();
+		mutations.rotateCredential.reset();
+		mutations.revokeCredential.reset();
 		void sources.refresh();
 		void connectedRuns.refresh();
 		void historyRuns.refresh();
 		void credentials.refresh();
-	}, [connectedRuns, credentials, historyRuns, sources]);
+	}, [connectedRuns, credentials, historyRuns, mutations, sources]);
 
 	const handleSync = useCallback(() => {
 		if (!connectedSource) return;
@@ -147,7 +157,7 @@ function DataPage() {
 					</p>
 				</header>
 
-				{resourceError ? (
+		{resourceError && !showSkeleton ? (
 					<ResourceError
 						title="Unable to load data sources"
 						error={resourceError}
@@ -155,12 +165,12 @@ function DataPage() {
 						className="mt-10"
 					/>
 				) : null}
-				{mutations.requestSync.error ? (
+				{mutations.requestSync.error && !showSkeleton ? (
 					<InlineError className="mt-4">
 						We couldn&apos;t start the synchronization. Please try again.
 					</InlineError>
 				) : null}
-				{uploadError ? (
+				{uploadError && !showSkeleton ? (
 					<InlineError className="mt-4">{uploadError.message}</InlineError>
 				) : null}
 

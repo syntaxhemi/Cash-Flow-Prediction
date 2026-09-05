@@ -4,9 +4,12 @@ export type MutationState = { pending: boolean; error: Error | null };
 type Action =
 	{ type: 'pending' } | { type: 'success' } | { type: 'error'; error: Error };
 
-function reducer(_state: MutationState, action: Action): MutationState {
+type MutationAction = Action | { type: 'reset' };
+
+function reducer(_state: MutationState, action: MutationAction): MutationState {
 	if (action.type === 'pending') return { pending: true, error: null };
 	if (action.type === 'success') return { pending: false, error: null };
+	if (action.type === 'reset') return { pending: false, error: null };
 	return { pending: false, error: action.error };
 }
 
@@ -18,6 +21,9 @@ export function useMutation<TInput, TResult>(
 		pending: false,
 		error: null,
 	});
+	const reset = useCallback(() => {
+		dispatch({ type: 'reset' });
+	}, []);
 	const mutateAsync = useCallback(
 		async (input: TInput) => {
 			dispatch({ type: 'pending' });
@@ -34,5 +40,5 @@ export function useMutation<TInput, TResult>(
 		},
 		[mutate],
 	);
-	return { ...state, mutateAsync };
+	return { ...state, mutateAsync, reset };
 }

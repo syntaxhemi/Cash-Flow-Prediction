@@ -184,18 +184,19 @@ function OverviewPage() {
 						hasForecast={Boolean(view)}
 					/>
 
-					{resourceError ? (
+					{resourceError && !showSkeleton ? (
 						<ResourceError
 							title="Unable to load your outlook"
 							error={resourceError}
 							onRetry={() => {
+								createBaseline.reset();
 								void refreshSources();
 								void refreshForecasts();
 							}}
 						/>
 					) : null}
 
-					{createBaseline.error && view ? (
+					{createBaseline.error && view && !createBaseline.pending ? (
 						<InlineError className="mt-4">
 							{createBaseline.error.message}
 						</InlineError>

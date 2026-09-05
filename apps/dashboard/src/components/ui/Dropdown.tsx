@@ -15,18 +15,25 @@ type DropdownProps = {
 	disabled?: boolean;
 	className?: string;
 	size?: 'sm' | 'md';
+	variant?: 'default' | 'borderless';
 };
 
 const dropdownButton = cva(
-	'inline-flex w-full items-center justify-between rounded-pill border border-border bg-surface text-left text-ink transition hover:border-border active:border-border focus:border-border focus-visible:border-border focus-visible:outline-none focus-visible:ring-0 disabled:pointer-events-none disabled:opacity-50',
+	'inline-flex w-full items-center justify-between rounded-pill text-left text-ink transition focus-visible:outline-none focus-visible:ring-0 disabled:pointer-events-none disabled:opacity-50',
 	{
 		variants: {
+			variant: {
+				default:
+					'border border-border bg-surface hover:border-border active:border-border focus:border-border focus-visible:border-border',
+				borderless:
+					'border border-transparent bg-transparent hover:text-primary active:text-primary focus:text-primary',
+			},
 			size: {
 				sm: 'min-h-9 gap-3 px-3 py-1.5 text-xs',
 				md: 'min-h-10 gap-4 px-4 py-2 text-sm',
 			},
 		},
-		defaultVariants: { size: 'md' },
+		defaultVariants: { size: 'md', variant: 'default' },
 	},
 );
 
@@ -56,6 +63,7 @@ function Dropdown({
 	disabled = false,
 	className,
 	size = 'md',
+	variant = 'default',
 }: DropdownProps) {
 	const [isOpen, setIsOpen] = useState(false);
 	const containerRef = useRef<HTMLDivElement>(null);
@@ -90,7 +98,7 @@ function Dropdown({
 		>
 			<button
 				type="button"
-				className={dropdownButton({ size })}
+				className={dropdownButton({ size, variant })}
 				aria-haspopup="listbox"
 				aria-expanded={isOpen}
 				aria-controls={listboxId}

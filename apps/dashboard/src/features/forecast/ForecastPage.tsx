@@ -101,17 +101,18 @@ function ForecastPage() {
 			/>
 
 			{showForecastSkeleton ? <ForecastSkeleton /> : null}
-			{forecastsError ? (
+			{forecastsError && !showForecastSkeleton ? (
 				<ResourceError
 					title="Unable to load forecast data"
 					error={forecastsError}
 					onRetry={() => {
+						createBaseline.reset();
 						void refreshForecasts();
 					}}
 					className="mt-10"
 				/>
 			) : null}
-			{createBaseline.error ? (
+			{createBaseline.error && !createBaseline.pending ? (
 				<InlineError className="mt-4">
 					{createBaseline.error.message}
 				</InlineError>

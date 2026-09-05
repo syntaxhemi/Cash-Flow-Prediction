@@ -208,11 +208,12 @@ function ReceivablesPage() {
 				}}
 			/>
 
-			{resourceError ? (
+			{resourceError && !showSkeleton ? (
 				<ResourceError
 					title="Unable to load receivables"
 					error={resourceError}
 					onRetry={() => {
+						createTrappedLiquidity.reset();
 						void forecasts.refresh();
 						void receivables.refresh();
 						void simulations.refresh();
@@ -220,7 +221,7 @@ function ReceivablesPage() {
 					className="mt-10"
 				/>
 			) : null}
-			{createTrappedLiquidity.error ? (
+			{createTrappedLiquidity.error && !createTrappedLiquidity.pending ? (
 				<InlineError className="mt-4">
 					{createTrappedLiquidity.error.message}
 				</InlineError>

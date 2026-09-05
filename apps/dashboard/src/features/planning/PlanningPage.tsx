@@ -234,6 +234,8 @@ function PlanningPage() {
 	const retry = () => {
 		initialMitigationForecast.current = null;
 		initialTrappedForecast.current = null;
+		createLiquidityMitigation.reset();
+		createTrappedLiquidity.reset();
 		void forecasts.refresh();
 		void receivables.refresh();
 		void refreshMitigationSimulations();
@@ -255,7 +257,7 @@ function PlanningPage() {
 				</p>
 			</header>
 
-			{resourceError ? (
+			{resourceError && !showSkeleton ? (
 				<ResourceError
 					title="Unable to load planning data"
 					error={resourceError}
@@ -263,12 +265,12 @@ function PlanningPage() {
 					className="mt-10"
 				/>
 			) : null}
-			{createLiquidityMitigation.error ? (
+			{createLiquidityMitigation.error && !createLiquidityMitigation.pending ? (
 				<InlineError className="mt-4">
 					We couldn&apos;t prepare a cash plan. Please try again.
 				</InlineError>
 			) : null}
-			{createTrappedLiquidity.error ? (
+			{createTrappedLiquidity.error && !createTrappedLiquidity.pending ? (
 				<InlineError className="mt-2">
 					We couldn&apos;t identify collection opportunities. Please try again.
 				</InlineError>

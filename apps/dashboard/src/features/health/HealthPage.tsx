@@ -217,18 +217,19 @@ function HealthPage() {
 				}}
 			/>
 
-			{resourceError ? (
+			{resourceError && !showSkeleton ? (
 				<ResourceError
 					title="Unable to load health data"
 					error={resourceError}
 					onRetry={() => {
+						createHealthDelta.reset();
 						void forecasts.refresh();
 						void simulations.refresh();
 					}}
 					className="mt-10"
 				/>
 			) : null}
-			{createHealthDelta.error ? (
+			{createHealthDelta.error && !createHealthDelta.pending ? (
 				<InlineError className="mt-4">
 					{createHealthDelta.error.message}
 				</InlineError>

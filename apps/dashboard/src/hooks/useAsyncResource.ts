@@ -9,7 +9,8 @@ export type AsyncResourceState<T> = {
 type Action<T> =
 	| { type: 'loading' }
 	| { type: 'success'; data: T }
-	| { type: 'error'; error: Error };
+	| { type: 'error'; error: Error }
+	| { type: 'reset' };
 
 function reducer<T>(
 	state: AsyncResourceState<T>,
@@ -19,6 +20,7 @@ function reducer<T>(
 		return { ...state, loading: true, error: null };
 	if (action.type === 'success')
 		return { data: action.data, loading: false, error: null };
+	if (action.type === 'reset') return { data: null, loading: false, error: null };
 	return { ...state, loading: false, error: action.error };
 }
 
@@ -52,7 +54,10 @@ export function useAsyncResource<T>(load: () => Promise<T>, enabled = true) {
 	}, [enabled, load]);
 
 	useEffect(() => {
-		if (!enabled) return;
+		if (!enabled) {
+			dispatch({ type: 'reset' });
+			return;
+		}
 		void refresh();
 		return () => {
 			requestVersion.current += 1;
