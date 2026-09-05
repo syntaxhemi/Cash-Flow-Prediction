@@ -16,7 +16,7 @@ from sqlalchemy import (
     Index,
     Integer,
     String,
-    UniqueConstraint,
+    text,
 )
 from sqlalchemy.dialects.postgresql import JSONB, TIMESTAMP
 from sqlalchemy.dialects.postgresql import UUID as PGUUID
@@ -30,7 +30,15 @@ from database.utils import enum_type
 
 class IngestionSourceModel(Base):
     __tablename__ = 'ingestion_sources'
-    __table_args__ = (UniqueConstraint('enterprise_id', 'source_key'),)
+    __table_args__ = (
+        Index(
+            'uq_ingestion_sources_enterprise_id_source_key_active',
+            'enterprise_id',
+            'source_key',
+            unique=True,
+            postgresql_where=text('is_active IS TRUE'),
+        ),
+    )
 
     id: Mapped[UUID] = mapped_column(
         PGUUID(as_uuid=True), primary_key=True, default=uuid4

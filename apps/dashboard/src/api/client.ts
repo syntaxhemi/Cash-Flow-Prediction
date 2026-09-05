@@ -15,6 +15,12 @@ import type {
 	IngestionRunListResponse,
 	IngestionSource,
 	IngestionSourceCreate,
+	IngestionSourceCredential,
+	IngestionSourceCredentialCreate,
+	IngestionSourceCredentialListParams,
+	IngestionSourceCredentialListResponse,
+	IngestionSourceCredentialMetadataUpdate,
+	IngestionSourceCredentialSecretUpdate,
 	IngestionSourceListParams,
 	IngestionSourceListResponse,
 	IngestionSourceUpdate,
@@ -182,6 +188,52 @@ export const api = {
 	getIngestionRun: (enterpriseId: string, sourceId: string, runId: string) =>
 		request<IngestionRun>(
 			`/enterprises/${enterpriseId}/ingestion-sources/${sourceId}/runs/${runId}`,
+		),
+	listIngestionSourceCredentials: (
+		enterpriseId: string,
+		sourceId: string,
+		params: IngestionSourceCredentialListParams = {},
+	) =>
+		request<IngestionSourceCredentialListResponse>(
+			`/enterprises/${enterpriseId}/ingestion-sources/${sourceId}/credentials${query(params)}`,
+		),
+	createIngestionSourceCredential: (
+		enterpriseId: string,
+		sourceId: string,
+		body: IngestionSourceCredentialCreate,
+	) =>
+		request<IngestionSourceCredential>(
+			`/enterprises/${enterpriseId}/ingestion-sources/${sourceId}/credentials`,
+			{ method: 'POST', body: JSON.stringify(body) },
+		),
+	updateIngestionSourceCredential: (
+		enterpriseId: string,
+		sourceId: string,
+		credentialId: string,
+		body: IngestionSourceCredentialMetadataUpdate,
+	) =>
+		request<IngestionSourceCredential>(
+			`/enterprises/${enterpriseId}/ingestion-sources/${sourceId}/credentials/${credentialId}`,
+			{ method: 'PATCH', body: JSON.stringify(body) },
+		),
+	rotateIngestionSourceCredential: (
+		enterpriseId: string,
+		sourceId: string,
+		credentialId: string,
+		body: IngestionSourceCredentialSecretUpdate,
+	) =>
+		request<IngestionSourceCredential>(
+			`/enterprises/${enterpriseId}/ingestion-sources/${sourceId}/credentials/${credentialId}/rotate`,
+			{ method: 'POST', body: JSON.stringify(body) },
+		),
+	revokeIngestionSourceCredential: (
+		enterpriseId: string,
+		sourceId: string,
+		credentialId: string,
+	) =>
+		request<IngestionSourceCredential>(
+			`/enterprises/${enterpriseId}/ingestion-sources/${sourceId}/credentials/${credentialId}/revoke`,
+			{ method: 'POST' },
 		),
 
 	listStaticFinancialSnapshots: (enterpriseId: string) =>

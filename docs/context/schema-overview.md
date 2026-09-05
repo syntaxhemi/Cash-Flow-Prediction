@@ -88,6 +88,7 @@ Notes:
 
 - this table identifies where records came from
 - `source_key` should be the stable lookup key used by application code to resolve the correct ingestion implementation
+- `(enterprise_id, source_key)` is unique only for active sources, so a deactivated connection does not block a replacement
 - credentials or secrets should not be mixed directly into this source identity record if that can be avoided
 
 ### 2a. `ingestion_source_credentials`
@@ -520,6 +521,7 @@ High-level relationships:
 ### Candidate uniqueness constraints
 
 - `enterprises.external_key`
+- `ingestion_sources (enterprise_id, source_key)` for active sources
 - `counterparties (enterprise_id, external_key)`
 - `financial_transactions (ingestion_source_id, source_record_id)` where source record IDs are reliable
 - `monthly_cashflow_aggregates (enterprise_id, period_start, period_end)`

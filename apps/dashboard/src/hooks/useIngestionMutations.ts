@@ -1,6 +1,9 @@
 import { useCallback } from 'react';
 import { api } from '@/api/client';
 import type {
+	IngestionSourceCredentialCreate,
+	IngestionSourceCredentialMetadataUpdate,
+	IngestionSourceCredentialSecretUpdate,
 	IngestionRunCreate,
 	IngestionSourceCreate,
 	IngestionSourceUpdate,
@@ -11,6 +14,21 @@ type SourceInput = { sourceId: string; body: IngestionSourceUpdate };
 type SourceIdInput = { sourceId: string };
 type SyncInput = { sourceId: string; body: IngestionRunCreate };
 type UploadInput = { sourceId: string; file: File; sheetName?: string };
+type CredentialInput = {
+	sourceId: string;
+	body: IngestionSourceCredentialCreate;
+};
+type CredentialUpdateInput = {
+	sourceId: string;
+	credentialId: string;
+	body: IngestionSourceCredentialMetadataUpdate;
+};
+type CredentialRotateInput = {
+	sourceId: string;
+	credentialId: string;
+	body: IngestionSourceCredentialSecretUpdate;
+};
+type CredentialIdInput = { sourceId: string; credentialId: string };
 
 /** Exposes ingestion-source, synchronization, and upload writes. */
 export function useIngestionMutations(enterpriseId: string | undefined) {
@@ -71,6 +89,78 @@ export function useIngestionMutations(enterpriseId: string | undefined) {
 			[enterpriseId],
 		),
 	);
+	const createCredential = useMutation<
+		CredentialInput,
+		Awaited<ReturnType<typeof api.createIngestionSourceCredential>>
+	>(
+		useCallback(
+			({ sourceId, body }) =>
+				enterpriseId
+					? api.createIngestionSourceCredential(enterpriseId, sourceId, body)
+					: Promise.reject(new Error('No enterprise selected')),
+			[enterpriseId],
+		),
+	);
+	const updateCredential = useMutation<
+		CredentialUpdateInput,
+		Awaited<ReturnType<typeof api.updateIngestionSourceCredential>>
+	>(
+		useCallback(
+			({ sourceId, credentialId, body }) =>
+				enterpriseId
+					? api.updateIngestionSourceCredential(
+							enterpriseId,
+							sourceId,
+							credentialId,
+							body,
+						)
+					: Promise.reject(new Error('No enterprise selected')),
+			[enterpriseId],
+		),
+	);
+	const rotateCredential = useMutation<
+		CredentialRotateInput,
+		Awaited<ReturnType<typeof api.rotateIngestionSourceCredential>>
+	>(
+		useCallback(
+			({ sourceId, credentialId, body }) =>
+				enterpriseId
+					? api.rotateIngestionSourceCredential(
+							enterpriseId,
+							sourceId,
+							credentialId,
+							body,
+						)
+					: Promise.reject(new Error('No enterprise selected')),
+			[enterpriseId],
+		),
+	);
+	const revokeCredential = useMutation<
+		CredentialIdInput,
+		Awaited<ReturnType<typeof api.revokeIngestionSourceCredential>>
+	>(
+		useCallback(
+			({ sourceId, credentialId }) =>
+				enterpriseId
+					? api.revokeIngestionSourceCredential(
+							enterpriseId,
+							sourceId,
+							credentialId,
+						)
+					: Promise.reject(new Error('No enterprise selected')),
+			[enterpriseId],
+		),
+	);
 
-	return { createSource, updateSource, deleteSource, requestSync, uploadFile };
+	return {
+		createSource,
+		updateSource,
+		deleteSource,
+		requestSync,
+		uploadFile,
+		createCredential,
+		updateCredential,
+		rotateCredential,
+		revokeCredential,
+	};
 }

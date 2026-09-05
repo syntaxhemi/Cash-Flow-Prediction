@@ -1,10 +1,12 @@
 import { useId, useRef, useState, type ChangeEvent } from 'react';
+import { LuLoaderCircle } from 'react-icons/lu';
 import { cn } from '@/utils/cn';
 
 type FileUploadProps = {
 	accept?: string;
 	buttonLabel?: string;
 	className?: string;
+	loading?: boolean;
 	onChange?: (file: File | null) => void;
 };
 
@@ -18,6 +20,7 @@ function FileUpload({
 	accept,
 	buttonLabel = 'Choose file',
 	className,
+	loading = false,
 	onChange,
 }: FileUploadProps) {
 	const inputRef = useRef<HTMLInputElement>(null);
@@ -38,15 +41,28 @@ function FileUpload({
 				type="file"
 				accept={accept}
 				className="sr-only"
+				disabled={loading}
 				onChange={handleChange}
 			/>
 			<button
 				type="button"
-				className="max-w-full truncate rounded-control border border-border bg-surface px-4 py-2 text-sm text-ink hover:border-primary"
+				className={cn(
+					'max-w-full truncate rounded-control border border-border bg-surface px-4 py-2 text-sm text-ink hover:border-primary',
+					loading && 'cursor-wait opacity-70',
+				)}
+				disabled={loading}
+				aria-busy={loading}
 				onClick={() => inputRef.current?.click()}
 				aria-controls={inputId}
 			>
-				{fileName || buttonLabel}
+				{loading ? (
+					<span className="inline-flex items-center gap-2">
+						<LuLoaderCircle className="size-4 animate-spin" aria-hidden="true" />
+						Uploading...
+					</span>
+				) : (
+					fileName || buttonLabel
+				)}
 			</button>
 		</div>
 	);

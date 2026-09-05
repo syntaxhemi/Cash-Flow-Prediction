@@ -58,7 +58,9 @@ class IngestionSourceRepository:
         try:
             await self._session.flush()
         except IntegrityError as error:
-            if self._matches_constraint(error, 'uq_ingestion_sources_enterprise_id'):
+            if self._matches_constraint(
+                error, 'uq_ingestion_sources_enterprise_id_source_key_active'
+            ):
                 raise IngestionSourceAlreadyExistsError(
                     f'Source key "{payload.source_key}" already exists for enterprise.'
                 ) from error

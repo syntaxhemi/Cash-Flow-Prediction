@@ -293,7 +293,7 @@
         "records_received": 0,
         "records_processed": 0,
         "records_failed": 0,
-        "error_summary": "ERPNext connection timed out after three attempts.",
+        "error_summary": "Connection timed out after 3 attempts.",
         "created_at": "2026-08-30T08:30:00+05:30"
       }
     ],

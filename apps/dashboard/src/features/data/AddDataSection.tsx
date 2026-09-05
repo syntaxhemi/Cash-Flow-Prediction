@@ -1,8 +1,25 @@
-import { LuChevronRight, LuFileSpreadsheet, LuLink } from 'react-icons/lu';
+import {
+	LuChevronRight,
+	LuCircleCheck,
+	LuFileSpreadsheet,
+	LuLink,
+} from 'react-icons/lu';
 import FileUpload from '@/components/ui/FileUpload';
 import DataIconBox from './DataIconBox';
 
-function AddDataSection() {
+type AddDataSectionProps = {
+	erpNextConnected: boolean;
+	uploading: boolean;
+	onConnectErpNext: () => void;
+	onFileSelected: (file: File | null) => void;
+};
+
+function AddDataSection({
+	erpNextConnected,
+	uploading,
+	onConnectErpNext,
+	onFileSelected,
+}: AddDataSectionProps) {
 	return (
 		<section aria-labelledby="add-data-title">
 			<h2
@@ -22,13 +39,21 @@ function AddDataSection() {
 							<p className="mt-2 max-w-xs text-sm leading-relaxed text-text-muted">
 								Use the automated accounting source
 							</p>
-							<button
-								type="button"
-								className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-primary hover:underline"
-							>
-								Connect ERPNext
-								<LuChevronRight className="size-4" aria-hidden="true" />
-							</button>
+							{erpNextConnected ? (
+								<span className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-positive">
+									<LuCircleCheck className="size-4" aria-hidden="true" />
+									Connected
+								</span>
+							) : (
+								<button
+									type="button"
+									className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-primary hover:underline"
+									onClick={onConnectErpNext}
+								>
+									Connect ERPNext
+									<LuChevronRight className="size-4" aria-hidden="true" />
+								</button>
+							)}
 						</div>
 					</div>
 				</article>
@@ -37,13 +62,18 @@ function AddDataSection() {
 					<div className="flex items-start gap-4">
 						<DataIconBox icon={LuFileSpreadsheet} />
 						<div className="min-w-0">
-							<h3 className="font-serif text-xl text-ink sm:text-2xl">
+							<h3 className="font-serif text-xl text-ink sm:text-2xl xl:whitespace-nowrap">
 								Upload CSV or XLSX
 							</h3>
 							<p className="mt-2 max-w-xs text-sm leading-relaxed text-text-muted">
 								Validate and preview before processing
 							</p>
-							<FileUpload className="mt-6" accept=".csv,.xlsx" />
+							<FileUpload
+								className="mt-6"
+								accept=".csv,.xlsx"
+								loading={uploading}
+								onChange={onFileSelected}
+							/>
 						</div>
 					</div>
 				</article>
