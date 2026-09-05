@@ -22,6 +22,7 @@ from api.services.ingestion import (
     IngestionSourceService,
     UploadStagingService,
 )
+from api.services.receivables import ReceivablesService
 
 
 def get_enterprise_service(
@@ -128,6 +129,20 @@ def get_simulation_result_service(
         Simulation result retrieval service.
     """
     return SimulationResultService(uow)
+
+
+def get_receivables_service(
+    uow: Annotated[IUnitOfWork, Depends(get_unit_of_work)],
+) -> ReceivablesService:
+    """Build the forecast-scoped Receivables read service.
+
+    Args:
+            uow: Request-scoped database unit of work.
+
+    Returns:
+            Receivables read service.
+    """
+    return ReceivablesService(uow)
 
 
 def get_ingestion_source_service(

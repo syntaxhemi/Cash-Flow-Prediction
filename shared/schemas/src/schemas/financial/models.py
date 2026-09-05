@@ -1,5 +1,6 @@
 from datetime import date, datetime
 from decimal import Decimal
+from typing import Literal
 from uuid import UUID
 
 from domain.enterprise import CounterpartyType
@@ -199,3 +200,57 @@ class CounterpartyMonthlyReceivableUpdateSchema(SchemaModel):
     outstanding_amount: Decimal
     average_payment_delay_days: Decimal | None = None
     late_invoice_count: int = Field(ge=0)
+
+
+class ReceivableRecordSchema(SchemaModel):
+    """Supporting invoice record for one receivable counterparty."""
+
+    id: UUID
+    reference_number: str | None = None
+    issued_date: date
+    due_date: date | None = None
+    settlement_date: date | None = None
+    amount: Decimal
+    amount_paid: Decimal = Field(default=Decimal(0), ge=0)
+    outstanding_amount: Decimal = Field(ge=0)
+    currency_code: str
+    status: TransactionStatus
+    payment_status: Literal['unpaid', 'partially_paid', 'paid']
+
+
+class ReceivableItemSchema(SchemaModel):
+    """Counterparty-level receivable details used by the dashboard."""
+
+    counterparty_id: UUID
+    name: str
+    counterparty_type: CounterpartyType
+    invoice_total: Decimal
+    amount_paid: Decimal
+    outstanding_amount: Decimal
+    average_payment_delay_days: Decimal | None = None
+    late_invoice_count: int = Field(ge=0)
+    paid_on_time_percentage: Decimal | None = Field(default=None, ge=0, le=100)
+    records: list[ReceivableRecordSchema] = Field(default_factory=list)
+
+
+class ReceivablesFilterParams(SchemaModel):
+    """Filters for the enterprise receivables read model."""
+
+    forecast_run_id: UUID
+    account_filter: Literal['all', 'overdue', 'upcoming'] = 'all'
+    horizon_days: Literal['30', '60', '90'] = '30'
+
+
+class ReceivablesSummarySchema(SchemaModel):
+    """Aggregate figures for the Receivables page."""
+
+    total_outstanding: Decimal
+    counterparty_count: int = Field(ge=0)
+    median_payment_delay_days: Decimal | None = None
+
+
+class ReceivablesListResponse(SchemaModel):
+    """Counterparty receivables and summary figures for one forecast window."""
+
+    items: list[ReceivableItemSchema] = Field(default_factory=list)
+    summary: ReceivablesSummarySchema

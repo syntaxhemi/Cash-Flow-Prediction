@@ -2,7 +2,7 @@ import { LuArrowUpRight } from 'react-icons/lu';
 import Button from '@/components/ui/Button';
 import Dropdown, { type DropdownOption } from '@/components/ui/Dropdown';
 import SegmentedControl from '@/components/ui/SegmentedControl';
-import { horizonOptions } from './mock-data';
+import { horizonOptions } from './options';
 
 const sortOptions: DropdownOption[] = [
 	{ label: 'Cash impact', value: 'impact' },
@@ -23,6 +23,9 @@ type ReceivablesControlsProps = {
 	onSortChange: (value: string) => void;
 	accountFilter: string;
 	onAccountFilterChange: (value: string) => void;
+	pending?: boolean;
+	disabled?: boolean;
+	onRun: () => void;
 };
 
 function ReceivablesControls({
@@ -32,6 +35,9 @@ function ReceivablesControls({
 	onSortChange,
 	accountFilter,
 	onAccountFilterChange,
+	pending = false,
+	disabled = false,
+	onRun,
 }: ReceivablesControlsProps) {
 	return (
 		<section
@@ -53,6 +59,7 @@ function ReceivablesControls({
 					options={accountOptions}
 					value={accountFilter}
 					onChange={onAccountFilterChange}
+					disabled={disabled || pending}
 					className="w-full shrink-0 sm:w-56"
 					size="sm"
 				/>
@@ -61,15 +68,18 @@ function ReceivablesControls({
 					options={sortOptions}
 					value={sortBy}
 					onChange={onSortChange}
+					disabled={disabled || pending}
 					className="w-full shrink-0 sm:w-48"
 					size="sm"
 				/>
 				<Button
 					size="sm"
 					leading={<LuArrowUpRight className="size-4" />}
+					disabled={disabled || pending}
+					onClick={onRun}
 					className="col-span-2 w-full sm:col-span-1 sm:w-auto"
 				>
-					Run analysis
+					{pending ? 'Running…' : 'Run analysis'}
 				</Button>
 			</div>
 		</section>

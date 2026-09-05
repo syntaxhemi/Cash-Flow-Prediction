@@ -53,7 +53,13 @@ function SupportingRecords({ receivable }: SupportingRecordsProps) {
 								{record.due}
 							</span>
 							<span className="text-sm tabular-nums text-ink">
-								{formatCurrency(record.amount)}
+								<div>{formatCurrency(record.outstanding)}</div>
+								{record.amountPaid > 0 && (
+									<div className="mt-1 text-xs text-text-muted">
+										{formatCurrency(record.amountPaid)} paid of{' '}
+										{formatCurrency(record.amount)}
+									</div>
+								)}
 							</span>
 							<span
 								className={cn(

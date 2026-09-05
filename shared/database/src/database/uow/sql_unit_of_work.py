@@ -10,6 +10,7 @@ from database.repositories import (
     IngestionSourceCredentialRepository,
     IngestionSourceRepository,
     IngestionUploadRepository,
+    InvoicePaymentAllocationRepository,
     MitigationRecommendationRepository,
     MonthlyCashflowAggregateRepository,
     ReceivablesRankingRepository,
@@ -39,6 +40,7 @@ class SqlAlchemyUnitOfWork:
         )
         self._ingestion_runs = IngestionRunRepository(session)
         self._financial_transactions = FinancialTransactionRepository(session)
+        self._invoice_payment_allocations = InvoicePaymentAllocationRepository(session)
         self._forecasts = ForecastRepository(session)
         self._ingestion_uploads = IngestionUploadRepository(session)
         self._static_financial_snapshots = StaticFinancialSnapshotRepository(session)
@@ -88,6 +90,11 @@ class SqlAlchemyUnitOfWork:
     def financial_transactions(self) -> FinancialTransactionRepository:
         """Return the financial-transaction repository."""
         return self._financial_transactions
+
+    @property
+    def invoice_payment_allocations(self) -> InvoicePaymentAllocationRepository:
+        """Return the invoice-payment allocation repository."""
+        return self._invoice_payment_allocations
 
     @property
     def forecasts(self) -> ForecastRepository:

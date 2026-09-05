@@ -10,6 +10,7 @@ from database.repositories import (
     IngestionSourceCredentialRepository,
     IngestionSourceRepository,
     IngestionUploadRepository,
+    InvoicePaymentAllocationRepository,
     MitigationRecommendationRepository,
     MonthlyCashflowAggregateRepository,
     ReceivablesRankingRepository,
@@ -60,6 +61,11 @@ class IUnitOfWork(Protocol):
     @property
     def financial_transactions(self) -> FinancialTransactionRepository:
         """Return the financial-transaction repository."""
+        ...
+
+    @property
+    def invoice_payment_allocations(self) -> InvoicePaymentAllocationRepository:
+        """Return the invoice-payment allocation repository."""
         ...
 
     @property

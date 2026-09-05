@@ -5,6 +5,7 @@ from database.models.financial import (
     CounterpartyModel,
     CounterpartyMonthlyReceivableModel,
     FinancialTransactionModel,
+    InvoicePaymentAllocationModel,
     MonthlyCashflowAggregateModel,
     StaticFinancialSnapshotModel,
 )
@@ -33,6 +34,7 @@ __all__ = [
     'IngestionSourceCredentialModel',
     'IngestionSourceModel',
     'IngestionUploadModel',
+    'InvoicePaymentAllocationModel',
     'MitigationRecommendationModel',
     'MonthlyCashflowAggregateModel',
     'ReceivablesRankingModel',

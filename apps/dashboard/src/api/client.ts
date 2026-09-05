@@ -19,6 +19,8 @@ import type {
 	IngestionSourceListResponse,
 	IngestionSourceUpdate,
 	LiquidityMitigationRequest,
+	ReceivablesListParams,
+	ReceivablesListResponse,
 	SimulationListParams,
 	SimulationRun,
 	StaticFinancialSnapshot,
@@ -219,6 +221,13 @@ export const api = {
 	listForecasts: (enterpriseId: string, params: ForecastListParams = {}) =>
 		request<ForecastListResponse>(
 			`/enterprises/${enterpriseId}/forecasts${query(params)}`,
+		),
+	listReceivables: (
+		enterpriseId: string,
+		params: ReceivablesListParams,
+	) =>
+		request<ReceivablesListResponse>(
+			`/enterprises/${enterpriseId}/receivables${query(params)}`,
 		),
 	getForecast: (enterpriseId: string, forecastRunId: string) =>
 		request<ForecastRun>(

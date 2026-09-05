@@ -169,6 +169,34 @@ class FinancialTransactionRepository:
             items=list(result.scalars().all()), total_count=total_count
         )
 
+    async def list_for_counterparty(
+        self, enterprise_id: UUID, counterparty_id: UUID, limit: int = 200
+    ) -> list[FinancialTransactionModel]:
+        """Return transactions supporting one enterprise receivable.
+
+        Args:
+            enterprise_id: Owning enterprise identifier.
+            counterparty_id: Counterparty whose transactions are requested.
+            limit: Maximum number of records to return.
+
+        Returns:
+            Invoice-like transactions ordered by due date and transaction date.
+        """
+        result = await self._session.execute(
+            select(FinancialTransactionModel)
+            .where(
+                FinancialTransactionModel.enterprise_id == enterprise_id,
+                FinancialTransactionModel.counterparty_id == counterparty_id,
+            )
+            .order_by(
+                FinancialTransactionModel.due_date,
+                FinancialTransactionModel.transaction_date,
+                FinancialTransactionModel.id,
+            )
+            .limit(limit)
+        )
+        return list(result.scalars().all())
+
     async def list_for_period(
         self, enterprise_id: UUID, period_start: date, period_end: date
     ) -> list[FinancialTransactionModel]:

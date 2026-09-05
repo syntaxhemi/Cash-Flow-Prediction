@@ -14,6 +14,7 @@ from sqlalchemy import select
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
 from database.models import CounterpartyMonthlyReceivableModel
 
@@ -175,6 +176,7 @@ class CounterpartyMonthlyReceivableRepository:
         """
         result = await self._session.execute(
             select(CounterpartyMonthlyReceivableModel)
+            .options(selectinload(CounterpartyMonthlyReceivableModel.counterparty))
             .where(
                 CounterpartyMonthlyReceivableModel.enterprise_id == enterprise_id,
                 CounterpartyMonthlyReceivableModel.period_start >= period_start,

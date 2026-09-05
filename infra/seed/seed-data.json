@@ -994,6 +994,38 @@
         "description": "Monthly term-loan repayment"
       }
     ],
+    "invoice_payment_allocations": [
+      {
+        "key": "allocation-apex-july",
+        "invoice_key": "inv-apex-2026-07",
+        "payment_key": "pay-apex-2026-07",
+        "allocated_amount": "200000.00"
+      },
+      {
+        "key": "allocation-orchid-july",
+        "invoice_key": "inv-orchid-2026-07",
+        "payment_key": "pay-orchid-2026-07",
+        "allocated_amount": "250000.00"
+      },
+      {
+        "key": "allocation-kaveri-july",
+        "invoice_key": "inv-kaveri-2026-07",
+        "payment_key": "pay-kaveri-2026-07",
+        "allocated_amount": "150000.00"
+      },
+      {
+        "key": "allocation-delta-july",
+        "invoice_key": "inv-delta-2026-07",
+        "payment_key": "pay-delta-2026-07",
+        "allocated_amount": "120000.00"
+      },
+      {
+        "key": "allocation-sunrise-july",
+        "invoice_key": "inv-sunrise-2026-07",
+        "payment_key": "pay-sunrise-2026-07",
+        "allocated_amount": "190000.00"
+      }
+    ],
     "monthly_cashflow_aggregates": [
       {
         "key": "aggregate-2026-02",

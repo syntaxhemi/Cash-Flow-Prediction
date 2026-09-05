@@ -4,8 +4,12 @@ from pathlib import Path
 from uuid import UUID
 
 from database import IUnitOfWork
-from database.models import CounterpartyMonthlyReceivableModel
+from database.models import (
+    CounterpartyMonthlyReceivableModel,
+    FinancialTransactionModel,
+)
 from domain.exceptions import InvalidForecastRunError, InvalidSimulationError
+from domain.financial import TransactionStatus, TransactionType
 from domain.forecasting import ForecastStatus
 from domain.simulation import SimulationStatus, SimulationType
 from ml import ModelArtifactLoader
@@ -115,28 +119,47 @@ class TrappedLiquiditySimulationService:
             )
             await self._uow.commit()
             rankings: list[tuple[UUID, Decimal, Decimal]] = []
+            reference_date = datetime.now(UTC).date()
 
             for counterparty_id, aggregate, sequence_index in candidates:
-                delay_reduction = self._delay_reduction(aggregate)
+                transactions = (
+                    await self._uow.financial_transactions.list_for_counterparty(
+                        enterprise_id, counterparty_id
+                    )
+                )
                 baseline_delay = Decimal(
                     str(context.temporal_rows[sequence_index]['payment_delay'])
                 )
-                simulated_delay = max(Decimal(0), baseline_delay - delay_reduction)
+                if payload.payment_delay_days is None:
+                    overdue_delay = self._overdue_delay_days(
+                        transactions, reference_date
+                    )
+                    simulated_delay = max(baseline_delay, overdue_delay)
+                else:
+                    simulated_delay = baseline_delay + payload.payment_delay_days
                 evaluation = self._evaluator.evaluate(
                     context,
                     {},
                     artifacts,
                     temporal_patch={sequence_index: {'payment_delay': simulated_delay}},
                 )
+                delta = (
+                    context.baseline_prediction - evaluation.predicted_net_cashflow
+                    if payload.payment_delay_days is None
+                    else evaluation.delta_from_baseline
+                )
                 rankings.append(
                     (
                         counterparty_id,
                         aggregate.outstanding_amount,
-                        evaluation.delta_from_baseline,
+                        delta,
                     )
                 )
 
-            rankings.sort(key=lambda ranking: ranking[2], reverse=True)
+            rankings.sort(
+                key=lambda ranking: (abs(ranking[2]), ranking[1]),
+                reverse=True,
+            )
             ranking_models = []
 
             for position, (counterparty_id, outstanding, delta) in enumerate(
@@ -157,9 +180,15 @@ class TrappedLiquiditySimulationService:
             summary = {
                 'baseline_prediction': str(context.baseline_prediction),
                 'ranked_counterparties': len(ranking_models),
+                'run_purpose': (
+                    'preview' if payload.payment_delay_days is not None else 'analysis'
+                ),
                 'top_counterparty_id': str(rankings[0][0]),
                 'top_simulated_cashflow_delta': str(rankings[0][2]),
-                'method': 'modeled payment-delay reduction',
+                'modeled_trapped_liquidity': str(
+                    sum((max(delta, Decimal(0)) for _, _, delta in rankings), Decimal())
+                ),
+                'method': 'modeled payment-delay counterfactual',
             }
             run = await self._uow.simulation_runs.update(
                 run.id,
@@ -239,17 +268,48 @@ class TrappedLiquiditySimulationService:
         return candidates[: payload.max_counterparties]
 
     @staticmethod
-    def _delay_reduction(
-        aggregate: CounterpartyMonthlyReceivableModel,
+    def _overdue_delay_days(
+        transactions: list[FinancialTransactionModel],
+        reference_date: date,
     ) -> Decimal:
-        """Estimate removable payment-delay contribution for one receivable.
+        """Calculate an amount-weighted delay for unpaid overdue invoices.
 
         Args:
-            aggregate: Counterparty monthly receivable aggregate.
+            transactions: Counterparty transactions containing invoice records.
+            reference_date: Date used to measure unpaid invoice lateness.
 
         Returns:
-            Modeled payment-delay reduction in days.
+            Amount-weighted overdue days, or zero when no invoice is overdue.
         """
-        average_delay = aggregate.average_payment_delay_days or Decimal(0)
-        late_count = aggregate.late_invoice_count or 0
-        return average_delay * late_count if late_count else average_delay
+        overdue_records = [
+            transaction
+            for transaction in transactions
+            if transaction.transaction_type is TransactionType.INVOICE
+            and transaction.status
+            not in (TransactionStatus.SETTLED, TransactionStatus.CANCELLED)
+            and transaction.due_date is not None
+            and transaction.due_date < reference_date
+        ]
+        if not overdue_records:
+            return Decimal(0)
+
+        total_amount = sum(
+            (transaction.amount for transaction in overdue_records), Decimal()
+        )
+        if total_amount <= 0:
+            return Decimal(
+                sum(
+                    (reference_date - transaction.due_date).days
+                    for transaction in overdue_records
+                )
+            ) / Decimal(len(overdue_records))
+
+        weighted_days = sum(
+            (
+                Decimal((reference_date - transaction.due_date).days)
+                * transaction.amount
+                for transaction in overdue_records
+            ),
+            Decimal(),
+        )
+        return weighted_days / total_amount

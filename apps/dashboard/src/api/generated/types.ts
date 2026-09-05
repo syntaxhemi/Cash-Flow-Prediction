@@ -470,6 +470,26 @@ export interface paths {
         patch: operations["update_ingestion_source_enterprises__enterprise_id__ingestion_sources__source_id__patch"];
         trace?: never;
     };
+    "/enterprises/{enterprise_id}/receivables": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Receivables
+         * @description Return receivable details and supporting records for a forecast.
+         */
+        get: operations["list_receivables_enterprises__enterprise_id__receivables_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/enterprises/{enterprise_id}/simulations": {
         parameters: {
             query?: never;
@@ -521,6 +541,11 @@ export interface components {
             /** Sheet Name */
             sheet_name?: string | null;
         };
+        /**
+         * CounterpartyType
+         * @enum {string}
+         */
+        CounterpartyType: "customer" | "supplier" | "lender" | "other";
         /**
          * CredentialStatus
          * @enum {string}
@@ -1124,6 +1149,82 @@ export interface components {
             has_prev: boolean;
         };
         /**
+         * ReceivableItemSchema
+         * @description Counterparty-level receivable details used by the dashboard.
+         */
+        ReceivableItemSchema: {
+            /**
+             * Counterparty Id
+             * Format: uuid
+             */
+            counterparty_id: string;
+            /** Name */
+            name: string;
+            counterparty_type: components["schemas"]["CounterpartyType"];
+            /** Invoice Total */
+            invoice_total: string;
+            /** Amount Paid */
+            amount_paid: string;
+            /** Outstanding Amount */
+            outstanding_amount: string;
+            /** Average Payment Delay Days */
+            average_payment_delay_days?: string | null;
+            /** Late Invoice Count */
+            late_invoice_count: number;
+            /** Paid On Time Percentage */
+            paid_on_time_percentage?: string | null;
+            /** Records */
+            records?: components["schemas"]["ReceivableRecordSchema"][];
+        };
+        /**
+         * ReceivableRecordSchema
+         * @description Supporting invoice record for one receivable counterparty.
+         */
+        ReceivableRecordSchema: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Reference Number */
+            reference_number?: string | null;
+            /**
+             * Issued Date
+             * Format: date
+             */
+            issued_date: string;
+            /** Due Date */
+            due_date?: string | null;
+            /** Settlement Date */
+            settlement_date?: string | null;
+            /** Amount */
+            amount: string;
+            /**
+             * Amount Paid
+             * @default 0
+             */
+            amount_paid: string;
+            /** Outstanding Amount */
+            outstanding_amount: string;
+            /** Currency Code */
+            currency_code: string;
+            status: components["schemas"]["TransactionStatus"];
+            /**
+             * Payment Status
+             * @enum {string}
+             */
+            payment_status: "unpaid" | "partially_paid" | "paid";
+        };
+        /**
+         * ReceivablesListResponse
+         * @description Counterparty receivables and summary figures for one forecast window.
+         */
+        ReceivablesListResponse: {
+            /** Items */
+            items?: components["schemas"]["ReceivableItemSchema"][];
+            summary: components["schemas"]["ReceivablesSummarySchema"];
+        };
+        /**
          * ReceivablesRankingSchema
          * @description Persisted trapped-liquidity ranking response.
          */
@@ -1154,6 +1255,18 @@ export interface components {
              * Format: date-time
              */
             created_at: string;
+        };
+        /**
+         * ReceivablesSummarySchema
+         * @description Aggregate figures for the Receivables page.
+         */
+        ReceivablesSummarySchema: {
+            /** Total Outstanding */
+            total_outstanding: string;
+            /** Counterparty Count */
+            counterparty_count: number;
+            /** Median Payment Delay Days */
+            median_payment_delay_days?: string | null;
         };
         /**
          * RecommendationActionType
@@ -1375,6 +1488,11 @@ export interface components {
             missed_payments_number?: number | null;
         };
         /**
+         * TransactionStatus
+         * @enum {string}
+         */
+        TransactionStatus: "pending" | "settled" | "overdue" | "cancelled";
+        /**
          * TrappedLiquidityRequestSchema
          * @description Request trapped-liquidity analysis for selected counterparties.
          */
@@ -1386,6 +1504,8 @@ export interface components {
              * @default 10
              */
             max_counterparties: number;
+            /** Payment Delay Days */
+            payment_delay_days?: number | string | null;
         };
         /** ValidationError */
         ValidationError: {
@@ -2462,6 +2582,41 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["IngestionSourceSchema"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_receivables_enterprises__enterprise_id__receivables_get: {
+        parameters: {
+            query: {
+                forecast_run_id: string;
+                account_filter?: "all" | "overdue" | "upcoming";
+                horizon_days?: "30" | "60" | "90";
+            };
+            header?: never;
+            path: {
+                enterprise_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReceivablesListResponse"];
                 };
             };
             /** @description Validation Error */

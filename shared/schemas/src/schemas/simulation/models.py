@@ -112,6 +112,7 @@ class TrappedLiquidityRequestSchema(SchemaModel):
 
     counterparty_ids: list[UUID] | None = Field(default=None, max_length=50)
     max_counterparties: int = Field(default=10, ge=1, le=50)
+    payment_delay_days: Decimal | None = Field(default=None, ge=0, le=365)
 
 
 class ReceivablesRankingSchema(SchemaModel):

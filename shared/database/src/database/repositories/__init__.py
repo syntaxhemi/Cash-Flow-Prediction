@@ -28,6 +28,9 @@ from database.repositories.ingestion_source_credential import (
     IngestionSourceCredentialRepository,
 )
 from database.repositories.ingestion_upload import IngestionUploadRepository
+from database.repositories.invoice_payment_allocation import (
+    InvoicePaymentAllocationRepository,
+)
 from database.repositories.mitigation_recommendation import (
     MitigationRecommendationRepository,
 )
@@ -60,6 +63,7 @@ __all__ = [
     'IngestionSourceListResult',
     'IngestionSourceRepository',
     'IngestionUploadRepository',
+    'InvoicePaymentAllocationRepository',
     'MitigationRecommendationRepository',
     'MonthlyCashflowAggregateRepository',
     'ReceivablesRankingRepository',

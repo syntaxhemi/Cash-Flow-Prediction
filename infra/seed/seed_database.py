@@ -21,6 +21,7 @@ from database.models import (
     IngestionRunModel,
     IngestionSourceCredentialModel,
     IngestionSourceModel,
+    InvoicePaymentAllocationModel,
     MitigationRecommendationModel,
     MonthlyCashflowAggregateModel,
     ReceivablesRankingModel,
@@ -228,6 +229,53 @@ async def _seed_transactions(
                 'description': item.get('description'),
                 'source_record_id': item['source_record_id'],
                 'source_payload_hash': _payload_hash(item['source_record_id']),
+            },
+        )
+
+
+async def _seed_invoice_payment_allocations(
+    session: AsyncSession,
+    enterprise_id: UUID,
+    records: list[dict[str, Any]],
+) -> None:
+    """Seed explicit payment allocations for invoice-level receivable status.
+
+    Args:
+        session: Database session used for persistence.
+        enterprise_id: Owning enterprise identifier.
+        records: Allocation fixture rows containing invoice and payment keys.
+    """
+    for item in records:
+        invoice = await session.get(
+            FinancialTransactionModel,
+            _stable_id(enterprise_id, 'transaction', item['invoice_key']),
+        )
+        payment = await session.get(
+            FinancialTransactionModel,
+            _stable_id(enterprise_id, 'transaction', item['payment_key']),
+        )
+        allocated_amount = _decimal(item['allocated_amount'])
+        if invoice is None or invoice.transaction_type is not TransactionType.INVOICE:
+            raise ValueError(f'Allocation references an invalid invoice: {item["key"]}')
+        if payment is None or payment.transaction_type is not TransactionType.PAYMENT:
+            raise ValueError(f'Allocation references an invalid payment: {item["key"]}')
+        if allocated_amount > invoice.amount or allocated_amount > payment.amount:
+            raise ValueError(
+                f'Allocation exceeds its source transaction amount: {item["key"]}'
+            )
+        await _ensure_by_id(
+            session,
+            InvoicePaymentAllocationModel,
+            _stable_id(enterprise_id, 'invoice-payment-allocation', item['key']),
+            {
+                'enterprise_id': enterprise_id,
+                'invoice_id': _stable_id(
+                    enterprise_id, 'transaction', item['invoice_key']
+                ),
+                'payment_transaction_id': _stable_id(
+                    enterprise_id, 'transaction', item['payment_key']
+                ),
+                'allocated_amount': allocated_amount,
             },
         )
 
@@ -502,6 +550,11 @@ async def _seed_database(seed: dict[str, Any], state: dict[str, str]) -> None:
                 runs['erpnext-full-2026-07-31'].id,
                 counterparties,
                 seed['database']['financial_transactions'],
+            )
+            await _seed_invoice_payment_allocations(
+                session,
+                enterprise_id,
+                seed['database']['invoice_payment_allocations'],
             )
             aggregates = await _seed_aggregates(
                 session,

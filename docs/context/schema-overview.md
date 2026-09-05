@@ -242,6 +242,29 @@ Notes:
 - `source_record_id` plus `ingestion_source_id` should help with idempotency
 - `source_payload_hash` can support duplicate detection when source identifiers are weak
 
+### 5a. `invoice_payment_allocations`
+
+Represents the invoice-level application of a payment transaction.
+
+Suggested fields:
+
+- `id`
+- `enterprise_id`
+- `invoice_id`
+- `payment_transaction_id`
+- `allocated_amount`
+- `created_at`
+- `updated_at`
+
+Notes:
+
+- payments remain normalized transactions; this table records how they are
+  applied to invoices
+- one payment may be allocated across multiple invoices
+- one invoice may receive multiple payments
+- invoice-level paid, partially-paid, and outstanding amounts are derived from
+  allocation rows rather than inferred from counterparty totals
+
 ### 6. `monthly_cashflow_aggregates`
 
 Represents enterprise-level monthly temporal features used for forecasting.
@@ -482,6 +505,7 @@ High-level relationships:
 - one `ingestion_run` can have zero or one `ingestion_upload`
 - one `enterprise` has many `counterparties`
 - one `enterprise` has many `financial_transactions`
+- one `invoice_payment_allocations` row links one invoice transaction to one payment transaction
 - one `enterprise` has many `monthly_cashflow_aggregates`
 - one `enterprise` has many `static_financial_snapshots`
 - one `enterprise` has many `forecast_runs`
@@ -524,7 +548,9 @@ Suggested direction:
 ## Resolved Design Decisions
 
 1. `financial_transactions` should remain purely normalized and atomic.
-   Invoice/payment pairing should not be materialized separately unless later receivables workflows prove it necessary.
+   Invoice/payment application is represented by the separate
+   `invoice_payment_allocations` table so receivables can determine partial
+   payment status without changing the normalized transaction records.
 2. `monthly_cashflow_aggregates` should remain enterprise-level only.
    On-demand reconstruction from raw transactions adds unnecessary complexity for this project and is not the preferred design.
 3. `counterparty_monthly_receivables` is enough.

@@ -52,6 +52,8 @@ export type HealthDeltaRequest =
 	components['schemas']['HealthDeltaRequestSchema'];
 export type TrappedLiquidityRequest =
 	components['schemas']['TrappedLiquidityRequestSchema'];
+export type ReceivablesListResponse =
+	components['schemas']['ReceivablesListResponse'];
 export type LiquidityMitigationRequest =
 	components['schemas']['LiquidityMitigationRequestSchema'];
 export type SimulationRun = components['schemas']['SimulationRunSchema'];
@@ -73,4 +75,7 @@ export type SimulationListParams = NonNullable<
 >;
 export type ForecastListParams = NonNullable<
 	operations['list_forecasts_enterprises__enterprise_id__forecasts_get']['parameters']['query']
+>;
+export type ReceivablesListParams = NonNullable<
+	operations['list_receivables_enterprises__enterprise_id__receivables_get']['parameters']['query']
 >;

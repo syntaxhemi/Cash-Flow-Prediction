@@ -11,6 +11,7 @@ from domain.financial import (
     TransactionType,
 )
 from sqlalchemy import (
+    CheckConstraint,
     Date,
     ForeignKey,
     Index,
@@ -134,6 +135,53 @@ class FinancialTransactionModel(Base):
     )
     ingestion_source: Mapped['IngestionSourceModel'] = relationship()
     ingestion_run: Mapped['IngestionRunModel'] = relationship()
+
+
+class InvoicePaymentAllocationModel(Base):
+    """Allocate a settled payment to one invoice."""
+
+    __tablename__ = 'invoice_payment_allocations'
+    __table_args__ = (
+        UniqueConstraint('invoice_id', 'payment_transaction_id'),
+        CheckConstraint(
+            'allocated_amount > 0',
+            name='ck_invoice_payment_allocations_amount_positive',
+        ),
+        Index(
+            'ix_invoice_payment_allocations_enterprise_invoice_id',
+            'enterprise_id',
+            'invoice_id',
+        ),
+        Index(
+            'ix_invoice_payment_allocations_enterprise_payment_id',
+            'enterprise_id',
+            'payment_transaction_id',
+        ),
+    )
+
+    id: Mapped[UUID] = mapped_column(
+        PGUUID(as_uuid=True), primary_key=True, default=uuid4
+    )
+    enterprise_id: Mapped[UUID] = mapped_column(
+        ForeignKey('enterprises.id'), nullable=False
+    )
+    invoice_id: Mapped[UUID] = mapped_column(
+        ForeignKey('financial_transactions.id'), nullable=False
+    )
+    payment_transaction_id: Mapped[UUID] = mapped_column(
+        ForeignKey('financial_transactions.id'), nullable=False
+    )
+    allocated_amount: Mapped[Decimal] = mapped_column(Money, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        TIMESTAMP(timezone=True), server_default=func.now(), nullable=False
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        TIMESTAMP(timezone=True),
+        server_default=func.now(),
+        onupdate=func.now(),
+        nullable=False,
+    )
+    enterprise: Mapped['EnterpriseModel'] = relationship()
 
 
 class MonthlyCashflowAggregateModel(Base):

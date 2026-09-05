@@ -1,9 +1,10 @@
 import Button from '@/components/ui/Button';
 import NumberInput from '@/components/ui/NumberInput';
+import type { SimulationRun } from '@/api/contracts';
 import { cn } from '@/utils/cn';
 import { formatCurrency } from '@/utils/formatCurrency';
 import type { Receivable } from './types';
-import { priorityStyles } from './priorityStyles';
+import { formatReceivableDelta } from './adapters';
 
 type CustomerDetailProps = {
 	receivable: Receivable;
@@ -11,6 +12,8 @@ type CustomerDetailProps = {
 	onDelayChange: (value: number) => void;
 	simulationRun: boolean;
 	onPreview: () => void;
+	previewPending: boolean;
+	previewSimulation: SimulationRun | null;
 	id: string;
 	titleId: string;
 	className?: string;
@@ -26,13 +29,15 @@ function CustomerDetail({
 	onDelayChange,
 	simulationRun,
 	onPreview,
+	previewPending,
+	previewSimulation,
 	id,
 	titleId,
 	className,
 }: CustomerDetailProps) {
-	const simulatedDelta = Math.round(
-		(Math.abs(receivable.predictedDelta) * Math.min(delayDays, 14)) / 14,
-	);
+	const previewDelta = previewSimulation?.receivables_rankings?.find(
+		(ranking) => ranking.counterparty_id === receivable.id,
+	)?.simulated_cashflow_delta;
 
 	return (
 		<aside
@@ -57,13 +62,8 @@ function CustomerDetail({
 						</h3>
 					</div>
 				</div>
-				<span
-					className={cn(
-						'rounded-full px-2.5 py-1 text-[11px] font-medium',
-						priorityStyles[receivable.priority],
-					)}
-				>
-					{receivable.priority}
+				<span className="text-sm tabular-nums text-text-muted">
+					{receivable.rank === null ? 'Unranked' : `Rank #${receivable.rank}`}
 				</span>
 			</div>
 			<p className="mt-4 text-sm text-text-muted">{receivable.industry}</p>
@@ -78,19 +78,23 @@ function CustomerDetail({
 				<div>
 					<p className="text-xs text-text-muted">Cash impact</p>
 					<p className="mt-1 text-lg tabular-nums text-primary lg:text-xl">
-						−{formatCompactCurrency(Math.abs(receivable.predictedDelta))}
+						{formatReceivableDelta(-Math.abs(receivable.predictedDelta))}
 					</p>
 				</div>
 				<div>
 					<p className="text-xs text-text-muted">Paid on time</p>
 					<p className="mt-1 text-sm tabular-nums text-ink lg:text-base">
-						{receivable.paidOnTime}%
+						{receivable.paidOnTime === null
+							? '—'
+							: `${receivable.paidOnTime}%`}
 					</p>
 				</div>
 				<div>
 					<p className="text-xs text-text-muted">Typical payment</p>
 					<p className="mt-1 text-sm tabular-nums text-ink lg:text-base">
-						{receivable.medianDays} days
+						{receivable.medianDays === null
+							? '—'
+							: `${receivable.medianDays} days`}
 					</p>
 				</div>
 			</div>
@@ -115,19 +119,20 @@ function CustomerDetail({
 						variant="soft"
 						size="sm"
 						onClick={onPreview}
+						disabled={previewPending}
 						className="shrink-0"
 					>
-						Preview impact
+						{previewPending ? 'Running…' : 'Preview impact'}
 					</Button>
 				</div>
-				{simulationRun && (
+				{simulationRun && previewDelta !== undefined && (
 					<div className="mt-5 rounded-control bg-[#f2edf1] p-4" role="status">
 						<div className="flex items-center justify-between gap-4">
 							<span className="text-xs text-text-muted">
 								Estimated cash impact
 							</span>
 							<span className="text-sm font-medium tabular-nums text-simulation">
-								−{formatCompactCurrency(simulatedDelta)}
+								{formatReceivableDelta(Number(previewDelta))}
 							</span>
 						</div>
 						<p className="mt-2 text-xs leading-relaxed text-text-muted">
