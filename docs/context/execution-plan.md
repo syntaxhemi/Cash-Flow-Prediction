@@ -114,6 +114,10 @@ integration, and demo validation remain open.
 - [done] Calculate the solvency buffer gap from the predicted net cash flow.
 - [done] Persist forecast runs and the selected forecast-run periods with model and artifact metadata.
 - [done] Expose the baseline forecast API endpoint.
+- [done] Add the artifact-versioned LSTM/persistence hybrid forecast and report its
+  end-to-end validation MAE.
+- [done] Normalize research credit and failure scores to the runtime 0-to-1 feature
+  contract before fitting artifacts.
 
 ## Phase 7: Simulation Services
 
@@ -130,6 +134,8 @@ integration, and demo validation remain open.
 - [done] Define solvency buffer configuration and simulation comparison rules.
 - [done] Expose simulation request and result APIs for health delta, trapped liquidity,
   and liquidity mitigation workflows.
+- [done] Keep simulation baselines artifact-compatible and preserve cash-flow identities
+  in payment-delay, repayment, outflow, and capex counterfactuals.
 
 ## Phase 8: Dashboard
 

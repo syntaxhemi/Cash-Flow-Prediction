@@ -23,7 +23,7 @@ def save_pickle(path: Path, value: Any) -> None:
 
 
 def save_json(path: Path, value: dict[str, Any]) -> None:
-    path.write_text(json.dumps(value, indent=2), encoding='utf-8')
+    path.write_text(json.dumps(value, indent=2), encoding='utf-8', newline='\n')
 
 
 def save_training_artifacts(
@@ -56,5 +56,7 @@ def save_training_artifacts(
     save_json(run_directory / 'metrics.json', metrics)
     save_json(run_directory / 'artifact_metadata.json', metadata)
     (run_directory / 'config.snapshot.yaml').write_text(
-        yaml.safe_dump(config_to_dict(config), sort_keys=False), encoding='utf-8'
+        yaml.safe_dump(config_to_dict(config), sort_keys=False),
+        encoding='utf-8',
+        newline='\n',
     )

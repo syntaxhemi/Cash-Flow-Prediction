@@ -25,6 +25,8 @@ model:
   scheduler_patience: 1
   gradient_clip_norm: 1.0
   target_scaling: false
+  persistence_model_weight: 0.675
+  model_zscore_limit: 200.0
 
 features:
   sequence_length: 6

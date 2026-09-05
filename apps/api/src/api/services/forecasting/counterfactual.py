@@ -46,8 +46,16 @@ def build_counterfactual_context(
 
     Raises:
         InvalidSimulationError: If the forecast does not contain the required input
-            periods.
+            periods or was produced by a different artifact version.
     """
+    if (
+        forecast.model_version != metadata.model_version
+        or forecast.artifact_version != str(metadata.artifact_version)
+    ):
+        raise InvalidSimulationError(
+            'The baseline forecast uses a different model artifact. Run a new '
+            'baseline forecast before starting a simulation.'
+        )
     periods = sorted(forecast.periods, key=lambda period: period.sequence_index)
     if len(periods) != metadata.sequence_length:
         raise InvalidSimulationError(

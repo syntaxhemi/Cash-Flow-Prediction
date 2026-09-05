@@ -1,8 +1,8 @@
 {
   "model_version": "baseline",
-  "artifact_version": 1,
+  "artifact_version": 2,
   "training_run_name": "baseline",
-  "created_at": "2026-08-30T18:34:21.316075+00:00",
+  "created_at": "2026-09-05T22:11:58.379383+00:00",
   "sequence_length": 6,
   "temporal_features": [
     "total_invoice_amount",
@@ -29,6 +29,9 @@
   "random_state": 32,
   "input_format": "processed",
   "target_scaling": "none",
+  "persistence_model_weight": 0.675,
+  "persistence_strategy": "sequence_mean",
+  "model_zscore_limit": 200.0,
   "artifact_files": {
     "model": "model.pth",
     "temporal_scaler": "temporal_scaler.pkl",

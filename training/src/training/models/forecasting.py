@@ -4,52 +4,11 @@ from dataclasses import dataclass
 
 import numpy as np
 import torch
+from ml.models import RuntimeForecastModel, RuntimeModelConfig
 from torch import nn, optim
 from torch.utils.data import DataLoader, Dataset
 
 from training.config import ModelConfig
-
-
-class TemporalStaticFusion(nn.Module):
-    def __init__(
-        self,
-        sequence_input_size: int,
-        static_input_size: int,
-        config: ModelConfig,
-    ) -> None:
-        super().__init__()
-        self.lstm = nn.LSTM(
-            input_size=sequence_input_size,
-            hidden_size=config.lstm_hidden,
-            batch_first=True,
-        )
-        self.sequence_block = nn.Sequential(
-            nn.Linear(config.lstm_hidden, config.dense_hidden),
-            nn.ReLU(),
-            nn.Dropout(config.dropout),
-        )
-        self.static_block = nn.Sequential(
-            nn.Linear(static_input_size, config.dense_hidden),
-            nn.ReLU(),
-            nn.Dropout(config.dropout),
-        )
-        self.fusion_block = nn.Sequential(
-            nn.Linear(config.dense_hidden * 2, config.dense_hidden),
-            nn.ReLU(),
-            nn.Dropout(config.dropout),
-        )
-        self.output_layer = nn.Linear(config.dense_hidden, 1)
-
-    def forward(
-        self, input_sequence: torch.Tensor, input_static: torch.Tensor
-    ) -> torch.Tensor:
-        sequence_output, _ = self.lstm(input_sequence)
-        sequence_features = self.sequence_block(sequence_output[:, -1, :])
-        static_features = self.static_block(input_static)
-        fused = self.fusion_block(
-            torch.cat((sequence_features, static_features), dim=1)
-        )
-        return self.output_layer(fused)
 
 
 class TemporalStaticDataset(Dataset[tuple[torch.Tensor, torch.Tensor, torch.Tensor]]):
@@ -74,7 +33,7 @@ class TemporalStaticDataset(Dataset[tuple[torch.Tensor, torch.Tensor, torch.Tens
 
 @dataclass(slots=True)
 class TrainingResult:
-    model: TemporalStaticFusion
+    model: RuntimeForecastModel
     device: str
     train_losses: list[float]
     validation_losses: list[float]
@@ -84,7 +43,7 @@ class TrainingResult:
 
 def _evaluate(
     loader: DataLoader[tuple[torch.Tensor, torch.Tensor, torch.Tensor]],
-    model: TemporalStaticFusion,
+    model: RuntimeForecastModel,
     criterion: nn.Module,
     device: torch.device,
     target_center: float,
@@ -146,10 +105,14 @@ def train_model(
         and ``target_scale``.
     """
     device = torch.device('cuda' if use_gpu and torch.cuda.is_available() else 'cpu')
-    model = TemporalStaticFusion(
+    model = RuntimeForecastModel(
         sequence_input_size=sequences_train.shape[2],
         static_input_size=static_train.shape[1],
-        config=config,
+        config=RuntimeModelConfig(
+            lstm_hidden=config.lstm_hidden,
+            dense_hidden=config.dense_hidden,
+            dropout=config.dropout,
+        ),
     ).to(device)
     train_loader = DataLoader(
         TemporalStaticDataset(sequences_train, static_train, labels_train),

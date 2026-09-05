@@ -45,6 +45,9 @@ class ForecastArtifactMetadata:
     label_column: str
     sequence_input_size: int
     static_input_size: int
+    persistence_model_weight: float
+    persistence_strategy: str
+    model_zscore_limit: float
     artifact_files: dict[str, str]
 
 
@@ -182,6 +185,9 @@ class ModelArtifactLoader:
             label_column=str(raw['label_column']),
             sequence_input_size=int(raw['sequence_input_size']),
             static_input_size=int(raw['static_input_size']),
+            persistence_model_weight=float(raw.get('persistence_model_weight', 1.0)),
+            persistence_strategy=str(raw.get('persistence_strategy', 'none')),
+            model_zscore_limit=float(raw.get('model_zscore_limit', float('inf'))),
             artifact_files=dict(raw['artifact_files']),
         )
 
@@ -217,6 +223,19 @@ class ModelArtifactLoader:
             )
         if metadata.label_column != 'net_cash_flow':
             raise ValueError('Artifact label_column must be "net_cash_flow".')
+        if not 0.0 <= metadata.persistence_model_weight <= 1.0:
+            raise ValueError(
+                'Artifact persistence_model_weight must be between 0 and 1.'
+            )
+        expected_strategy = (
+            'none' if metadata.persistence_model_weight == 1.0 else 'sequence_mean'
+        )
+        if metadata.persistence_strategy != expected_strategy:
+            raise ValueError(
+                'Artifact persistence_strategy does not match its model weight.'
+            )
+        if metadata.model_zscore_limit <= 0:
+            raise ValueError('Artifact model_zscore_limit must be positive.')
 
     @staticmethod
     def _validate_scaler(scaler: Any, expected_features: int, name: str) -> None:

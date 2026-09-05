@@ -243,8 +243,13 @@ class LiquidityMitigationService:
         }[profile]
         latest_index = len(context.temporal_rows) - 1
         candidates: list[_MitigationCandidate] = []
+        latest_outflows = Decimal(
+            str(context.temporal_rows[latest_index]['total_outflows'])
+        )
         capex = Decimal(str(context.static_values['capex']))
         if capex > 0:
+            monthly_capex = capex / Decimal(12)
+            outflow_reduction = min(latest_outflows, monthly_capex)
             candidates.append(
                 _MitigationCandidate(
                     RecommendationActionType.DELAY_CAPEX,
@@ -252,14 +257,16 @@ class LiquidityMitigationService:
                     capex,
                     Decimal(0),
                     {'capex': Decimal(0)},
-                    {},
+                    {
+                        latest_index: {
+                            'total_outflows': latest_outflows - outflow_reduction
+                        }
+                    },
                 )
             )
 
         for factor in factors:
-            outflows = Decimal(
-                str(context.temporal_rows[latest_index]['total_outflows'])
-            )
+            outflows = latest_outflows
 
             if outflows > 0:
                 candidates.append(
@@ -278,14 +285,23 @@ class LiquidityMitigationService:
             )
 
             if repayment > 0:
+                recommended_repayment = repayment * factor
+                repayment_reduction = repayment - recommended_repayment
                 candidates.append(
                     _MitigationCandidate(
                         RecommendationActionType.ADJUST_REPAYMENT,
                         'monthly_repayment',
                         repayment,
-                        repayment * factor,
+                        recommended_repayment,
                         {},
-                        {latest_index: {'monthly_repayment': repayment * factor}},
+                        {
+                            latest_index: {
+                                'monthly_repayment': recommended_repayment,
+                                'total_outflows': max(
+                                    Decimal(0), outflows - repayment_reduction
+                                ),
+                            }
+                        },
                     )
                 )
 

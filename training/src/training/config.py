@@ -41,6 +41,8 @@ class ModelConfig:
     scheduler_patience: int = 4
     gradient_clip_norm: float = 1.0
     target_scaling: bool = True
+    persistence_model_weight: float = 1.0
+    model_zscore_limit: float = 200.0
 
 
 @dataclass(slots=True)
@@ -72,7 +74,7 @@ def load_config(config_path: Path) -> TrainingConfig:
     if input_format not in ('raw', 'processed'):
         raise ValueError('data.input_format must be either "raw" or "processed".')
 
-    return TrainingConfig(
+    config = TrainingConfig(
         data=DataConfig(
             account_receivable_path=Path(raw_config['data']['account_receivable_path']),
             businesses_path=Path(raw_config['data']['businesses_path']),
@@ -97,6 +99,11 @@ def load_config(config_path: Path) -> TrainingConfig:
             run_name=raw_config['artifacts']['run_name'],
         ),
     )
+    if not 0.0 <= config.model.persistence_model_weight <= 1.0:
+        raise ValueError('model.persistence_model_weight must be between 0 and 1.')
+    if config.model.model_zscore_limit <= 0:
+        raise ValueError('model.model_zscore_limit must be positive.')
+    return config
 
 
 def config_to_dict(config: TrainingConfig) -> dict[str, Any]:

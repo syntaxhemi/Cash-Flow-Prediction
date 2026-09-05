@@ -55,3 +55,14 @@ Each run writes model weights, fitted temporal/static/target scalers, metrics, a
 metadata, and a configuration snapshot to `training/artifacts/runs/<run_name>/`. The
 target scaler is fitted on training labels only; runtime inference reverses it so API
 predictions remain in original cash-flow units.
+
+The baseline artifact combines the temporal/static LSTM prediction with a six-month
+average cash-flow persistence estimate. The blend weight is recorded in the
+configuration and artifact metadata so training evaluation and runtime inference use
+the same calculation. This stabilizes forecasts for enterprise inputs outside the
+research dataset's scale and prevents an underfit neural output near zero from becoming
+the entire forecast. Using all six periods also gives bounded outflow and repayment
+counterfactuals a direct, economically consistent path into the simulated forecast.
+Artifacts also record a maximum standardized input magnitude. Inputs beyond that
+training-support guard use the persistence estimate alone rather than extrapolating a
+saturated neural prediction across an unsupported cash scale.

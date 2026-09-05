@@ -50,6 +50,23 @@ class ForecastInferenceService:
                     np.asarray([[prediction_value]])
                 )[0, 0]
             )
+        model_weight = artifacts.metadata.persistence_model_weight
+        maximum_zscore = float(
+            max(np.max(np.abs(temporal_scaled)), np.max(np.abs(static_scaled)))
+        )
+        if maximum_zscore > artifacts.metadata.model_zscore_limit:
+            model_weight = 0.0
+        if model_weight < 1.0:
+            inflow_index = artifacts.metadata.temporal_features.index('total_inflows')
+            outflow_index = artifacts.metadata.temporal_features.index('total_outflows')
+            cashflows = (
+                features.temporal[:, inflow_index] - features.temporal[:, outflow_index]
+            )
+            persistence_prediction = float(np.mean(cashflows))
+            prediction_value = (
+                model_weight * prediction_value
+                + (1.0 - model_weight) * persistence_prediction
+            )
 
         return ForecastPrediction(
             predicted_net_cashflow=prediction_value,

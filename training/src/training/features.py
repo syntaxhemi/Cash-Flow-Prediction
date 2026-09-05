@@ -186,6 +186,17 @@ def _prepare_processed_credit_rating(frame: pd.DataFrame) -> pd.DataFrame:
     return frame.copy()
 
 
+def _normalize_score(frame: pd.DataFrame, column: str, source_maximum: float) -> None:
+    values = pd.to_numeric(frame[column], errors='raise')
+    if (values < 0).any() or (values > source_maximum).any():
+        raise ValueError(
+            f'{column} must be between 0 and {source_maximum:g} in source data.'
+        )
+    if values.max() > 1:
+        values = values / source_maximum
+    frame[column] = values
+
+
 def _prepare_processed_loan(frame: pd.DataFrame) -> pd.DataFrame:
     """Normalize a loan table produced by the research notebook."""
     result = frame.copy()
@@ -238,6 +249,12 @@ def prepare_datasets(
         loans = _prepare_processed_loan(datasets['loan'])
     else:
         raise ValueError(f'Unsupported input format: {input_format}.')
+
+    # Runtime snapshots and health simulations use both scores on a 0-to-1
+    # scale. The research files encode credit score on 0-to-1000 and failure
+    # score on 0-to-100, so normalize them before fitting the static scaler.
+    _normalize_score(ratings, 'credit_score', 1000)
+    _normalize_score(ratings, 'failure_score', 100)
 
     monthly_invoices = (
         accounts.groupby(['company_reg_number', 'month'])

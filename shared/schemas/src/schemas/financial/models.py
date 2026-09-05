@@ -111,8 +111,8 @@ class StaticFinancialSnapshotCreateSchema(SchemaModel):
     snapshot_date: date
     entry_mode: EntryMode = EntryMode.MANUAL
     ingestion_source_id: UUID | None = None
-    credit_score: Decimal | None = None
-    failure_score: Decimal | None = None
+    credit_score: Decimal | None = Field(default=None, ge=0, le=1)
+    failure_score: Decimal | None = Field(default=None, ge=0, le=1)
     debt_to_revenue_ratio: Decimal | None = None
     current_assets: Decimal | None = Field(default=None, ge=0)
     current_liabilities: Decimal | None = Field(default=None, ge=0)
@@ -128,8 +128,8 @@ class StaticFinancialSnapshotUpdateSchema(SchemaModel):
 
     entry_mode: EntryMode | None = None
     ingestion_source_id: UUID | None = None
-    credit_score: Decimal | None = None
-    failure_score: Decimal | None = None
+    credit_score: Decimal | None = Field(default=None, ge=0, le=1)
+    failure_score: Decimal | None = Field(default=None, ge=0, le=1)
     debt_to_revenue_ratio: Decimal | None = None
     current_assets: Decimal | None = Field(default=None, ge=0)
     current_liabilities: Decimal | None = Field(default=None, ge=0)

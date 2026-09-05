@@ -62,8 +62,35 @@ indent-style = "space"
 
 [tool.mypy]
 python_version = "3.13"
+mypy_path = [
+  "apps/api/src",
+  "apps/worker/src",
+  "training/src",
+  "shared/database/src",
+  "shared/domain/src",
+  "shared/event_broker/src",
+  "shared/integrations/src",
+  "shared/ml/src",
+  "shared/schemas/src",
+]
 warn_unused_configs = true
 pretty = true
+
+[tool.pytest.ini_options]
+pythonpath = ["apps/api/src"]
+
+[tool.pyright]
+extraPaths = [
+  "apps/api/src",
+  "apps/worker/src",
+  "training/src",
+  "shared/database/src",
+  "shared/domain/src",
+  "shared/event_broker/src",
+  "shared/integrations/src",
+  "shared/ml/src",
+  "shared/schemas/src",
+]
 
 [[tool.mypy.overrides]]
 module = [

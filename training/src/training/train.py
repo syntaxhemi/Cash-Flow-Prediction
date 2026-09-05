@@ -177,6 +177,56 @@ def train_pipeline(
         target_center=target_center,
         target_scale=target_scale,
     )
+    result.model.eval()
+    model_device = next(result.model.parameters()).device
+    with torch.no_grad():
+        validation_predictions = (
+            result.model(
+                torch.tensor(sequence_validation_scaled, dtype=torch.float32).to(
+                    model_device
+                ),
+                torch.tensor(static_validation_scaled, dtype=torch.float32).to(
+                    model_device
+                ),
+            )
+            .detach()
+            .cpu()
+            .numpy()
+            .reshape(-1, 1)
+        )
+    if target_scaler is not None:
+        validation_predictions = target_scaler.inverse_transform(validation_predictions)
+    validation_predictions = validation_predictions.reshape(-1)
+    inflow_index = config.features.temporal_features.index('total_inflows')
+    outflow_index = config.features.temporal_features.index('total_outflows')
+    validation_cashflows = (
+        sequence_validation[:, :, inflow_index]
+        - sequence_validation[:, :, outflow_index]
+    )
+    persistence_predictions = np.mean(validation_cashflows, axis=1)
+    model_weight = config.model.persistence_model_weight
+    maximum_validation_zscores = np.maximum(
+        np.max(np.abs(sequence_validation_scaled), axis=(1, 2)),
+        np.max(np.abs(static_validation_scaled), axis=1),
+    )
+    validation_model_weights = np.where(
+        maximum_validation_zscores > config.model.model_zscore_limit,
+        0.0,
+        model_weight,
+    )
+    blended_predictions = (
+        validation_model_weights * validation_predictions
+        + (1.0 - validation_model_weights) * persistence_predictions
+    )
+    validation_model_mae = float(
+        np.mean(np.abs(validation_predictions - sequence_data.labels[validation_mask]))
+    )
+    validation_persistence_mae = float(
+        np.mean(np.abs(persistence_predictions - sequence_data.labels[validation_mask]))
+    )
+    validation_blended_mae = float(
+        np.mean(np.abs(blended_predictions - sequence_data.labels[validation_mask]))
+    )
     best_history_index = result.best_epoch - 1
     best_validation_loss = result.validation_losses[best_history_index]
     best_validation_mae = result.validation_maes[best_history_index]
@@ -198,10 +248,18 @@ def train_pipeline(
         'validation_mae_history': result.validation_maes,
         'best_validation_loss': best_validation_loss,
         'best_validation_mae': best_validation_mae,
+        'validation_model_mae': validation_model_mae,
+        'validation_persistence_mae': validation_persistence_mae,
+        'validation_blended_mae': validation_blended_mae,
+        'persistence_model_weight': model_weight,
+        'model_zscore_limit': config.model.model_zscore_limit,
+        'validation_ood_fallback_count': int(
+            np.sum(maximum_validation_zscores > config.model.model_zscore_limit)
+        ),
         'last_validation_loss': result.validation_losses[-1],
         'last_validation_mae': result.validation_maes[-1],
         'final_validation_loss': best_validation_loss,
-        'final_validation_mae': best_validation_mae,
+        'final_validation_mae': validation_blended_mae,
         'input_format': config.data.input_format,
     }
     artifact_files = {
@@ -216,7 +274,7 @@ def train_pipeline(
         artifact_files['target_scaler'] = 'target_scaler.pkl'
     metadata = {
         'model_version': config.artifacts.run_name,
-        'artifact_version': 1,
+        'artifact_version': 2,
         'training_run_name': config.artifacts.run_name,
         'created_at': datetime.now(UTC).isoformat(),
         'sequence_length': config.features.sequence_length,
@@ -228,6 +286,11 @@ def train_pipeline(
         'random_state': config.split.random_state,
         'input_format': config.data.input_format,
         'target_scaling': 'standard' if target_scaler is not None else 'none',
+        'persistence_model_weight': config.model.persistence_model_weight,
+        'persistence_strategy': (
+            'none' if config.model.persistence_model_weight == 1.0 else 'sequence_mean'
+        ),
+        'model_zscore_limit': config.model.model_zscore_limit,
         'artifact_files': artifact_files,
     }
     save_training_artifacts(

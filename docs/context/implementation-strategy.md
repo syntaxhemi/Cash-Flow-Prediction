@@ -194,6 +194,21 @@ The baseline path should:
 - apply scaler and artifact metadata
 - return next-interval net cash flow prediction
 
+The selected runtime artifact uses a calibrated hybrid prediction:
+
+- 67.5 percent from the research-aligned temporal/static LSTM
+- 32.5 percent from the mean observed net cash flow across the six input months
+
+The persistence component is an explicit stability path for enterprise inputs whose
+cash scale differs from the research dataset. Its weight and strategy are stored in
+artifact metadata and evaluated by the training pipeline, so training and runtime use
+the same forecast calculation. Research credit and failure scores must be normalized
+to the platform's canonical 0-to-1 scale before fitting the static scaler.
+
+Artifacts also record an input z-score limit above the observed validation envelope.
+When runtime inputs exceed that limit, inference uses the persistence path alone rather
+than extrapolating the LSTM across an unsupported enterprise cash scale.
+
 ### Health delta simulation
 
 This path should:
@@ -210,6 +225,12 @@ This path should:
 - adjust payment-delay-related inputs
 - estimate forecast change attributable to late payments
 
+Payment-delay scenarios should also reduce the affected period's inflow by a bounded
+share of the counterparty's outstanding invoice amount. The share is proportional to
+the delay within a 30-day forecast interval and cannot exceed recorded inflows. This
+keeps the counterfactual connected to cash realization rather than relying on a weak
+payment-delay embedding alone.
+
 ### Liquidity mitigation planning
 
 This path should:
@@ -220,9 +241,14 @@ This path should:
 
 Initial action mappings should remain distinct:
 
-- `delay_capex` changes the static `capex` input substantially.
+- `delay_capex` changes the static `capex` input and the bounded monthly outflow
+  represented by that annual amount.
 - `reduce_outflows` changes the temporal `total_outflows` input by a bounded amount.
-- `adjust_repayment` changes the temporal `monthly_repayment` input.
+- `adjust_repayment` changes both temporal `monthly_repayment` and its corresponding
+  `total_outflows` amount.
+
+Counterfactual runs must use the same model and artifact version as their persisted
+baseline forecast. A new baseline is required after an artifact upgrade.
 
 This should be described as recommendation logic, not autonomous optimization.
 

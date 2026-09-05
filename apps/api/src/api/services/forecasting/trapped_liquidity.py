@@ -137,11 +137,33 @@ class TrappedLiquiditySimulationService:
                     simulated_delay = max(baseline_delay, overdue_delay)
                 else:
                     simulated_delay = baseline_delay + payload.payment_delay_days
+                delay_days = (
+                    overdue_delay
+                    if payload.payment_delay_days is None
+                    else payload.payment_delay_days
+                )
+                baseline_inflows = Decimal(
+                    str(context.temporal_rows[sequence_index]['total_inflows'])
+                )
+                invoice_amount = Decimal(
+                    str(context.temporal_rows[sequence_index]['total_invoice_amount'])
+                )
+                simulated_inflows = self._simulated_inflows(
+                    baseline_inflows,
+                    invoice_amount,
+                    aggregate.outstanding_amount,
+                    delay_days,
+                )
                 evaluation = self._evaluator.evaluate(
                     context,
                     {},
                     artifacts,
-                    temporal_patch={sequence_index: {'payment_delay': simulated_delay}},
+                    temporal_patch={
+                        sequence_index: {
+                            'payment_delay': simulated_delay,
+                            'total_inflows': simulated_inflows,
+                        }
+                    },
                 )
                 delta = (
                     context.baseline_prediction - evaluation.predicted_net_cashflow
@@ -188,7 +210,10 @@ class TrappedLiquiditySimulationService:
                 'modeled_trapped_liquidity': str(
                     sum((max(delta, Decimal(0)) for _, _, delta in rankings), Decimal())
                 ),
-                'method': 'modeled payment-delay counterfactual',
+                'method': (
+                    'modeled payment-delay counterfactual with bounded '
+                    'within-month inflow realization'
+                ),
             }
             run = await self._uow.simulation_runs.update(
                 run.id,
@@ -228,6 +253,19 @@ class TrappedLiquiditySimulationService:
                 for ranking in ranking_models
             ],
         )
+
+    @staticmethod
+    def _simulated_inflows(
+        baseline_inflows: Decimal,
+        invoice_amount: Decimal,
+        outstanding_amount: Decimal,
+        delay_days: Decimal,
+    ) -> Decimal:
+        """Estimate bounded within-month inflows after a payment delay."""
+        at_risk_amount = min(outstanding_amount, invoice_amount)
+        delay_fraction = min(Decimal(1), delay_days / Decimal(30))
+        inflow_reduction = min(baseline_inflows, at_risk_amount * delay_fraction)
+        return baseline_inflows - inflow_reduction
 
     @staticmethod
     def _select_candidates(
@@ -281,35 +319,31 @@ class TrappedLiquiditySimulationService:
         Returns:
             Amount-weighted overdue days, or zero when no invoice is overdue.
         """
-        overdue_records = [
-            transaction
-            for transaction in transactions
-            if transaction.transaction_type is TransactionType.INVOICE
-            and transaction.status
-            not in (TransactionStatus.SETTLED, TransactionStatus.CANCELLED)
-            and transaction.due_date is not None
-            and transaction.due_date < reference_date
-        ]
+        overdue_records: list[tuple[int, Decimal]] = []
+        for transaction in transactions:
+            due_date = transaction.due_date
+            if (
+                transaction.transaction_type is not TransactionType.INVOICE
+                or transaction.status
+                in (TransactionStatus.SETTLED, TransactionStatus.CANCELLED)
+                or due_date is None
+                or due_date >= reference_date
+            ):
+                continue
+            overdue_records.append(
+                ((reference_date - due_date).days, transaction.amount)
+            )
         if not overdue_records:
             return Decimal(0)
 
-        total_amount = sum(
-            (transaction.amount for transaction in overdue_records), Decimal()
-        )
+        total_amount = sum((amount for _, amount in overdue_records), Decimal())
         if total_amount <= 0:
-            return Decimal(
-                sum(
-                    (reference_date - transaction.due_date).days
-                    for transaction in overdue_records
-                )
-            ) / Decimal(len(overdue_records))
+            return Decimal(sum(days for days, _ in overdue_records)) / Decimal(
+                len(overdue_records)
+            )
 
         weighted_days = sum(
-            (
-                Decimal((reference_date - transaction.due_date).days)
-                * transaction.amount
-                for transaction in overdue_records
-            ),
+            (Decimal(days) * amount for days, amount in overdue_records),
             Decimal(),
         )
         return weighted_days / total_amount

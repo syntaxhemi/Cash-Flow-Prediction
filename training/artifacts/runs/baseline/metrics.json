@@ -103,9 +103,15 @@
   ],
   "best_validation_loss": 33.01071533469654,
   "best_validation_mae": 33.50690173686331,
+  "validation_model_mae": 33.50690140983094,
+  "validation_persistence_mae": 40.52983213660929,
+  "validation_blended_mae": 32.37252208789585,
+  "persistence_model_weight": 0.675,
+  "model_zscore_limit": 200.0,
+  "validation_ood_fallback_count": 0,
   "last_validation_loss": 34.67486717190805,
   "last_validation_mae": 35.17001745898651,
   "final_validation_loss": 33.01071533469654,
-  "final_validation_mae": 33.50690173686331,
+  "final_validation_mae": 32.37252208789585,
   "input_format": "processed"
 }
