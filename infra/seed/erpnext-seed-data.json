@@ -1,0 +1,69 @@
+{
+  "setup": {
+    "language": "English",
+    "country": "India",
+    "timezone": "Asia/Kolkata",
+    "currency": "INR",
+    "full_name": "Demo Administrator",
+    "email": "demo.admin@example.test",
+    "company_name": "Northstar Components Private Limited",
+    "company_abbr": "NCPL",
+    "domain": "Manufacturing",
+    "chart_of_accounts": "Standard",
+    "fy_start_date": "2026-04-01",
+    "fy_end_date": "2027-03-31",
+    "bank_account": "Demo Bank Account",
+    "setup_demo": 0
+  },
+  "integration_user": {
+    "email": "cashflow.integration@example.test",
+    "first_name": "Cash Flow Integration",
+    "role": "Accounts Manager"
+  },
+  "item": {
+    "item_code": "DEMO-COMPONENTS",
+    "item_name": "Demo industrial components",
+    "item_group": "Services",
+    "stock_uom": "Nos"
+  },
+  "customers": [
+    "Apex Retail",
+    "Orchid Components",
+    "Meridian Foods",
+    "Blue Oak Energy",
+    "Kaveri Logistics",
+    "Delta Wholesale",
+    "Sunrise Medical"
+  ],
+  "suppliers": ["Atlas Supplies"],
+  "sales_invoices": [
+    {"seed_id":"SI-2026-08001","customer":"Apex Retail","posting_date":"2026-08-03","due_date":"2026-09-02","amount":"170000.00","description":"August retail invoice"},
+    {"seed_id":"SI-2026-08002","customer":"Orchid Components","posting_date":"2026-08-08","due_date":"2026-09-07","amount":"140000.00","description":"August components invoice"},
+    {"seed_id":"SI-2026-08003","customer":"Meridian Foods","posting_date":"2026-08-12","due_date":"2026-09-11","amount":"100000.00","description":"August overdue food-sector invoice"},
+    {"seed_id":"SI-2026-08004","customer":"Blue Oak Energy","posting_date":"2026-08-18","due_date":"2026-09-17","amount":"90000.00","description":"August overdue energy-sector invoice"},
+    {"seed_id":"SI-2026-09001","customer":"Apex Retail","posting_date":"2026-09-02","due_date":"2026-10-02","amount":"200000.00","description":"September retail invoice"},
+    {"seed_id":"SI-2026-09002","customer":"Orchid Components","posting_date":"2026-09-06","due_date":"2026-10-06","amount":"150000.00","description":"September components invoice"},
+    {"seed_id":"SI-2026-09003","customer":"Kaveri Logistics","posting_date":"2026-09-10","due_date":"2026-10-10","amount":"110000.00","description":"September overdue logistics invoice"},
+    {"seed_id":"SI-2026-09004","customer":"Delta Wholesale","posting_date":"2026-09-14","due_date":"2026-10-14","amount":"90000.00","description":"September wholesale invoice"}
+  ],
+  "payment_entries": [
+    {"seed_id":"PE-2026-08001","party":"Apex Retail","posting_date":"2026-08-20","amount":"100000.00","description":"Apex Retail August settlement"},
+    {"seed_id":"PE-2026-08002","party":"Orchid Components","posting_date":"2026-08-25","amount":"85000.00","description":"Orchid Components August settlement"},
+    {"seed_id":"PE-2026-08003","party":"Kaveri Logistics","posting_date":"2026-08-27","amount":"70000.00","description":"Kaveri Logistics August settlement"},
+    {"seed_id":"PE-2026-08004","party":"Delta Wholesale","posting_date":"2026-08-29","amount":"55000.00","description":"Delta Wholesale August settlement"},
+    {"seed_id":"PE-2026-08005","party":"Sunrise Medical","posting_date":"2026-08-31","amount":"40000.00","description":"Sunrise Medical August settlement"},
+    {"seed_id":"PE-2026-09001","party":"Apex Retail","posting_date":"2026-09-20","amount":"110000.00","description":"Apex Retail September settlement"},
+    {"seed_id":"PE-2026-09002","party":"Orchid Components","posting_date":"2026-09-24","amount":"90000.00","description":"Orchid Components September settlement"},
+    {"seed_id":"PE-2026-09003","party":"Meridian Foods","posting_date":"2026-09-26","amount":"75000.00","description":"Meridian Foods September settlement"},
+    {"seed_id":"PE-2026-09004","party":"Blue Oak Energy","posting_date":"2026-09-28","amount":"60000.00","description":"Blue Oak Energy September settlement"},
+    {"seed_id":"PE-2026-09005","party":"Kaveri Logistics","posting_date":"2026-09-30","amount":"45000.00","description":"Kaveri Logistics September settlement"}
+  ],
+  "journal_entries": [
+    {"seed_id":"JV-2026-08001","posting_date":"2026-08-18","amount":"790000.00","description":"August operations and supplier spend"},
+    {"seed_id":"JV-2026-08002","posting_date":"2026-08-22","amount":"20000.00","description":"August discretionary equipment investment"},
+    {"seed_id":"JR-2026-08001","posting_date":"2026-08-25","amount":"10000.00","description":"August term-loan repayment"},
+    {"seed_id":"JV-2026-09001","posting_date":"2026-09-18","amount":"850000.00","description":"September operations and supplier spend"},
+    {"seed_id":"JV-2026-09002","posting_date":"2026-09-22","amount":"15000.00","description":"September discretionary equipment investment"},
+    {"seed_id":"JR-2026-09001","posting_date":"2026-09-25","amount":"10000.00","description":"September term-loan repayment"}
+  ]
+}

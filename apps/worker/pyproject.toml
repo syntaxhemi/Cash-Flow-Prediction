@@ -12,7 +12,6 @@ dependencies = [
   "cash-flow-event-broker",
   "cash-flow-domain",
   "cash-flow-integrations",
-  "cash-flow-ml",
   "cash-flow-schemas",
   "pydantic-settings",
   "redis",

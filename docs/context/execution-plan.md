@@ -159,6 +159,12 @@ integration, and demo validation remain open.
 
 - [done] Add API/worker Compose services with a shared upload-volume mount.
 - [done] Add the optional ERPNext Compose demo stack.
+- [done] Add one-command, idempotent ERPNext setup, demo-data seeding, credential
+  rotation, and initial synchronization through the Compose profile.
+- [done] Run the API-owned and database demo seed stages through one shared Compose
+  bootstrap image before ERPNext credential rotation and synchronization.
+- [done] Reduce Compose image size with CPU-only PyTorch, runtime-specific dependency
+  pruning, non-editable workspace installs, and source-independent dependency layers.
 - [done] Add model-calibrated demo seed data with ledger-derived aggregates,
   artifact-reproducible forecasts and simulations, and automated integrity checks.
 - [todo] Add operator runbook and presentation notes.

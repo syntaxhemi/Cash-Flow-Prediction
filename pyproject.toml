@@ -44,6 +44,12 @@ cash-flow-database = { workspace = true }
 cash-flow-ml = { workspace = true }
 cash-flow-integrations = { workspace = true }
 cash-flow-event-broker = { workspace = true }
+torch = { index = "pytorch-cpu" }
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
 
 [tool.ruff]
 line-length = 88

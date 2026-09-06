@@ -258,6 +258,19 @@ truth for ingestion-run state.
 - Verify API-triggered synchronization through the worker.
 - Verify persisted transactions and run status in PostgreSQL.
 
+The local demonstration uses ordered one-shot Compose services. `platform-seed` first
+loads the general historical demo fixture through the existing API and database seed
+stages. After the ERPNext site is created, `erpnext-seed` completes the setup wizard
+through the pinned Frappe API,
+creates deterministic demo masters and accounting documents, generates a dedicated
+integration-user token, and rotates the fixture's existing platform credential without
+writing the token to disk. The seed service then requests a full synchronization. Both
+the worker and seed service join the ERPNext network; the persisted internal base URL
+is `http://erpnext-frontend:8080`.
+
+The setup-wizard RPC is version-sensitive. ERPNext upgrades must verify the bootstrap
+against the newly pinned image before changing the Compose image tag.
+
 ## Verification Criteria
 
 The workflow is complete when:

@@ -54,6 +54,13 @@ Primary delivery format:
 - environment-variable-based configuration
 - all core value demonstrable locally
 
+The Compose runtime uses CPU-only PyTorch because the local demo does not expose a
+GPU. Application images resolve third-party dependencies in a cached layer before
+installing workspace source, and workspace packages are installed non-editably. The
+ingestion worker does not depend on the ML runtime; forecasting inference remains in
+the API application layer. Migration, platform seeding, and ERPNext seeding reuse one
+lightweight bootstrap image with different one-shot commands.
+
 This project should not depend on cloud-only infrastructure to prove its architecture.
 
 ### Redis Streams Event Broker

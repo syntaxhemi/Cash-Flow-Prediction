@@ -1,4 +1,36 @@
 services:
+  migrate:
+    image: cash-flow-bootstrap:local
+    build:
+      context: .
+      dockerfile: infra/docker/bootstrap.Dockerfile
+    command: ["alembic", "-c", "infra/migrations/alembic.ini", "upgrade", "head"]
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
+      DB_NAME: cash_flow
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  platform-seed:
+    image: cash-flow-bootstrap:local
+    pull_policy: never
+    command: ["python", "infra/seed/seed_platform.py"]
+    restart: "no"
+    environment:
+      CASH_FLOW_API_URL: http://api:8000
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
+      DB_NAME: cash_flow
+    depends_on:
+      api:
+        condition: service_healthy
+
   api:
     build:
       context: .
@@ -24,8 +56,8 @@ services:
     volumes:
       - upload_data:/var/uploads
     depends_on:
-      postgres:
-        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
       redis:
         condition: service_healthy
     healthcheck:
@@ -56,10 +88,13 @@ services:
     volumes:
       - upload_data:/var/uploads
     depends_on:
-      postgres:
-        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
       redis:
         condition: service_healthy
+    networks:
+      - default
+      - erpnext_network
 
   dashboard:
     build:
@@ -196,9 +231,7 @@ services:
         if [ -d "sites/frontend" ]; then
           echo "ERPNext site already exists, skipping creation";
         else
-          bench new-site --mariadb-user-host-login-scope='%' --admin-password=admin
-          --db-root-username=root --db-root-password=admin --install-app erpnext
-          --set-default frontend;
+          bench new-site frontend --mariadb-user-host-login-scope='%' --admin-password=admin --db-root-username=root --db-root-password=admin --install-app erpnext --set-default;
         fi;
     environment:
       DB_HOST: erpnext-db
@@ -265,6 +298,32 @@ services:
       - erpnext_sites:/home/frappe/frappe-bench/sites
       - erpnext_logs:/home/frappe/frappe-bench/logs
 
+  erpnext-seed:
+    image: cash-flow-bootstrap:local
+    pull_policy: never
+    command: ["python", "infra/seed/seed_erpnext.py"]
+    profiles: [erpnext]
+    restart: "no"
+    environment:
+      ERPNEXT_BASE_URL: http://erpnext-frontend:8080
+      ERPNEXT_ADMIN_USER: Administrator
+      ERPNEXT_ADMIN_PASSWORD: admin
+      CASH_FLOW_API_URL: http://api:8000
+      ERPNEXT_READY_TIMEOUT_SECONDS: "300"
+      TRIGGER_ERPNEXT_SYNC: "true"
+    depends_on:
+      erpnext-create-site:
+        condition: service_completed_successfully
+      erpnext-frontend:
+        condition: service_started
+      api:
+        condition: service_healthy
+      platform-seed:
+        condition: service_completed_successfully
+    networks:
+      - default
+      - erpnext_network
+
 volumes:
   upload_data:
   postgres_data:
@@ -275,5 +334,7 @@ volumes:
   erpnext_logs:
 
 networks:
+  default:
+    driver: bridge
   erpnext_network:
     driver: bridge
