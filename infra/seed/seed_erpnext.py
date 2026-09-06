@@ -23,8 +23,19 @@ class _ApiError(RuntimeError):
 class _JsonApiClient:
     """Minimal JSON API client with optional cookie-backed authentication."""
 
-    def __init__(self, base_url: str, *, cookies: bool = False) -> None:
+    def __init__(
+        self,
+        base_url: str,
+        *,
+        cookies: bool = False,
+        headers: dict[str, str] | None = None,
+    ) -> None:
         self.base_url = base_url.rstrip('/')
+        self._headers = {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            **(headers or {}),
+        }
         self._opener = (
             build_opener(HTTPCookieProcessor(CookieJar()))
             if cookies
@@ -46,7 +57,7 @@ class _JsonApiClient:
         request = Request(
             f'{self.base_url}{path}{suffix}',
             data=payload,
-            headers={'Accept': 'application/json', 'Content-Type': 'application/json'},
+            headers=self._headers,
             method=method,
         )
         try:
@@ -400,9 +411,57 @@ def _ensure_integration_user(
         raise _ApiError('ERPNext returned invalid API credentials.')
     api_key = credentials.get('api_key')
     api_secret = credentials.get('api_secret')
-    if not isinstance(api_key, str) or not isinstance(api_secret, str):
+    if (
+        not isinstance(api_key, str)
+        or not api_key
+        or not isinstance(api_secret, str)
+        or not api_secret
+    ):
         raise _ApiError('ERPNext did not return an API key and secret.')
     return {'api_key': api_key, 'api_secret': api_secret}
+
+
+def _token_client(base_url: str, credentials: dict[str, str]) -> _JsonApiClient:
+    return _JsonApiClient(
+        base_url,
+        headers={
+            'Authorization': (
+                f'token {credentials["api_key"]}:{credentials["api_secret"]}'
+            )
+        },
+    )
+
+
+def _verify_erpnext_credentials(
+    base_url: str,
+    credentials: dict[str, str],
+    expected_user: str,
+    *,
+    attempts: int = 5,
+) -> None:
+    client = _token_client(base_url, credentials)
+    last_error: _ApiError | None = None
+    for attempt in range(attempts):
+        try:
+            authenticated_user = _message(
+                client.request(
+                    'GET',
+                    '/api/method/frappe.auth.get_logged_user',
+                    timeout=10,
+                )
+            )
+            if authenticated_user != expected_user:
+                raise _ApiError('ERPNext token authenticated as an unexpected user.')
+            return
+        except _ApiError as error:
+            last_error = error
+            if attempt + 1 < attempts:
+                time.sleep(1)
+
+    raise _ApiError(
+        'ERPNext rejected the generated integration credential after '
+        f'{attempts} attempts.'
+    ) from last_error
 
 
 def _first_by(
@@ -419,7 +478,7 @@ def _configure_platform(
     platform_seed: dict[str, Any],
     credentials: dict[str, str],
     erpnext_base_url: str,
-) -> None:
+) -> str:
     api_seed = platform_seed['api']
     enterprise_payload = api_seed['enterprise']
     enterprises = client.request(
@@ -443,8 +502,15 @@ def _configure_platform(
         source = client.request('POST', source_path, erpnext_source_payload)
 
     credential_path = f'{source_path}/{source["id"]}/credentials'
-    credential_response = client.request('GET', credential_path)
+    credential_response = client.request(
+        'GET', credential_path, query={'status': 'active'}
+    )
     existing_credentials = _items(credential_response)
+    if len(existing_credentials) > 1:
+        raise _ApiError(
+            'The platform returned more than one active credential for the '
+            'ERPNext source.'
+        )
     secret_ref = f'{credentials["api_key"]}:{credentials["api_secret"]}'
     config_json = {
         'base_url': erpnext_base_url,
@@ -459,13 +525,13 @@ def _configure_platform(
             f'{credential_path}/{credential["id"]}',
             {'credential_type': 'api_key', 'config_json': config_json},
         )
-        client.request(
+        credential = client.request(
             'POST',
             f'{credential_path}/{credential["id"]}/rotate',
             {'secret_ref': secret_ref},
         )
     else:
-        client.request(
+        credential = client.request(
             'POST',
             credential_path,
             {
@@ -474,13 +540,18 @@ def _configure_platform(
                 'secret_ref': secret_ref,
             },
         )
+    if not isinstance(credential, dict) or not credential.get('id'):
+        raise _ApiError('The platform did not confirm the active ERPNext credential.')
 
-    if os.environ.get('TRIGGER_ERPNEXT_SYNC', 'true').lower() == 'true':
-        client.request(
-            'POST',
-            f'{source_path}/{source["id"]}/sync',
-            {'run_type': 'full', 'status': 'pending'},
-        )
+    return f'{source_path}/{source["id"]}/sync'
+
+
+def _trigger_erpnext_sync(client: _JsonApiClient, sync_path: str) -> None:
+    client.request(
+        'POST',
+        sync_path,
+        {'run_type': 'full', 'status': 'pending'},
+    )
 
 
 def main() -> None:
@@ -492,7 +563,8 @@ def main() -> None:
 
     Notes:
         Generated ERPNext API credentials are passed directly to the platform and are
-        never written to disk or printed.
+        never written to disk or printed. Synchronization is requested only after the
+        generated token authenticates successfully before and after platform rotation.
     """
     erpnext_base_url = os.environ.get(
         'ERPNEXT_BASE_URL', 'http://erpnext-frontend:8080'
@@ -511,12 +583,21 @@ def main() -> None:
     accounts = _account_context(erpnext, seed['setup']['company_name'])
     transaction_counts = _seed_transactions(erpnext, seed, accounts)
     credentials = _ensure_integration_user(erpnext, seed['integration_user'])
-    _configure_platform(
-        _JsonApiClient(cash_flow_api_url),
+    integration_user = str(seed['integration_user']['email'])
+    print('Verifying generated ERPNext credential...')
+    _verify_erpnext_credentials(erpnext_base_url, credentials, integration_user)
+    platform = _JsonApiClient(cash_flow_api_url)
+    sync_path = _configure_platform(
+        platform,
         platform_seed,
         credentials,
         erpnext_base_url,
     )
+    print('Verifying ERPNext credential before synchronization...')
+    _verify_erpnext_credentials(erpnext_base_url, credentials, integration_user)
+    should_sync = os.environ.get('TRIGGER_ERPNEXT_SYNC', 'true').lower() == 'true'
+    if should_sync:
+        _trigger_erpnext_sync(platform, sync_path)
     print(
         'ERPNext seed complete: '
         f'{master_counts["created"]} masters created, '
@@ -524,7 +605,7 @@ def main() -> None:
         f'{transaction_counts["created"]} transactions created, '
         f'{transaction_counts["reused"]} reused.'
     )
-    if os.environ.get('TRIGGER_ERPNEXT_SYNC', 'true').lower() == 'true':
+    if should_sync:
         print('ERPNext credential configured and synchronization requested.')
     else:
         print('ERPNext credential configured; synchronization was disabled.')
