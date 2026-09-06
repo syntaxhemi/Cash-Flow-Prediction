@@ -108,7 +108,7 @@ cmd = "uv run uvicorn --app-dir apps/api/src api.main:app"
 cmd = "uv run uvicorn --app-dir apps/api/src api.main:app --reload"
 
 [tool.poe.tasks.worker]
-cmd = "uv run python --module worker.main"
+cmd = "uv run python -m worker.main"
 
 [tool.poe.tasks.dashboard-install]
 cmd = "npm --prefix apps/dashboard install"

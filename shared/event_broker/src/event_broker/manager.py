@@ -20,12 +20,18 @@ class EventBrokerManager:
         self._client: Redis | None = None
 
     async def initialize(self) -> None:
-        """Initialize the async Redis client."""
+        """Initialize the async Redis client.
+
+        Notes:
+            Socket reads have no client-side timeout because Redis Stream consumers
+            use server-bounded blocking reads.
+        """
         if self._client is not None:
             return
         self._client = Redis.from_url(
             self._settings.EVENT_BROKER_URL,
             decode_responses=True,
+            socket_timeout=None,
         )
 
     async def check_connection(self) -> None:

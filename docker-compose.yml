@@ -41,7 +41,7 @@ services:
       dockerfile: infra/docker/worker.Dockerfile
     container_name: cash-flow-worker
     restart: unless-stopped
-    command: ["uv", "run", "python", "--module", "worker.main"]
+    command: ["uv", "run", "python", "-m", "worker.main"]
     environment:
       ENVIRONMENT: development
       DB_HOST: postgres

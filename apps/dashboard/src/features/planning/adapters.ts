@@ -57,7 +57,6 @@ function mitigationOption(
 		linkHref: '#cash-position-title',
 		postScenario: Number(recommendation.expected_post_action_cashflow),
 		meetsBuffer: recommendation.meets_buffer,
-		recommended: recommendation.priority_rank === 1,
 	};
 }
 
@@ -75,7 +74,6 @@ function buildCollectionOption(
 		linkHref: opportunity.linkHref,
 		postScenario: baseline + opportunity.impact,
 		meetsBuffer: baseline + opportunity.impact >= buffer,
-		recommended: true,
 	};
 }
 
@@ -117,10 +115,17 @@ export function toPlanningView(
 	const mitigationOptions = (mitigation?.mitigation_recommendations ?? []).map(
 		(recommendation) => mitigationOption(recommendation),
 	);
-	const options = [...(collectionPlan ? [collectionPlan] : []), ...mitigationOptions]
-		.sort((left, right) => Math.abs(right.impact) - Math.abs(left.impact))
-		.slice(0, 4);
-	const draftOption = options[0] ?? null;
+	const rankedOptions = [
+		...(collectionPlan ? [collectionPlan] : []),
+		...mitigationOptions,
+	]
+		.sort((left, right) => right.impact - left.impact)
+		.slice(0, 3)
+		.map((option, index) => ({ ...option, recommended: index === 0 }));
+	const draftOption = rankedOptions[0] ?? null;
+	const options = [...rankedOptions].sort(
+		(left, right) => left.impact - right.impact,
+	);
 	const draftUsesCollection = draftOption?.id === 'collection-opportunity';
 
 	return {

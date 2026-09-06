@@ -25,6 +25,7 @@ COPY shared/database/src shared/database/src
 COPY shared/ml/src shared/ml/src
 COPY shared/integrations/src shared/integrations/src
 COPY shared/event_broker/src shared/event_broker/src
+COPY training/artifacts/runs/baseline training/artifacts/runs/baseline
 
 EXPOSE 8000
 
