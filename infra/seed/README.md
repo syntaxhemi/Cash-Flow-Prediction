@@ -45,3 +45,15 @@ The database loader accepts `--seed-file` and `--state-file` with the same defau
 The fixture uses February through July 2026 as the six-month temporal history and
 August 2026 as the forecast target period. Monetary values are stored as strings in
 JSON so they remain exact decimals through loading.
+
+The India-facing fixture is denominated in INR and calibrated to the baseline
+artifact's fixed `1 GBP = 100 INR` model-reference rate. Its converted monthly inputs
+remain within a maximum absolute standardized magnitude of 5, and its monthly net cash
+flow remains within the research dataset's observed target envelope. The stored
+forecast and simulation outputs are evaluations from baseline artifact version 3, not
+hand-authored presentation values.
+
+Seed integrity tests recompute monthly aggregates and receivable balances from the
+transaction ledger, rerun the baseline model, and reproduce health, trapped-liquidity,
+and mitigation outcomes. The database loader updates deterministic seed rows on rerun,
+so fixture revisions do not require recreating the database.

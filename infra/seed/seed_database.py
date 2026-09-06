@@ -94,8 +94,26 @@ async def _ensure_by_id(
     model_id: UUID,
     values: dict[str, Any],
 ) -> Any:
+    """Create or update a deterministic seed record.
+
+    Args:
+        session: Database session used for persistence.
+        model_class: SQLAlchemy model class to seed.
+        model_id: Deterministic identifier for the fixture record.
+        values: Persisted values that define the current fixture version.
+
+    Returns:
+        The inserted or refreshed SQLAlchemy model instance.
+
+    Notes:
+        Updating existing records lets a seed-data revision refresh an already-seeded
+        demo database without requiring destructive database recreation.
+    """
     existing = await session.get(model_class, model_id)
     if existing is not None:
+        for name, value in values.items():
+            setattr(existing, name, value)
+        await session.flush()
         return existing
     model = model_class(id=model_id, **values)  # type: ignore[call-arg]
     session.add(model)
@@ -431,6 +449,12 @@ async def _seed_simulations(
 ) -> None:
     simulations: dict[str, SimulationRunModel] = {}
     for item in records['simulation_runs']:
+        summary_result = dict(item['summary_result'])
+        top_counterparty_key = summary_result.pop('top_counterparty_key', None)
+        if top_counterparty_key is not None:
+            summary_result['top_counterparty_id'] = str(
+                counterparties[top_counterparty_key].id
+            )
         simulation = await _ensure_by_id(
             session,
             SimulationRunModel,
@@ -440,7 +464,7 @@ async def _seed_simulations(
                 'forecast_run_id': forecasts[item['forecast_key']].id,
                 'simulation_type': SimulationType(item['simulation_type']),
                 'status': SimulationStatus(item['status']),
-                'summary_result': item['summary_result'],
+                'summary_result': summary_result,
                 'requested_at': _parse_datetime(item['requested_at']),
                 'completed_at': _parse_datetime(item['completed_at']),
                 'created_at': _parse_datetime(item['created_at']),
@@ -461,6 +485,17 @@ async def _seed_simulations(
                 'predicted_net_cashflow': _decimal(item['predicted_net_cashflow']),
                 'delta_from_baseline': _decimal(item['delta_from_baseline']),
                 'meets_buffer': item['meets_buffer'],
+                'health_score': (
+                    _decimal(item['health_score'])
+                    if item.get('health_score') is not None
+                    else None
+                ),
+                'health_score_delta': (
+                    _decimal(item['health_score_delta'])
+                    if item.get('health_score_delta') is not None
+                    else None
+                ),
+                'health_status': item.get('health_status'),
             },
         )
 

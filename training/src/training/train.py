@@ -272,9 +272,12 @@ def train_pipeline(
     }
     if target_scaler is not None:
         artifact_files['target_scaler'] = 'target_scaler.pkl'
+    currency_rates = config.artifacts.currency_units_per_training_unit or {
+        config.artifacts.training_currency: 1.0
+    }
     metadata = {
         'model_version': config.artifacts.run_name,
-        'artifact_version': 2,
+        'artifact_version': 3,
         'training_run_name': config.artifacts.run_name,
         'created_at': datetime.now(UTC).isoformat(),
         'sequence_length': config.features.sequence_length,
@@ -291,6 +294,8 @@ def train_pipeline(
             'none' if config.model.persistence_model_weight == 1.0 else 'sequence_mean'
         ),
         'model_zscore_limit': config.model.model_zscore_limit,
+        'training_currency': config.artifacts.training_currency,
+        'currency_units_per_training_unit': currency_rates,
         'artifact_files': artifact_files,
     }
     save_training_artifacts(

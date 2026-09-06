@@ -66,3 +66,10 @@ counterfactuals a direct, economically consistent path into the simulated foreca
 Artifacts also record a maximum standardized input magnitude. Inputs beyond that
 training-support guard use the persistence estimate alone rather than extrapolating a
 saturated neural prediction across an unsupported cash scale.
+
+The SME UK dataset is treated as GBP-denominated by project assumption. Artifact
+version 3 records GBP as the training currency and uses the fixed 2020 model-reference
+rate of 1 GBP = 100 INR. INR monetary features are divided by 100 before feature
+scaling; predictions are multiplied by 100 before being returned to the India-facing
+platform. This is an inference normalization constant, not a live foreign-exchange
+quote. Delay, score, ratio, and count features are never currency-converted.

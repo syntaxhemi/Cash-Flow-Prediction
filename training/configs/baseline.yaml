@@ -52,3 +52,7 @@ features:
 artifacts:
   output_dir: training/artifacts/runs
   run_name: baseline
+  training_currency: GBP
+  currency_units_per_training_unit:
+    GBP: 1.0
+    INR: 100.0

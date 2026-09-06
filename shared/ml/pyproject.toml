@@ -13,6 +13,7 @@ dependencies = [
   "cash-flow-schemas",
   "numpy",
   "pandas",
+  "pyyaml",
   "scikit-learn",
   "torch",
 ]

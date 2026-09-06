@@ -35,6 +35,7 @@ def _context() -> CounterfactualContext:
         },
         baseline_prediction=Decimal(300),
         solvency_buffer=Decimal(500),
+        currency_code='INR',
     )
 
 

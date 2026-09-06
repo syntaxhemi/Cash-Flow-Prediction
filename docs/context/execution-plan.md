@@ -118,6 +118,8 @@ integration, and demo validation remain open.
   end-to-end validation MAE.
 - [done] Normalize research credit and failure scores to the runtime 0-to-1 feature
   contract before fitting artifacts.
+- [done] Add artifact-versioned GBP/INR monetary normalization using the fixed 2020
+  model-reference rate and return predictions in the enterprise currency.
 
 ## Phase 7: Simulation Services
 
@@ -157,6 +159,7 @@ integration, and demo validation remain open.
 
 - [done] Add API/worker Compose services with a shared upload-volume mount.
 - [done] Add the optional ERPNext Compose demo stack.
-- [done] Add demo seed data.
+- [done] Add model-calibrated demo seed data with ledger-derived aggregates,
+  artifact-reproducible forecasts and simulations, and automated integrity checks.
 - [todo] Add operator runbook and presentation notes.
 - [todo] Validate the end-to-end ERPNext-to-dashboard demo flow.

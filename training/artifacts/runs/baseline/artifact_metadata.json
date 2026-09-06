@@ -1,8 +1,8 @@
 {
   "model_version": "baseline",
-  "artifact_version": 2,
+  "artifact_version": 3,
   "training_run_name": "baseline",
-  "created_at": "2026-09-05T22:11:58.379383+00:00",
+  "created_at": "2026-09-06T06:25:50.361521+00:00",
   "sequence_length": 6,
   "temporal_features": [
     "total_invoice_amount",
@@ -32,6 +32,11 @@
   "persistence_model_weight": 0.675,
   "persistence_strategy": "sequence_mean",
   "model_zscore_limit": 200.0,
+  "training_currency": "GBP",
+  "currency_units_per_training_unit": {
+    "GBP": 1.0,
+    "INR": 100.0
+  },
   "artifact_files": {
     "model": "model.pth",
     "temporal_scaler": "temporal_scaler.pkl",

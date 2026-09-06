@@ -65,7 +65,9 @@ class HealthDeltaSimulationService:
                 different enterprise, or is not completed.
             InvalidSimulationError: If baseline inputs or a scenario are invalid.
         """
-        await self._uow.enterprises.get_active_by_id_or_raise(enterprise_id)
+        enterprise = await self._uow.enterprises.get_active_by_id_or_raise(
+            enterprise_id
+        )
 
         forecast = await self._uow.forecasts.get_by_id_with_inputs(
             enterprise_id, forecast_run_id
@@ -82,7 +84,9 @@ class HealthDeltaSimulationService:
             )
 
         artifacts = self._artifact_loader.load()
-        context = build_counterfactual_context(forecast, artifacts.metadata)
+        context = build_counterfactual_context(
+            forecast, artifacts.metadata, enterprise.base_currency
+        )
         baseline_health_score = calculate_health_score(context.static_values)
         requested_at = datetime.now(UTC)
         run = await self._uow.simulation_runs.create(

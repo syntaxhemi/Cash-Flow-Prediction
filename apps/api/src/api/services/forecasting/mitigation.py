@@ -80,7 +80,9 @@ class LiquidityMitigationService:
             InvalidSimulationError: If the baseline does not breach its buffer or
                 mitigation inputs are invalid.
         """
-        await self._uow.enterprises.get_active_by_id_or_raise(enterprise_id)
+        enterprise = await self._uow.enterprises.get_active_by_id_or_raise(
+            enterprise_id
+        )
 
         forecast = await self._uow.forecasts.get_by_id_with_inputs(
             enterprise_id, forecast_run_id
@@ -99,7 +101,9 @@ class LiquidityMitigationService:
             )
 
         artifacts = self._artifact_loader.load()
-        context = build_counterfactual_context(forecast, artifacts.metadata)
+        context = build_counterfactual_context(
+            forecast, artifacts.metadata, enterprise.base_currency
+        )
         candidates = self._build_candidates(context, payload.profile)
         if not candidates:
             raise InvalidSimulationError(

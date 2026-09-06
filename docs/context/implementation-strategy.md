@@ -209,6 +209,16 @@ Artifacts also record an input z-score limit above the observed validation envel
 When runtime inputs exceed that limit, inference uses the persistence path alone rather
 than extrapolating the LSTM across an unsupported enterprise cash scale.
 
+The NayaOne SME UK dataset is treated as GBP-denominated by explicit project
+assumption because its published Kaggle description identifies UK economic coverage
+but does not declare a currency field. The artifact records GBP as its training
+currency and a fixed 2020 model-reference conversion of 1 GBP = 100 INR. For INR
+enterprises, only monetary temporal and static features are converted to GBP before
+scaling and inference; the predicted target is converted back to INR before API
+persistence. Non-monetary delays, scores, ratios, and counts remain unchanged. This
+fixed historical conversion is part of the reproducible model contract and must not be
+presented as a current FX quote.
+
 ### Health delta simulation
 
 This path should:

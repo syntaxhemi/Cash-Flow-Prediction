@@ -48,6 +48,8 @@ class ForecastArtifactMetadata:
     persistence_model_weight: float
     persistence_strategy: str
     model_zscore_limit: float
+    training_currency: str
+    currency_units_per_training_unit: dict[str, float]
     artifact_files: dict[str, str]
 
 
@@ -188,6 +190,13 @@ class ModelArtifactLoader:
             persistence_model_weight=float(raw.get('persistence_model_weight', 1.0)),
             persistence_strategy=str(raw.get('persistence_strategy', 'none')),
             model_zscore_limit=float(raw.get('model_zscore_limit', float('inf'))),
+            training_currency=str(raw.get('training_currency', 'GBP')).upper(),
+            currency_units_per_training_unit={
+                str(currency).upper(): float(rate)
+                for currency, rate in (
+                    raw.get('currency_units_per_training_unit') or {'GBP': 1.0}
+                ).items()
+            },
             artifact_files=dict(raw['artifact_files']),
         )
 
@@ -236,6 +245,11 @@ class ModelArtifactLoader:
             )
         if metadata.model_zscore_limit <= 0:
             raise ValueError('Artifact model_zscore_limit must be positive.')
+        rates = metadata.currency_units_per_training_unit
+        if rates.get(metadata.training_currency) != 1.0:
+            raise ValueError('Artifact training currency rate must be 1.0.')
+        if any(rate <= 0 for rate in rates.values()):
+            raise ValueError('Artifact currency conversion rates must be positive.')
 
     @staticmethod
     def _validate_scaler(scaler: Any, expected_features: int, name: str) -> None:

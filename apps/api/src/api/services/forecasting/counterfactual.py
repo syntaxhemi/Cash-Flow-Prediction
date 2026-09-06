@@ -21,6 +21,7 @@ class CounterfactualContext:
     static_values: dict[str, float]
     baseline_prediction: Decimal
     solvency_buffer: Decimal
+    currency_code: str
 
 
 @dataclass(frozen=True, slots=True)
@@ -33,13 +34,16 @@ class CounterfactualEvaluation:
 
 
 def build_counterfactual_context(
-    forecast: ForecastRunModel, metadata: ForecastArtifactMetadata
+    forecast: ForecastRunModel,
+    metadata: ForecastArtifactMetadata,
+    currency_code: str,
 ) -> CounterfactualContext:
     """Build baseline feature values from a loaded forecast run.
 
     Args:
         forecast: Forecast ORM model with input relationships eagerly loaded.
         metadata: Loaded artifact metadata defining feature dimensions.
+        currency_code: Currency of persisted monetary inputs and outputs.
 
     Returns:
         Baseline temporal and static feature values for counterfactual evaluation.
@@ -95,6 +99,7 @@ def build_counterfactual_context(
         static_values=static_values,
         baseline_prediction=forecast.predicted_net_cashflow,
         solvency_buffer=forecast.solvency_buffer,
+        currency_code=currency_code,
     )
 
 
@@ -171,7 +176,9 @@ class CounterfactualEvaluator:
         features = self._preparation.prepare(
             temporal_rows, static_values, artifacts.metadata
         )
-        prediction = self._inference.predict(features, artifacts)
+        prediction = self._inference.predict(
+            features, artifacts, input_currency=context.currency_code
+        )
         predicted = Decimal(str(prediction.predicted_net_cashflow))
         return CounterfactualEvaluation(
             predicted_net_cashflow=predicted,

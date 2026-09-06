@@ -270,6 +270,7 @@ dependencies = [
     { name = "cash-flow-schemas" },
     { name = "numpy" },
     { name = "pandas" },
+    { name = "pyyaml" },
     { name = "scikit-learn" },
     { name = "torch" },
 ]
@@ -281,6 +282,7 @@ requires-dist = [
     { name = "cash-flow-schemas", editable = "shared/schemas" },
     { name = "numpy" },
     { name = "pandas" },
+    { name = "pyyaml" },
     { name = "scikit-learn" },
     { name = "torch" },
 ]

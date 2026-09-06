@@ -57,6 +57,8 @@ class FeatureConfig:
 class ArtifactConfig:
     output_dir: Path
     run_name: str
+    training_currency: str = 'GBP'
+    currency_units_per_training_unit: dict[str, float] | None = None
 
 
 @dataclass(slots=True)
@@ -97,16 +99,33 @@ def load_config(config_path: Path) -> TrainingConfig:
         artifacts=ArtifactConfig(
             output_dir=Path(raw_config['artifacts']['output_dir']),
             run_name=raw_config['artifacts']['run_name'],
+            training_currency=str(
+                raw_config['artifacts'].get('training_currency', 'GBP')
+            ).upper(),
+            currency_units_per_training_unit={
+                str(currency).upper(): float(rate)
+                for currency, rate in raw_config['artifacts']
+                .get('currency_units_per_training_unit', {'GBP': 1.0})
+                .items()
+            },
         ),
     )
     if not 0.0 <= config.model.persistence_model_weight <= 1.0:
         raise ValueError('model.persistence_model_weight must be between 0 and 1.')
     if config.model.model_zscore_limit <= 0:
         raise ValueError('model.model_zscore_limit must be positive.')
+    rates = config.artifacts.currency_units_per_training_unit or {}
+    if rates.get(config.artifacts.training_currency) != 1.0:
+        raise ValueError('The training currency conversion rate must be 1.0.')
+    if not rates or any(rate <= 0 for rate in rates.values()):
+        raise ValueError('Artifact currency conversion rates must be positive.')
     return config
 
 
 def config_to_dict(config: TrainingConfig) -> dict[str, Any]:
+    currency_rates = config.artifacts.currency_units_per_training_unit or {
+        config.artifacts.training_currency: 1.0
+    }
     return {
         'data': {key: str(value) for key, value in asdict(config.data).items()},
         'split': asdict(config.split),
@@ -115,5 +134,7 @@ def config_to_dict(config: TrainingConfig) -> dict[str, Any]:
         'artifacts': {
             'output_dir': str(config.artifacts.output_dir),
             'run_name': config.artifacts.run_name,
+            'training_currency': config.artifacts.training_currency,
+            'currency_units_per_training_unit': currency_rates,
         },
     }

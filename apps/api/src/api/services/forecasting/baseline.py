@@ -65,7 +65,9 @@ class BaselineForecastService:
             InvalidForecastRunError: If the target range or six-month input window is
                 not available.
         """
-        await self._uow.enterprises.get_active_by_id_or_raise(enterprise_id)
+        enterprise = await self._uow.enterprises.get_active_by_id_or_raise(
+            enterprise_id
+        )
         self._validate_target_period(
             payload.target_period_start, payload.target_period_end
         )
@@ -127,7 +129,9 @@ class BaselineForecastService:
             temporal_rows, static_values, artifacts.metadata
         )
 
-        prediction = self._inference.predict(features, artifacts)
+        prediction = self._inference.predict(
+            features, artifacts, input_currency=enterprise.base_currency
+        )
         predicted = Decimal(str(prediction.predicted_net_cashflow))
 
         buffer_gap = predicted - payload.solvency_buffer

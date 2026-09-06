@@ -64,7 +64,9 @@ class TrappedLiquiditySimulationService:
             InvalidSimulationError: If the baseline inputs or receivables data cannot
                 produce a supported counterfactual.
         """
-        await self._uow.enterprises.get_active_by_id_or_raise(enterprise_id)
+        enterprise = await self._uow.enterprises.get_active_by_id_or_raise(
+            enterprise_id
+        )
 
         forecast = await self._uow.forecasts.get_by_id_with_inputs(
             enterprise_id, forecast_run_id
@@ -80,7 +82,9 @@ class TrappedLiquiditySimulationService:
             )
 
         artifacts = self._artifact_loader.load()
-        context = build_counterfactual_context(forecast, artifacts.metadata)
+        context = build_counterfactual_context(
+            forecast, artifacts.metadata, enterprise.base_currency
+        )
         periods = sorted(forecast.periods, key=lambda period: period.sequence_index)
         receivables = (
             await self._uow.counterparty_monthly_receivables.list_for_enterprise(
