@@ -1,9 +1,13 @@
+x-bootstrap-build: &bootstrap-build
+  image: cash-flow-bootstrap:local
+  pull_policy: build
+  build:
+    context: .
+    dockerfile: infra/docker/bootstrap.Dockerfile
+
 services:
   migrate:
-    image: cash-flow-bootstrap:local
-    build:
-      context: .
-      dockerfile: infra/docker/bootstrap.Dockerfile
+    <<: *bootstrap-build
     command: ["alembic", "-c", "infra/migrations/alembic.ini", "upgrade", "head"]
     environment:
       DB_HOST: postgres
@@ -16,8 +20,7 @@ services:
         condition: service_healthy
 
   platform-seed:
-    image: cash-flow-bootstrap:local
-    pull_policy: never
+    <<: *bootstrap-build
     command: ["python", "infra/seed/seed_platform.py"]
     restart: "no"
     environment:
@@ -299,8 +302,7 @@ services:
       - erpnext_logs:/home/frappe/frappe-bench/logs
 
   erpnext-seed:
-    image: cash-flow-bootstrap:local
-    pull_policy: never
+    <<: *bootstrap-build
     command: ["python", "infra/seed/seed_erpnext.py"]
     profiles: [erpnext]
     restart: "no"

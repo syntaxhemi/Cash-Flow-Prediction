@@ -36,12 +36,13 @@ Start the complete platform with the ERPNext demonstration:
 docker compose --profile erpnext up -d --build
 ```
 
-**Note:** Use --force-recreate flag with this command to get rid of stale Docker build.
-
 Compose waits for PostgreSQL and Redis health, applies Alembic migrations, starts the
 API and worker, and loads the platform fixture. The ERPNext profile additionally
 creates the ERPNext site, configures the demo company, loads accounting records,
 rotates a dedicated API token into the platform, and requests an initial full sync.
+The migration and seed services share the local `cash-flow-bootstrap:local` image and
+each declares the same build definition, so a fresh clone builds it locally rather
+than attempting to pull a private registry image.
 
 ## Deterministic demonstration data
 
