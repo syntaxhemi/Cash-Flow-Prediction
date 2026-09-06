@@ -40,9 +40,10 @@ Compose waits for PostgreSQL and Redis health, applies Alembic migrations, start
 API and worker, and loads the platform fixture. The ERPNext profile additionally
 creates the ERPNext site, configures the demo company, loads accounting records,
 rotates a dedicated API token into the platform, and requests an initial full sync.
-The migration and seed services share the local `cash-flow-bootstrap:local` image and
-each declares the same build definition, so a fresh clone builds it locally rather
-than attempting to pull a private registry image.
+Each migration and seed service declares the bootstrap build definition directly.
+Compose therefore creates project-local images on a fresh clone instead of depending
+on a pre-existing image tag or attempting to pull a private registry image. The
+services still reuse the same Docker build layers.
 
 ## Deterministic demonstration data
 
