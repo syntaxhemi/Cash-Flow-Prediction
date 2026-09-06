@@ -6,19 +6,21 @@ This file defines the working contract for agents and contributors operating in 
 
 Use this document together with:
 
-- `docs/context/project-overview.md`
-- `docs/context/research-summary.md`
-- `docs/context/prd-summary.md`
-- `docs/context/repo-structure.md`
-- `docs/context/schema-overview.md`
-- `docs/context/implementation-strategy.md`
-- `docs/context/execution-plan.md`
+- `docs/context/system-overview.md`
+- `docs/context/architecture.md`
+- `docs/context/data-and-ingestion.md`
+- `docs/context/forecasting-and-simulation.md`
+- `docs/context/training-and-evaluation.md`
+- `docs/context/dashboard.md`
+- `docs/context/reproducibility.md`
 
 If there is a conflict between ad hoc assumptions and the context documents, follow the context documents.
 
 ## Project Positioning
 
-This repository is a final-year engineering project that demonstrates an enterprise-style cash flow prediction platform built around an existing applied research forecasting model.
+This repository is a final-year engineering project that develops a cash flow
+forecasting model and demonstrates the model through an enterprise-style prediction
+and decision-support platform.
 
 Important scope rules:
 
@@ -35,7 +37,7 @@ Important scope rules:
 - `docs/reference/research-paper.pdf`
 - `docs/reference/prd.pdf`
 
-### Working implementation context
+### Maintained project documentation
 
 - everything under `docs/context`
 
@@ -299,10 +301,12 @@ Do not collapse these concerns into one folder.
 
 ## Documentation Rules
 
-- keep architecture guidance in `docs/context`
-- keep the execution tracker updated in `docs/context/execution-plan.md`
+- keep current architecture, behavior, and research evidence in `docs/context`
+- describe implemented behavior rather than maintaining planning documents or task
+  trackers in `docs/context`
 - keep source PDFs in `docs/reference`
-- when a major structural decision changes, update the relevant context documents in the same change
+- when architecture, model behavior, evaluation evidence, or a major workflow changes,
+  update the relevant context documents in the same change
 
 ## Implementation Rules
 

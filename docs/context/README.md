@@ -1,28 +1,33 @@
-# Context Documents
+# Project Documentation
 
-This directory contains the working architecture and implementation context for the cash flow prediction platform.
+This directory contains the maintained documentation for the implemented Cash Flow
+Prediction platform. The collection describes the system as it exists and records
+the engineering and experimental evidence needed to explain it in an applied
+engineering research paper.
 
-These documents are intended to be the primary source of truth before scaffolding and major implementation work begins.
+## Reading order
 
-## Recommended Reading Order
+1. [system-overview.md](./system-overview.md): problem, scope, capabilities, and
+   research contribution
+2. [architecture.md](./architecture.md): runtime topology, module ownership, and
+   principal workflows
+3. [data-and-ingestion.md](./data-and-ingestion.md): canonical accounting model,
+   ingestion adapters, aggregation, and persistence
+4. [forecasting-and-simulation.md](./forecasting-and-simulation.md): inference,
+   health analysis, receivables analysis, and mitigation logic
+5. [training-and-evaluation.md](./training-and-evaluation.md): dataset preparation,
+   model design, evaluation, and artifact contract
+6. [dashboard.md](./dashboard.md): executive decision-support experience and API
+   integration
+7. [reproducibility.md](./reproducibility.md): setup, seeding, validation, and
+   deployment properties
 
-1. [project-overview.md](./project-overview.md)
-2. [research-summary.md](./research-summary.md)
-3. [prd-summary.md](./prd-summary.md)
-4. [repo-structure.md](./repo-structure.md)
-5. [schema-overview.md](./schema-overview.md)
-6. [implementation-strategy.md](./implementation-strategy.md)
-7. [execution-plan.md](./execution-plan.md)
+## Evidence boundary
 
-## Role of `docs/reference`
+These documents distinguish implemented behavior from project assumptions and
+experimental limitations. Exact model results come from the committed baseline
+artifact metadata and metrics. Product requirements and the source study remain in
+`docs/reference`; the implementation is the authority for current system behavior.
 
-The files under `docs/reference` are the primary source references:
-
-- `research-paper.pdf`
-- `prd.pdf`
-
-The Markdown files in this directory are derived implementation guidance built from those references plus explicit project decisions made during planning.
-
-## Current Status
-
-These documents represent the current committed architecture and implementation context for the repository.
+The collection is descriptive documentation, not a task tracker. Architecture or
+behavior changes should update the relevant document in the same change.
