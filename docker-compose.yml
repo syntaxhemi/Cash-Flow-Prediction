@@ -234,6 +234,7 @@ services:
         else
           bench new-site frontend --mariadb-user-host-login-scope='%' --admin-password=admin --db-root-username=root --db-root-password=admin --install-app erpnext --set-default;
         fi;
+        bench --site frontend execute frappe.utils.password.get_encryption_key > /dev/null;
     environment:
       DB_HOST: erpnext-db
       DB_PORT: "3306"

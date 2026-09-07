@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import {
 	LuCircleAlert,
 	LuCircleCheck,
@@ -6,8 +7,10 @@ import {
 	LuClock3,
 	LuDatabase,
 	LuLayers3,
+	LuRefreshCw,
 } from 'react-icons/lu';
 import type { IngestionRun, IngestionSource } from '@/api/contracts';
+import Button from '@/components/ui/Button';
 import { cn } from '@/utils/cn';
 import DataSectionEyebrow from './DataSectionEyebrow';
 
@@ -18,6 +21,8 @@ type IngestionHistoryProps = {
 	page: number;
 	pageSize: number;
 	onPageChange: (page: number) => void;
+	onRefresh: () => Promise<void>;
+	refreshing: boolean;
 };
 
 function formatRunTime(value: string) {
@@ -50,17 +55,49 @@ function IngestionHistory({
 	page,
 	pageSize,
 	onPageChange,
+	onRefresh,
+	refreshing,
 }: IngestionHistoryProps) {
+	const [manualRefreshing, setManualRefreshing] = useState(false);
 	const sourceNames = new Map(
 		sources.map((source) => [source.id, source.display_name]),
 	);
 	const pageCount = Math.max(1, Math.ceil(totalCount / pageSize));
 	const firstItem = totalCount === 0 ? 0 : page * pageSize + 1;
 	const lastItem = Math.min((page + 1) * pageSize, totalCount);
+	const isRefreshing = refreshing || manualRefreshing;
+
+	const handleRefresh = async () => {
+		setManualRefreshing(true);
+		try {
+			await Promise.all([
+				onRefresh(),
+				new Promise((resolve) => window.setTimeout(resolve, 600)),
+			]);
+		} finally {
+			setManualRefreshing(false);
+		}
+	};
 
 	return (
 		<section className="mt-14" aria-labelledby="history-title">
-			<DataSectionEyebrow>Ingestion history</DataSectionEyebrow>
+			<div className="flex items-center justify-between gap-4">
+				<DataSectionEyebrow>Ingestion run history</DataSectionEyebrow>
+				<Button
+					variant="ghost"
+					size="sm"
+					onClick={() => void handleRefresh()}
+					disabled={isRefreshing}
+					leading={
+						<LuRefreshCw
+							className={cn('size-4', isRefreshing && 'animate-spin')}
+							aria-hidden="true"
+						/>
+					}
+				>
+					Refresh
+				</Button>
+			</div>
 			<h2 id="history-title" className="sr-only">
 				Ingestion run history
 			</h2>

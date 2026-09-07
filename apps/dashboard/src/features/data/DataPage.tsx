@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import PageLayout from '@/components/layout/PageLayout';
 import InlineError from '@/components/ui/InlineError';
 import ResourceError from '@/components/ui/ResourceError';
@@ -51,6 +51,26 @@ function DataPage() {
 	const fileSources = sourceItems.filter(
 		(source) => source.source_key === 'csv' || source.source_key === 'excel',
 	);
+	const refreshIngestionState = useCallback(async () => {
+		await Promise.all([
+			sources.refresh(),
+			connectedRuns.refresh(),
+			historyRuns.refresh(),
+		]);
+	}, [connectedRuns, historyRuns, sources]);
+	const latestHistoryRun = historyRuns.data?.items[0] ?? null;
+	const ingestionInProgress = [latestRun, latestHistoryRun].some(
+		(run) => run?.status === 'pending' || run?.status === 'running',
+	);
+
+	useEffect(() => {
+		if (!ingestionInProgress || historyPage !== 0) return;
+
+		const refreshInterval = window.setInterval(() => {
+			void refreshIngestionState();
+		}, 2_000);
+		return () => window.clearInterval(refreshInterval);
+	}, [historyPage, ingestionInProgress, refreshIngestionState]);
 
 	const refreshData = useCallback(() => {
 		setFileUploadError(null);
@@ -63,11 +83,9 @@ function DataPage() {
 		mutations.updateCredential.reset();
 		mutations.rotateCredential.reset();
 		mutations.revokeCredential.reset();
-		void sources.refresh();
-		void connectedRuns.refresh();
-		void historyRuns.refresh();
+		void refreshIngestionState();
 		void credentials.refresh();
-	}, [connectedRuns, credentials, historyRuns, mutations, sources]);
+	}, [credentials, mutations, refreshIngestionState]);
 
 	const handleSync = useCallback(() => {
 		if (!connectedSource) return;
@@ -77,10 +95,11 @@ function DataPage() {
 				body: { run_type: 'incremental', status: 'pending', since: null },
 			})
 			.then(() => {
-				refreshData();
+				setHistoryPage(0);
+				void refreshIngestionState();
 			})
 			.catch(() => undefined);
-	}, [connectedSource, mutations.requestSync, refreshData]);
+	}, [connectedSource, mutations.requestSync, refreshIngestionState]);
 
 	const handleSourceCreated = useCallback(
 		() => {
@@ -117,7 +136,10 @@ function DataPage() {
 		}
 		void mutations.uploadFile
 			.mutateAsync({ sourceId: source.id, file })
-			.then(() => refreshData())
+			.then(() => {
+				setHistoryPage(0);
+				void refreshIngestionState();
+			})
 			.catch(() => undefined);
 	};
 
@@ -125,10 +147,10 @@ function DataPage() {
 		sources.error ?? connectedRuns.error ?? historyRuns.error ?? credentials.error;
 	const uploadError = fileUploadError ?? mutations.uploadFile.error;
 	const showSkeleton =
-		sources.loading ||
-		connectedRuns.loading ||
-		historyRuns.loading ||
-		credentials.loading;
+		(sources.loading && !sources.data) ||
+		(connectedRuns.loading && !connectedRuns.data) ||
+		(historyRuns.loading && !historyRuns.data) ||
+		(credentials.loading && !credentials.data);
 	const modalError = modal
 		? modal.type === 'add-source'
 			? mutations.createSource.error
@@ -213,6 +235,8 @@ function DataPage() {
 							page={historyPage}
 							pageSize={5}
 							onPageChange={setHistoryPage}
+							onRefresh={refreshIngestionState}
+							refreshing={historyRuns.loading}
 						/>
 					</>
 				)}

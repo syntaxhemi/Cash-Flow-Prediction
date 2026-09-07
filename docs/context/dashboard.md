@@ -51,8 +51,10 @@ improvement, post-action cash flow, and priority.
 
 The data workspace creates, edits, and deactivates ingestion sources; manages ERPNext
 credential metadata and rotation; requests synchronization; uploads CSV/XLSX files;
-and presents current processing status and paginated ingestion history. Secret values
-are write-only from the normal response contract.
+and presents current processing status and paginated ingestion history. Pending and
+running ingestion entries refresh automatically until they reach a terminal state,
+and the history can also be refreshed manually. Secret values are write-only from the
+normal response contract.
 
 ## Frontend architecture
 

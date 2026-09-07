@@ -464,6 +464,38 @@ def _verify_erpnext_credentials(
     ) from last_error
 
 
+def _verify_erpnext_resource_access(
+    base_url: str,
+    credentials: dict[str, str],
+) -> None:
+    client = _token_client(base_url, credentials)
+    for doctype in (
+        'Sales Invoice',
+        'Purchase Invoice',
+        'Payment Entry',
+        'Journal Entry',
+    ):
+        try:
+            response = client.request(
+                'GET',
+                _resource_path(doctype),
+                query={
+                    'fields': json.dumps(['*']),
+                    'limit_page_length': 1,
+                    'limit_start': 0,
+                },
+                timeout=15,
+            )
+        except _ApiError as error:
+            raise _ApiError(
+                f'ERPNext integration credential cannot read {doctype}: {error}'
+            ) from error
+        if not isinstance(response, dict) or not isinstance(response.get('data'), list):
+            raise _ApiError(
+                f'ERPNext returned an invalid resource response for {doctype}.'
+            )
+
+
 def _first_by(
     response: Any, property_name: str, expected: Any
 ) -> dict[str, Any] | None:
@@ -595,6 +627,7 @@ def main() -> None:
     )
     print('Verifying ERPNext credential before synchronization...')
     _verify_erpnext_credentials(erpnext_base_url, credentials, integration_user)
+    _verify_erpnext_resource_access(erpnext_base_url, credentials)
     should_sync = os.environ.get('TRIGGER_ERPNEXT_SYNC', 'true').lower() == 'true'
     if should_sync:
         _trigger_erpnext_sync(platform, sync_path)
